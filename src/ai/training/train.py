@@ -11,6 +11,8 @@ import config
 from src.ai.models.models import MyModel
 from utils import save_checkpoint, load_checkpoint
 import glob
+import math
+
 
 def clean_old_checkpoints(save_dir, keep=3):
     checkpoints = sorted(glob.glob(f"{save_dir}/*.pth"), key=os.path.getmtime)
@@ -29,11 +31,28 @@ def validate(model, val_loader, criterion, device):
     with torch.no_grad():
         for inputs, labels in val_loader:
             inputs, labels = inputs.to(device), labels.to(device)
+
+            # Überprüfe NaN in Eingabedaten
+            if torch.isnan(inputs).any() or torch.isnan(labels).any():
+                print("NaN detected in inputs or labels during validation!")
+                return float('nan'), 0.0
+
             outputs = model(inputs)
+
+            # Überprüfe NaN in Modellvorhersagen
+            if torch.isnan(outputs).any():
+                print("NaN detected in model output during validation!")
+                return float('nan'), 0.0
+
             loss = criterion(outputs, labels)
+
+            # Überprüfe NaN im Verlust
+            if torch.isnan(loss).any():
+                print("NaN detected in loss during validation!")
+                return float('nan'), 0.0
+
             val_loss += loss.item()
 
-            # Überprüfe, ob die Dimensionen der Vorhersagen und Labels übereinstimmen
             _, predicted = torch.max(outputs, 1)
             correct += (predicted == labels).sum().item()
             total += labels.size(0)
@@ -42,12 +61,14 @@ def validate(model, val_loader, criterion, device):
     val_acc = correct / total
     return sval_loss, val_acc
 
+
 # Funktion zum Berechnen der Trainingszeit
 def get_time_elapsed(start_time):
     elapsed_time = time.time() - start_time
     minutes = int(elapsed_time // 60)
     seconds = int(elapsed_time % 60)
     return f"{minutes}m {seconds}s"
+
 
 # 1. Datasets und Dataloader
 transform = transforms.Compose([
@@ -56,6 +77,7 @@ transform = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
+
 
 # Lade gefilterte Datasets
 def load_filtered_dataset(root_dir, selected_classes):
@@ -75,7 +97,8 @@ def load_filtered_dataset(root_dir, selected_classes):
 
 
 # Wähle Klassen
-selected_classes = os.listdir(config.TRAIN_DIR)[:20]  # Z.B. nur die ersten 10 Klassen
+#selected_classes = os.listdir(config.TRAIN_DIR)[:10]  # Z.B. nur die ersten 10 Klassen
+selected_classes = ['1355868','1355932','1355936','1355937','1355959','1355978','1355990','1356003']
 print("Selected Classes:", selected_classes)
 
 # Lade die Datasets
@@ -93,6 +116,7 @@ test_loader = DataLoader(test_dataset, batch_size=config.BATCH_SIZE, shuffle=Fal
 model = MyModel(num_classes=len(selected_classes)).to(config.DEVICE)
 optimizer = optim.Adam(model.parameters(), lr=config.LEARNING_RATE, weight_decay=config.WEIGHT_DECAY)
 criterion = nn.CrossEntropyLoss()
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3)
 
 # 3. Checkpoint laden, falls Modell fortgesetzt werden soll
 start_epoch = 0
@@ -121,9 +145,27 @@ for epoch in range(start_epoch, config.EPOCHS):
 
     for batch_idx, (inputs, labels) in enumerate(tqdm(train_loader)):
         inputs, labels = inputs.to(config.DEVICE), labels.to(config.DEVICE)
+
+        # Überprüfe NaN in Eingabedaten
+        if torch.isnan(inputs).any() or torch.isnan(labels).any():
+            print("NaN detected in inputs or labels during training!")
+            break
+
         optimizer.zero_grad()
         outputs = model(inputs)
+
+        # Überprüfe NaN in Modellvorhersagen
+        if torch.isnan(outputs).any():
+            print("NaN detected in model output during training!")
+            break
+
         loss = criterion(outputs, labels)
+
+        # Überprüfe NaN im Verlust
+        if torch.isnan(loss).any():
+            print("NaN detected in loss during training!")
+            break
+
         loss.backward()
         optimizer.step()
 
@@ -135,11 +177,19 @@ for epoch in range(start_epoch, config.EPOCHS):
     # Zeige die Statistiken der aktuellen Epoche
     epoch_loss = running_loss / len(train_loader)
     epoch_acc = correct / total
-    print(f"Epoch [{epoch+1}/{config.EPOCHS}], Loss: {epoch_loss:.4f}, Accuracy: {epoch_acc:.4f}")
+    print(f"Epoch [{epoch + 1}/{config.EPOCHS}], Loss: {epoch_loss:.4f}, Accuracy: {epoch_acc:.4f}")
 
     # Validierung nach jeder Epoche
     sval_loss, val_acc = validate(model, val_loader, criterion, config.DEVICE)
+
+    # Überprüfe NaN für float-Werte
+    if math.isnan(sval_loss) or math.isnan(val_acc):
+        print("NaN detected during validation. Aborting training.")
+        break
+
     print(f"Validation Loss: {sval_loss:.4f}, Validation Accuracy: {val_acc:.4f}")
+    scheduler.step(sval_loss)
+    print(f"Neue Learning Rate: {scheduler.get_last_lr()[0]:.6f}")
 
     # Speichern des Modells nach jeder Epoche
     save_checkpoint(model, optimizer, epoch, config.CHECKPOINT_PATH.format(epoch))

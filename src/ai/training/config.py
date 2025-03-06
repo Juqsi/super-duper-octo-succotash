@@ -7,8 +7,8 @@ MODEL_DIR = '../../../models'
 CHECKPOINT_DIR = '../../../checkpoints'
 
 # Hyperparameter
-BATCH_SIZE = 32
-LEARNING_RATE = 1e-7
+BATCH_SIZE = 16
+LEARNING_RATE = 1e-3
 EPOCHS = 10
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -22,5 +22,5 @@ CHECKPOINT_PATH = os.path.join(CHECKPOINT_DIR, 'checkpoint_epoch_{}.pth')
 RESUME_TRAINING = False  # Wenn True, lädt er den letzten Checkpoint
 LAST_EPOCH = 0  # Hier die letzte Epoche eintragen, ab der weitertrainiert wird
 
-NUM_WORKERS = 12
-WEIGHT_DECAY = 1e-4
+NUM_WORKERS = 8
+WEIGHT_DECAY = 1e-3
