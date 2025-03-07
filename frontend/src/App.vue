@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
+import CapturePhotoComponent from "@/components/CapturePhotoComponent.vue";
+import {Toaster} from 'vue-sonner'
 </script>
 
 <template>
-  <h1>Hello World</h1>
-  <RouterView />
+  <CapturePhotoComponent />
+  <Toaster position="top-center" richColors />
 </template>
