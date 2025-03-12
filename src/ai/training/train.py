@@ -97,8 +97,8 @@ def load_filtered_dataset(root_dir, selected_classes):
 
 
 # Wähle Klassen
-#selected_classes = os.listdir(config.TRAIN_DIR)[:10]  # Z.B. nur die ersten 10 Klassen
-selected_classes = ['1355868','1355932','1355936','1355937','1355959','1355978','1355990','1356003']
+#selected_classes = os.listdir(config.TRAIN_DIR)  # Z.B. nur die ersten 10 Klassen
+selected_classes = ['1356126','1363128','1356022','1357330','1355978','1363740','1364172','1355937','1361656','1363021','1385937','1356421','1358094','1384485','1393614']
 print("Selected Classes:", selected_classes)
 
 # Lade die Datasets
@@ -116,7 +116,7 @@ test_loader = DataLoader(test_dataset, batch_size=config.BATCH_SIZE, shuffle=Fal
 model = MyModel(num_classes=len(selected_classes)).to(config.DEVICE)
 optimizer = optim.Adam(model.parameters(), lr=config.LEARNING_RATE, weight_decay=config.WEIGHT_DECAY)
 criterion = nn.CrossEntropyLoss()
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3)
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.8, patience=3) # cos funktion
 
 # 3. Checkpoint laden, falls Modell fortgesetzt werden soll
 start_epoch = 0
