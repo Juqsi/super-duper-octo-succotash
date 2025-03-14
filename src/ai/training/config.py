@@ -6,10 +6,16 @@ DATA_DIR = '../../../dataset/plantnet_300K'
 MODEL_DIR = '../../../models'
 CHECKPOINT_DIR = '../../../checkpoints'
 
+# Lokales Speichern des vortrainierten Modells
+PRETRAINED_MODEL_PATH = "../../../models/resnet50.pth"
+
+USE_MIXUP = True
+MIXUP_DISABLE_EPOCH = 23
+
 # Hyperparameter
 BATCH_SIZE = 128
 
-LEARNING_RATE = 0.0004
+LEARNING_RATE = 0.0008
 EPOCHS = 30
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -20,10 +26,10 @@ TEST_DIR = os.path.join(DATA_DIR, 'images_test')
 
 # Checkpoints
 CHECKPOINT_PATH = os.path.join(CHECKPOINT_DIR, 'checkpoint_epoch_{}.pth')
-RESUME_TRAINING = False# Wenn True, lädt er den letzten Checkpoint
-LAST_EPOCH = 2 # Hier die letzte Epoche eintragen, ab der weitertrainiert wird
+RESUME_TRAINING = True  # Wenn True, lädt er den letzten Checkpoint
+LAST_EPOCH = 21 # Hier die letzte Epoche eintragen, ab der weitertrainiert wird
 
 NUM_WORKERS = 4
-WEIGHT_DECAY = 0.0005
+WEIGHT_DECAY = 0.001
 
 
