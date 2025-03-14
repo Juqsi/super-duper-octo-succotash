@@ -1,4 +1,4 @@
-script setup>
+<script setup>
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { CameraIcon, TrashIcon } from 'lucide-vue-next';
@@ -102,14 +102,14 @@ onBeforeUnmount(() => {
       <div v-else>
         <div class="flex justify-between items-center mb-4">
           <Button variant="outline" @click="stopCamera">Exit</Button>
-          <Button class="disabled:bg-muted" :disabled="photos.length === 0" @click="emitPhotos">Use Photos</Button>
+          <Button class="disabled:bg-muted disabled:text-muted-foreground" :disabled="photos.length === 0" @click="emitPhotos">Use Photos</Button>
         </div>
 
         <video ref="camera" autoplay playsinline muted class="w-full rounded-lg mb-4"
                @error="onVideoError"></video>
         <div class="grid grid-cols-3 gap-3">
           <div v-for="(photo, index) in photos" :key="index" class="relative">
-            <img :src="photo" class="rounded-lg w-full"/>
+            <img alt="Aufgenommenes Bild" :src="photo" class="rounded-lg w-full"/>
             <Button size="icon" variant="ghost" class="absolute top-2 right-2"
                     @click="removePhoto(index)">
               <TrashIcon class="w-4 h-4 text-destructive"/>
@@ -117,7 +117,7 @@ onBeforeUnmount(() => {
           </div>
         </div>
         <div class="flex gap-2 mt-4">
-          <Button @click="capturePhoto" :disabled="photos.length >= 5">Capture</Button>
+          <Button @click="capturePhoto" :disabled="photos.length >= 3">Capture</Button>
         </div>
       </div>
 
