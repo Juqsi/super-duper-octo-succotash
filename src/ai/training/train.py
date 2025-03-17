@@ -57,8 +57,8 @@ transform = transforms.Compose([
 ])
 
 # Lade Datensätze
-selected_classes = ['1356126', '1363128', '1356022', '1357330', '1355978', '1363740', '1364172', '1355937', '1361656',
-                    '1363021', '1385937', '1356421', '1358094', '1384485', '1393614']
+selected_classes = os.listdir(config.TRAIN_DIR)
+#selected_classes = ['1356126', '1363128', '1356022', '1357330', '1355978', '1363740', '1364172', '1355937', '1361656','1363021', '1385937', '1356421', '1358094', '1384485', '1393614']
 
 
 def load_dataset(root_dir):
@@ -123,11 +123,9 @@ for epoch in range(start_epoch, config.EPOCHS):
     running_loss = 0.0
     correct, total = 0, 0
 
-    if epoch >= config.MIXUP_DISABLE_EPOCH and config.USE_MIXUP:
-        config.USE_MIXUPIU = False  # Mixup deaktivieren ab Epoche
-        print(f"🔄 Mixup deaktiviert ab Epoche {epoch + 1}")
+    tqdm_loader = tqdm(train_loader, desc=f"Epoch {epoch+1}/{config.EPOCHS}")  # Fortschrittsanzeige
 
-    for inputs, labels in tqdm(train_loader):
+    for inputs, labels in tqdm_loader:
         inputs, labels = inputs.to(config.DEVICE), labels.to(config.DEVICE)
         optimizer.zero_grad()
 
@@ -147,6 +145,9 @@ for epoch in range(start_epoch, config.EPOCHS):
         _, predicted = torch.max(outputs, 1)
         correct += (predicted == labels).sum().item()
         total += labels.size(0)
+
+        # Fortschritt in der Epoche anzeigen
+        tqdm_loader.set_postfix(loss=loss.item(), acc=correct / total)
 
     epoch_loss = running_loss / len(train_loader)
     epoch_acc = correct / total
@@ -168,9 +169,41 @@ for epoch in range(start_epoch, config.EPOCHS):
     accuracy_list.append(val_acc)
 
     print(
-        f"Epoch [{epoch + 1}/{config.EPOCHS}], Train Loss: {epoch_loss:.4f}, Train Acc: {epoch_acc:.4f}, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}")
+        f"Epoch [{epoch}/{config.EPOCHS}], Train Loss: {epoch_loss:.4f}, Train Acc: {epoch_acc:.4f}, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}"
+    )
     scheduler.step()
     save_checkpoint(model, optimizer, epoch, config.CHECKPOINT_PATH.format(epoch))
     epoch_times.append(time.time() - epoch_start_time)
 
 total_training_time = time.time() - training_start_time
+
+# Speichern der finalen Konfiguration
+model_filename = os.path.join(config.MODEL_DIR, f'final_model_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.pth')
+torch.save(model.state_dict(), model_filename)
+
+config_filename = os.path.join(config.MODEL_DIR, f'config_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.json')
+config_data = {
+    'BATCH_SIZE': config.BATCH_SIZE,
+    'LEARNING_RATE': config.LEARNING_RATE,
+    'EPOCHS': config.EPOCHS,
+    'DEVICE': config.DEVICE,
+    'TRAIN_DIR': config.TRAIN_DIR,
+    'VAL_DIR': config.VAL_DIR,
+    'TEST_DIR': config.TEST_DIR,
+    'CHECKPOINT_PATH': config.CHECKPOINT_PATH,
+    'RESUME_TRAINING': config.RESUME_TRAINING,
+    'LAST_EPOCH': config.LAST_EPOCH,
+    'NUM_WORKERS': config.NUM_WORKERS,
+    'WEIGHT_DECAY': config.WEIGHT_DECAY,
+    'TOTAL_TRAINING_TIME': total_training_time,
+    'EPOCH_TIMES': epoch_times,
+    'TRAIN_ACCURACY': train_accuracy_list,
+    'VAL_ACCURACY': accuracy_list,
+    'NUM_CLASSES': len(selected_classes),
+    'CLASSES': selected_classes
+}
+with open(config_filename, 'w') as f:
+    json.dump(config_data, f, indent=4)
+print(f"Modelle gespeichert als: {model_filename}")
+print(f"Konfiguration gespeichert als: {config_filename}")
+
