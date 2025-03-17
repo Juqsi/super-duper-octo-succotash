@@ -10,11 +10,4 @@
     <orderEntry type="jdk" jdkName="Python 3.12 virtualenv at C:\Users\lukas\PycharmProjects\super-duper-octo-succotash\backend\venv" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
-  <component name="PyNamespacePackagesService">
-    <option name="namespacePackageFolders">
-      <list>
-        <option value="$MODULE_DIR$/backend/src/api" />
-      </list>
-    </option>
-  </component>
 </module>
