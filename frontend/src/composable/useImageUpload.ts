@@ -4,7 +4,7 @@ import { toast } from 'vue-sonner';
 export function useImageUpload(apiUrl) {
   const isUploading = ref(false);
   const error = ref<string | null>(null);
-  const MAX_FILE_SIZE_MB = 5; // Maximale Dateigröße in MB
+  const MAX_FILE_SIZE_MB = 5;
 
   const uploadImages = async (imageFiles) => {
     if (!imageFiles.length) {
@@ -18,10 +18,18 @@ export function useImageUpload(apiUrl) {
       return;
     }
 
-    const formData = new FormData();
-    imageFiles.forEach((file) => {
-      formData.append("images", file);
-    });
+    const base64Images = await Promise.all(
+        imageFiles.map((file) => new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        }))
+    );
+
+    const payload = {
+      images: base64Images,
+    };
 
     const toastId = toast.loading("Bilder werden hochgeladen...");
 
@@ -31,7 +39,10 @@ export function useImageUpload(apiUrl) {
     try {
       const response = await fetch(apiUrl, {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -39,7 +50,6 @@ export function useImageUpload(apiUrl) {
       }
 
       const data = await response.json();
-
       toast.success("Bilder erfolgreich hochgeladen!", { id: toastId });
       return data;
     } catch (err) {
