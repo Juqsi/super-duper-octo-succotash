@@ -36,7 +36,7 @@ jobs:
           pytest
       - name: Build Sphinx documentation
         run: |
-          cd docs
+          cd backend/docs
           sphinx-apidoc -o source/_modules ../src
           make html
       - name: Upload documentation artifact
