@@ -2,9 +2,9 @@ name: Python application
 
 on:
   push:
-    branches: [ "rest_api" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "rest_api", "dev" ]
+    branches: [ "main", "dev" ]
 
 
 permissions:
@@ -31,9 +31,14 @@ jobs:
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-      - name: Run tests with pytest
+      - name: Run tests with pytest and check coverage
         run: |
-          pytest
+          pytest --cov=backend/src --cov-fail-under=70 --cov-report=xml:coverage/coverage.xml
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
       - name: Build Sphinx documentation
         run: |
           cd docs
