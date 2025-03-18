@@ -5,7 +5,6 @@ import {Toaster} from "vue-sonner";
 </script>
 
 <template>
-  <h1>Hello World</h1>
   <ImageUpload />
   <RouterView />
   <Toaster rich-colors />
