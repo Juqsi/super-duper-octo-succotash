@@ -37,7 +37,7 @@ jobs:
       - name: Build Sphinx documentation
         run: |
           cd docs
-          sphinx-apidoc -o source/_modules ../src
+          sphinx-apidoc -o source/_modules ../backend/src
           make html
       - name: Upload documentation artifact
         uses: actions/upload-artifact@v4
