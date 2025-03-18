@@ -1,16 +1,15 @@
 import base64
+import binascii
 import os
+import subprocess
 import uuid
 from io import BytesIO
-from pydantic import BaseModel, constr
-from fastapi import FastAPI, HTTPException
-from PIL import Image, UnidentifiedImageError
-import binascii
-import subprocess
 
+from PIL import Image, UnidentifiedImageError
+from fastapi import FastAPI, HTTPException
 
 # Bild-Upload-Ordner erstellen
-UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "uploads")
+UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "classify")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Maximale Bildgröße aus der .env-Datei laden (Standard: 5 MB)
@@ -18,23 +17,27 @@ MAX_IMAGE_SIZE = int(os.getenv("MAX_IMAGE_SIZE", "5242880"))
 
 app = FastAPI()
 
-# Bild-Upload-Ordner erstellen
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Base64-Dekodierung und JPG-Speicherung
 def decode_and_save_image(image_base64: str) -> str:
-    try:
-        # Optionalen Header entfernen
-        if "," in image_base64:
-            image_base64 = image_base64.split(",")[1]
+    # Optionalen Header entfernen
+    if "," in image_base64:
+        image_base64 = image_base64.split(",")[1]
 
-        # Base64 dekodieren und Bild öffnen
+    # Dateigrößen-Prüfung
+    if len(image_base64) > MAX_IMAGE_SIZE:
+        raise HTTPException(
+            status_code=413, detail="Das Bild überschreitet die maximale Dateigröße von 5 MB.")
+
+    # Überprüfen, ob das Base64-Format gültig ist
+    try:
         image_data = base64.b64decode(image_base64)
 
-        # Dateigrößen-Prüfung
-        if len(image_data) > MAX_IMAGE_SIZE:
-            raise HTTPException(status_code=413, detail="Das Bild überschreitet die maximale Dateigröße von 5 MB.")
+    except binascii.Error:
+        raise HTTPException(
+            status_code=400, detail="Ungültiges Base64-Format.")
 
+    try:
         image = Image.open(BytesIO(image_data))
 
         # Bild in JPG konvertieren und speichern
@@ -44,10 +47,14 @@ def decode_and_save_image(image_base64: str) -> str:
 
         return save_path
 
-    except (binascii.Error, ValueError):
-        raise HTTPException(status_code=400, detail="Ungültiges Base64-Format.")
     except UnidentifiedImageError:
-        raise HTTPException(status_code=400, detail="Das Bildformat wird nicht unterstützt.")
+        raise HTTPException(
+            status_code=400, detail="Das Bildformat wird nicht unterstützt.")
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Unbekannter Fehler: {str(e)}")
+
 
 # Bild an KI-Skript weitergeben
 def run_plant_classifier(image_path: str) -> str:
@@ -58,22 +65,27 @@ def run_plant_classifier(image_path: str) -> str:
         )
         return result.stdout.strip()  # Ausgabe des Skripts als Antwort zurückgeben
     except subprocess.CalledProcessError as e:
-        raise HTTPException(status_code=500, detail=f"Fehler im KI-Skript: {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Fehler im KI-Skript: {e}")
     finally:
         # Bild nach erfolgreicher oder fehlgeschlagener Verarbeitung löschen
         if os.path.exists(image_path):
             os.remove(image_path)
 
-@app.post("/classify")
+
+@app.post("/uploads")
 async def classify_plant(image_data: dict):
-    try:
-        image_path = decode_and_save_image(image_data["image_base64"])
-        prediction = run_plant_classifier(image_path)
-        return {"prediction": prediction}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # image_path =
+    decode_and_save_image(image_data["image_base64"])
+    prediction = ""  # run_plant_classifier(image_path)
+    return {"prediction": prediction}
+
 
 @app.get("/")
 async def hello_world():
     return {"message": "Hello World 🌍"}
 
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="localhost", port=8000)
