@@ -4,7 +4,8 @@ services:
     container_name: pytorch_container1
     stdin_open: true
     tty: true
-    shm_size: 12G
+    shm_size: 20G
+    privileged: true
     devices:
       - "/dev/kfd"
       - "/dev/dri"

@@ -99,6 +99,15 @@ else:
 model.fc = nn.Linear(model.fc.in_features, len(selected_classes))
 model = model.to(config.DEVICE)
 
+# Feature-Extractor einfrieren (nur die letzten Layer trainieren)
+for param in model.parameters():
+    param.requires_grad = False  # Alle Gewichte einfrieren
+
+# Letzte Schichten freigeben (Fully Connected Layer)
+for param in model.fc.parameters():
+    param.requires_grad = True
+
+
 # Optimierung & Loss
 optimizer = optim.Adam(model.parameters(), lr=config.LEARNING_RATE, weight_decay=config.WEIGHT_DECAY)
 criterion = FocalLoss(alpha=0.25, gamma=2.0)
@@ -118,6 +127,17 @@ epoch_times = []
 training_start_time = time.time()
 
 for epoch in range(start_epoch, config.EPOCHS):
+    if epoch >= config.MIXUP_REDUCTION_EPOCH:
+        config.MIXUP_ALPHA *= 0.8
+        if config.MIXUP_ALPHA < 0.05:  # Wenn Alpha sehr klein wird, Mixup deaktivieren
+            config.USE_MIXUP = False
+            print(f" Mixup deaktiviert ab Epoche {epoch + 1}")
+
+    if epoch == config.LR_DECAY_EPOCH:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] *= config.LR_DECAY_FACTOR  # Lernrate um Faktor reduzieren
+            print(f"📉 Lernrate reduziert auf {param_group['lr']} ab Epoche {epoch+1}")
+
     epoch_start_time = time.time()
     model.train()
     running_loss = 0.0
@@ -131,7 +151,7 @@ for epoch in range(start_epoch, config.EPOCHS):
 
         if config.USE_MIXUP:
             # Mixup aktiv
-            inputs, y_a, y_b, lam = mixup_data(inputs, labels)
+            inputs, y_a, y_b, lam = mixup_data(inputs, labels, config.MIXUP_ALPHA)
             outputs = model(inputs)
             loss = mixup_criterion(criterion, outputs, y_a, y_b, lam)
         else:
