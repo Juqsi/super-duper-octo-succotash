@@ -14,18 +14,29 @@ const isCameraActive = ref(false)
 const photos = ref<string[]>([])
 let stream: MediaStream | null = null
 
-// Kamera starten
 const startCamera = async () => {
   try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: true })
+    const devices = await navigator.mediaDevices.enumerateDevices()
+    const videoDevices = devices.filter((device) => device.kind === 'videoinput')
 
-    if (camera.value) {
-      camera.value.srcObject = stream
-      await nextTick()
-      camera.value.play()
+    if (videoDevices.length > 0) {
+      const constraints = {
+        video: {
+          deviceId: videoDevices[0].deviceId,
+        },
+      }
+      stream = await navigator.mediaDevices.getUserMedia(constraints)
+
+      if (camera.value) {
+        camera.value.srcObject = stream
+        await nextTick()
+        camera.value.play()
+      }
+
+      isCameraActive.value = true
+    } else {
+      toast.error('Keine Kamera gefunden.')
     }
-
-    isCameraActive.value = true
   } catch (err) {
     console.error('Kamera-Fehler:', err)
     toast.error('Fehler: Zugriff auf Kamera verweigert oder nicht verfügbar.')
@@ -97,10 +108,9 @@ const emitPhotos = async () => {
   }
 }
 
-// Fehlerhandling für das Video-Element
 const onVideoError = (event: Event) => {
   console.error('Video-Fehler:', event)
-  toast.error('Video-Fehler: Kamera funktioniert nicht.')
+  toast.error('Video-Fehler: Kamera funktioniert nicht. Bitte prüfe die Kameraeinstellungen.')
 }
 </script>
 
@@ -144,7 +154,7 @@ const onVideoError = (event: Event) => {
           <div v-for="(photo, index) in photos" :key="index" class="relative">
             <img :src="photo" alt="Aufgenommenes Bild" class="rounded-lg w-full" />
             <Button
-              class="absolute top-2 right-2"
+              class="absolute top-1 right-1 bg-white p-1 rounded-full shadow"
               size="icon"
               variant="ghost"
               @click="removePhoto(index)"
