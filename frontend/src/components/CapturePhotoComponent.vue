@@ -4,45 +4,47 @@ import { Card, CardContent } from '@/components/ui/card'
 import { CameraIcon, TrashIcon } from 'lucide-vue-next'
 import { nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useImageUpload } from '@/composable/useImageUpload'
+import { toast } from 'vue-sonner'
 
 const { uploadImages, error } = useImageUpload('http://localhost:8000/upload')
 
-const camera = ref(null)
-const canvas = ref(null)
+const camera = ref<HTMLVideoElement | null>(null)
+const canvas = ref<HTMLCanvasElement | null>(null)
 const isCameraActive = ref(false)
-const photos = ref([])
-let stream = null
+const photos = ref<string[]>([])
+let stream: MediaStream | null = null
 
+// Kamera starten
 const startCamera = async () => {
   try {
     stream = await navigator.mediaDevices.getUserMedia({ video: true })
+
     if (camera.value) {
       camera.value.srcObject = stream
       await nextTick()
       camera.value.play()
     }
+
     isCameraActive.value = true
-  } catch (error) {
-    console.error('Kamera-Fehler:', error)
+  } catch (err) {
+    console.error('Kamera-Fehler:', err)
     toast.error('Fehler: Zugriff auf Kamera verweigert oder nicht verfügbar.')
   }
 }
 
+// Kamera-Stream beobachten
 watch(
   camera,
   (newVal) => {
-    if (newVal) {
-      if (stream) {
-        newVal.srcObject = stream
-        newVal.onloadedmetadata = () => {
-          newVal.play()
-        }
-      }
+    if (newVal && stream) {
+      newVal.srcObject = stream
+      newVal.onloadedmetadata = () => newVal.play()
     }
   },
   { immediate: true },
 )
 
+// Kamera stoppen
 const stopCamera = () => {
   if (stream) {
     stream.getTracks().forEach((track) => track.stop())
@@ -51,29 +53,44 @@ const stopCamera = () => {
   }
 }
 
+// Cleanup vor dem Verlassen der Seite
 onBeforeUnmount(() => {
-  if (stream) {
-    stopCamera()
-  }
+  stopCamera()
 })
 
+// Foto aufnehmen
 const capturePhoto = () => {
+  if (!canvas.value || !camera.value) {
+    toast.error('Fehler: Kamera oder Canvas nicht verfügbar.')
+    return
+  }
+
   const ctx = canvas.value.getContext('2d')
+  if (!ctx) {
+    toast.error('Fehler: Canvas-Kontext konnte nicht erstellt werden.')
+    return
+  }
+
   canvas.value.width = camera.value.videoWidth
   canvas.value.height = camera.value.videoHeight
   ctx.drawImage(camera.value, 0, 0, canvas.value.width, canvas.value.height)
-  photos.value.push(canvas.value.toDataURL('image/png'))
+
+  const imageData = canvas.value.toDataURL('image/png')
+  photos.value.push(imageData)
 }
 
-const removePhoto = (index) => {
+// Foto entfernen
+const removePhoto = (index: number) => {
   photos.value.splice(index, 1)
 }
 
+// Bilder hochladen
 const emitPhotos = async () => {
   if (!photos.value.length) {
     toast.error('Keine Bilder zum Hochladen.')
     return
   }
+
   const response = await uploadImages([...photos.value])
   if (response) {
     photos.value = []
@@ -83,9 +100,10 @@ const emitPhotos = async () => {
   }
 }
 
-const onVideoError = (event) => {
+// Fehlerhandling für das Video-Element
+const onVideoError = (event: Event) => {
   console.error('Video-Fehler:', event)
-  toast.error('Video error')
+  toast.error('Video-Fehler: Kamera funktioniert nicht.')
 }
 </script>
 
@@ -124,6 +142,7 @@ const onVideoError = (event) => {
           playsinline
           @error="onVideoError"
         ></video>
+
         <div class="grid grid-cols-3 gap-3">
           <div v-for="(photo, index) in photos" :key="index" class="relative">
             <img :src="photo" alt="Aufgenommenes Bild" class="rounded-lg w-full" />
@@ -137,6 +156,7 @@ const onVideoError = (event) => {
             </Button>
           </div>
         </div>
+
         <div class="flex gap-2 mt-4">
           <Button :disabled="photos.length >= 3" @click="capturePhoto">Capture</Button>
         </div>

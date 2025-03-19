@@ -5,35 +5,48 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { TrashIcon } from 'lucide-vue-next'
 
-const images = ref([])
-const imageFiles = ref([])
+// Typ für gespeicherte Bilder
+interface ImagePreview {
+  name: string
+  src: string
+}
+
+const images = ref<ImagePreview[]>([])
+const imageFiles = ref<File[]>([])
 const { uploadImages, isUploading, error } = useImageUpload('http://localhost:8000/upload')
 
-const handleFileChange = (event) => {
-  const files = Array.from(event.target.files)
-  if (!files.length) return
+// Datei hochladen
+const handleFileChange = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  if (!input.files) return
+
+  const files = Array.from(input.files) as File[]
+  if (files.length === 0) return
 
   files.forEach((file) => {
     const reader = new FileReader()
     reader.onload = (e) => {
-      images.value.push({ name: file.name, src: e.target.result })
+      if (e.target?.result) {
+        images.value.push({ name: file.name, src: e.target.result as string })
+        imageFiles.value.push(file)
+      }
     }
     reader.readAsDataURL(file)
-    imageFiles.value.push(file)
   })
 }
 
-const removeFile = (index) => {
+// Datei entfernen
+const removeFile = (index: number) => {
   images.value.splice(index, 1)
   imageFiles.value.splice(index, 1)
 }
 
+// Bilder hochladen
 const submitImages = async () => {
   if (imageFiles.value.length === 0) return
 
   const response = await uploadImages(imageFiles.value)
   if (response) {
-    // Nach erfolgreichem Upload Liste leeren
     images.value = []
     imageFiles.value = []
   }

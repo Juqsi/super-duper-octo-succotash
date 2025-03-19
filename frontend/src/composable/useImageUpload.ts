@@ -12,7 +12,7 @@ export function useImageUpload(apiUrl) {
       return
     }
 
-    let base64Images = []
+    let base64Images: string[] = []
 
     if (imageSources[0] instanceof File) {
       const oversizedFiles = imageSources.filter(
