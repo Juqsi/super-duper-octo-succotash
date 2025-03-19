@@ -1,13 +1,9 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { RouterView } from 'vue-router'
-import ImageUpload from "@/components/imageUpload.vue";
-import {Toaster} from "vue-sonner";
-import CapturePhotoComponent from "@/components/CapturePhotoComponent.vue";
+import { Toaster } from 'vue-sonner'
 </script>
 
 <template>
-  <ImageUpload />
   <RouterView />
-  <CapturePhotoComponent />
-  <Toaster rich-colors />
+  <Toaster position="top-center" richColors />
 </template>
