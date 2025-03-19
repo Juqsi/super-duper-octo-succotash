@@ -13,7 +13,7 @@ interface ImagePreview {
 
 const images = ref<ImagePreview[]>([])
 const imageFiles = ref<File[]>([])
-const { uploadImages, isUploading, error } = useImageUpload('http://localhost:8000/upload')
+const { uploadImages, isUploading } = useImageUpload('http://localhost:8000/upload')
 
 // Datei hochladen
 const handleFileChange = (event: Event) => {
@@ -50,15 +50,11 @@ const submitImages = async () => {
     images.value = []
     imageFiles.value = []
   }
-
-  if (error.value) {
-    console.error('Upload-Fehler:', error.value)
-  }
 }
 </script>
 
 <template>
-  <div class="flex flex-col items-center gap-4 p-6">
+  <div class="flex flex-col items-center gap-4">
     <Card class="w-full max-w-md p-4 border border-gray-200 shadow-md rounded-2xl">
       <CardContent class="flex flex-col gap-4">
         <input

@@ -6,7 +6,7 @@ import { nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useImageUpload } from '@/composable/useImageUpload'
 import { toast } from 'vue-sonner'
 
-const { uploadImages, error } = useImageUpload('http://localhost:8000/upload')
+const { uploadImages } = useImageUpload('http://localhost:8000/upload')
 
 const camera = ref<HTMLVideoElement | null>(null)
 const canvas = ref<HTMLCanvasElement | null>(null)
@@ -94,9 +94,6 @@ const emitPhotos = async () => {
   const response = await uploadImages([...photos.value])
   if (response) {
     photos.value = []
-  }
-  if (error.value) {
-    console.error('Upload-Fehler:', error.value)
   }
 }
 
