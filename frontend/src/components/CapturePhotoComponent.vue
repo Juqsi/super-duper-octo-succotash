@@ -113,11 +113,11 @@ const onVideoError = (event: Event) => {
             <CameraIcon class="w-6 h-6 text-muted-foreground" />
           </div>
           <div>
-            <h2 class="text-lg font-medium">Take a Photo</h2>
-            <p class="text-muted-foreground text-sm">Capture product feedback photos.</p>
+            <h2 class="text-lg font-medium">Foto aufnehmen</h2>
+            <p class="text-muted-foreground text-sm">Nimm ein Bild von deriner Pflanze auf</p>
           </div>
         </div>
-        <Button class="w-full" @click="startCamera">Start Camera</Button>
+        <Button class="w-full" @click="startCamera">Kamera starten</Button>
       </div>
 
       <div v-else>
