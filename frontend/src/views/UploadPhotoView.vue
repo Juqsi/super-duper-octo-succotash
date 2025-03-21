@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import CapturePhotoComponent from '@/components/CapturePhotoComponent.vue'
-import ImageUpload from '@/components/imageUpload.vue'
+import ImageUpload from '@/components/ImageUpload.vue'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 </script>
 

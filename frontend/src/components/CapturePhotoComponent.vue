@@ -124,7 +124,7 @@ const onVideoError = (event: Event) => {
           </div>
           <div>
             <h2 class="text-lg font-medium">Foto aufnehmen</h2>
-            <p class="text-muted-foreground text-sm">Nimm ein Bild von deriner Pflanze auf</p>
+            <p class="text-muted-foreground text-sm">Nimm ein Bild von deiner Pflanze auf</p>
           </div>
         </div>
         <Button class="w-full" @click="startCamera">Kamera starten</Button>
