@@ -7,15 +7,15 @@ class MyModel(nn.Module):
 
         self.conv1 = nn.Conv2d(3, 64, kernel_size=3, padding=1)
         self.bn1 = nn.BatchNorm2d(64)
-        self.dropout1 = nn.Dropout(0.1)  # Weniger Dropout in frühen CNN-Layern
+        self.dropout1 = nn.Dropout(0.05)  # Weniger Dropout in frühen CNN-Layern
 
         self.conv2 = nn.Conv2d(64, 128, kernel_size=3, padding=1)
         self.bn2 = nn.BatchNorm2d(128)
-        self.dropout2 = nn.Dropout(0.2)
+        self.dropout2 = nn.Dropout(0.1)
 
         self.conv3 = nn.Conv2d(128, 256, kernel_size=3, padding=1)
         self.bn3 = nn.BatchNorm2d(256)
-        self.dropout3 = nn.Dropout(0.3)
+        self.dropout3 = nn.Dropout(0.2)
 
         self.conv4 = nn.Conv2d(256, 512, kernel_size=3, padding=1)
         self.bn4 = nn.BatchNorm2d(512)
@@ -25,7 +25,7 @@ class MyModel(nn.Module):
         self.adaptive_pool = nn.AdaptiveAvgPool2d((1, 1))
 
         self.fc1 = nn.Linear(512, 1024)
-        self.dropout_fc = nn.Dropout(0.5)  # Hoher Wert in der FC-Schicht
+        self.dropout_fc = nn.Dropout(0.6)  # Hoher Wert in der FC-Schicht
         self.fc2 = nn.Linear(1024, num_classes)
 
     def forward(self, x):

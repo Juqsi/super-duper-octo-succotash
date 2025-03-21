@@ -58,6 +58,7 @@ transform = transforms.Compose([
 
 # Lade Datensätze
 selected_classes = os.listdir(config.TRAIN_DIR)
+print(len(selected_classes), selected_classes)
 #selected_classes = ['1356126', '1363128', '1356022', '1357330', '1355978', '1363740', '1364172', '1355937', '1361656','1363021', '1385937', '1356421', '1358094', '1384485', '1393614']
 
 
@@ -99,13 +100,20 @@ else:
 model.fc = nn.Linear(model.fc.in_features, len(selected_classes))
 model = model.to(config.DEVICE)
 
-# Feature-Extractor einfrieren (nur die letzten Layer trainieren)
+# Nur die letzten zwei Convolutional Layers und die Fully Connected Layer trainieren
 for param in model.parameters():
-    param.requires_grad = False  # Alle Gewichte einfrieren
+    param.requires_grad = False  # Alles einfrieren
 
-# Letzte Schichten freigeben (Fully Connected Layer)
+# Layer 3, Layer 4 und die Fully Connected Layer freigeben
+for param in model.layer3.parameters():
+    param.requires_grad = True
+
+for param in model.layer4.parameters():
+    param.requires_grad = True
+
 for param in model.fc.parameters():
     param.requires_grad = True
+
 
 
 # Optimierung & Loss
@@ -127,23 +135,24 @@ epoch_times = []
 training_start_time = time.time()
 
 for epoch in range(start_epoch, config.EPOCHS):
-    if epoch >= config.MIXUP_REDUCTION_EPOCH:
-        config.MIXUP_ALPHA *= 0.8
-        if config.MIXUP_ALPHA < 0.05:  # Wenn Alpha sehr klein wird, Mixup deaktivieren
+    # 🚀 Mixup Dynamik anpassen
+    if epoch >= config.MIXUP_REDUCTION_EPOCH and config.USE_MIXUP:
+        config.MIXUP_ALPHA *= 0.9
+        print(f"📉 Mixup Alpha reduziert auf {config.MIXUP_ALPHA:.4f} ab Epoche {epoch + 1}")
+        if config.MIXUP_ALPHA < 0.05:
             config.USE_MIXUP = False
-            print(f" Mixup deaktiviert ab Epoche {epoch + 1}")
+            print(f"❌ Mixup deaktiviert ab Epoche {epoch + 1}")
 
-    if epoch == config.LR_DECAY_EPOCH:
-        for param_group in optimizer.param_groups:
-            param_group['lr'] *= config.LR_DECAY_FACTOR  # Lernrate um Faktor reduzieren
-            print(f"📉 Lernrate reduziert auf {param_group['lr']} ab Epoche {epoch+1}")
+    # 🔄 Speicher optimieren (freigeben, bevor neue Epoche beginnt)
+    gc.collect()
+    torch.cuda.empty_cache()
 
     epoch_start_time = time.time()
     model.train()
     running_loss = 0.0
     correct, total = 0, 0
 
-    tqdm_loader = tqdm(train_loader, desc=f"Epoch {epoch+1}/{config.EPOCHS}")  # Fortschrittsanzeige
+    tqdm_loader = tqdm(train_loader, desc=f"Epoch {epoch+1}/{config.EPOCHS}")
 
     for inputs, labels in tqdm_loader:
         inputs, labels = inputs.to(config.DEVICE), labels.to(config.DEVICE)
@@ -173,7 +182,7 @@ for epoch in range(start_epoch, config.EPOCHS):
     epoch_acc = correct / total
     train_accuracy_list.append(epoch_acc)
 
-    # Validierung
+    # 🔄 Validierung
     model.eval()
     val_loss, val_correct, val_total = 0.0, 0, 0
     with torch.no_grad():
@@ -185,16 +194,22 @@ for epoch in range(start_epoch, config.EPOCHS):
             _, predicted = torch.max(outputs, 1)
             val_correct += (predicted == labels).sum().item()
             val_total += labels.size(0)
+
     val_acc = val_correct / val_total
     accuracy_list.append(val_acc)
 
     print(
-        f"Epoch [{epoch}/{config.EPOCHS}], Train Loss: {epoch_loss:.4f}, Train Acc: {epoch_acc:.4f}, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}"
+        f"✅ Epoch [{epoch}/{config.EPOCHS}], Train Loss: {epoch_loss:.4f}, Train Acc: {epoch_acc:.4f}, "
+        f"Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}"
     )
+
+    # 📉 **LR-Scheduler updaten (CosineAnnealingLR)**
     scheduler.step()
+
     save_checkpoint(model, optimizer, epoch, config.CHECKPOINT_PATH.format(epoch))
     epoch_times.append(time.time() - epoch_start_time)
 
+# ⏳ Trainingszeit loggen
 total_training_time = time.time() - training_start_time
 
 # Speichern der finalen Konfiguration
@@ -224,6 +239,7 @@ config_data = {
 }
 with open(config_filename, 'w') as f:
     json.dump(config_data, f, indent=4)
-print(f"Modelle gespeichert als: {model_filename}")
-print(f"Konfiguration gespeichert als: {config_filename}")
 
+print(f"Modelle gespeichert als: {model_filename}")
+
+print(f"✅ Konfiguration gespeichert als: {config_filename}")
