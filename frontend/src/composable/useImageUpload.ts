@@ -1,7 +1,11 @@
 import { ref } from 'vue'
 import { toast } from 'vue-sonner'
+import { usePlantHistory } from '@/stores/usePlantHistory.ts'
 
-export function useImageUpload(apiUrl) {
+export const BASE_PATH = import.meta.env.VITE_API_BASE || ''
+
+export function useImageUpload(apiUrl = BASE_PATH) {
+  const plantHistory = usePlantHistory()
   const isUploading = ref(false)
   const error = ref<string | null>(null)
   const MAX_FILE_SIZE_MB = 5
@@ -45,7 +49,7 @@ export function useImageUpload(apiUrl) {
     error.value = null
 
     try {
-      const response = await fetch(apiUrl, {
+      const response = await fetch(apiUrl + '/recognizePlant', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,6 +62,14 @@ export function useImageUpload(apiUrl) {
       }
 
       const data = await response.json()
+
+      data.results.forEach((result) => {
+        plantHistory.addImageRecognition({
+          image: result.image,
+          recognitions: result.recognitions,
+        })
+      })
+
       toast.success('Bilder erfolgreich hochgeladen!', { id: toastId })
       return data
     } catch (err) {

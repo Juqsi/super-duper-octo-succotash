@@ -1,19 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import UploadPhotoView from '@/views/UploadPhotoView.vue'
-import PlantInformations from '@/components/PlantInformations.vue'
+import PlantInformationView from '@/views/PlantInformationView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'home',
+      path: '/upload',
+      name: 'upload',
       component: UploadPhotoView,
     },
     {
-      path: '/plant/:id',
+      path: '/last/:number',
       name: 'Plant',
-      component: PlantInformations,
+      component: PlantInformationView,
     },
   ],
 })
