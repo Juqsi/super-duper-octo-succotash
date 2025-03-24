@@ -4,8 +4,9 @@ import { Toaster } from 'vue-sonner'
 </script>
 
 <template>
-  <div class="w-screen p-2 flex flex-col items-center justify-center mt-4">
+  <div class="min-h-svh bg-gradient-to-br from-green-100 to-blue-100">
     <RouterView />
   </div>
-  <Toaster position="top-center" richColors />
+
+  <Toaster position="bottom-center" richColors />
 </template>
