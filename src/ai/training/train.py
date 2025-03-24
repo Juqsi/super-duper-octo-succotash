@@ -44,7 +44,6 @@ def mixup_data(x, y, alpha=0.4):
 def mixup_criterion(criterion, pred, y_a, y_b, lam):
     return lam * criterion(pred, y_a) + (1 - lam) * criterion(pred, y_b)
 
-
 # Datentransformation mit Augmentation
 transform = transforms.Compose([
     transforms.Resize((256, 256)),
@@ -58,6 +57,7 @@ transform = transforms.Compose([
 
 # Lade Datensätze
 selected_classes = os.listdir(config.TRAIN_DIR)
+selected_classes.remove('.DS_Store')
 print(len(selected_classes), selected_classes)
 #selected_classes = ['1356126', '1363128', '1356022', '1357330', '1355978', '1363740', '1364172', '1355937', '1361656','1363021', '1385937', '1356421', '1358094', '1384485', '1393614']
 
@@ -100,21 +100,18 @@ else:
 model.fc = nn.Linear(model.fc.in_features, len(selected_classes))
 model = model.to(config.DEVICE)
 
-# Nur die letzten zwei Convolutional Layers und die Fully Connected Layer trainieren
 for param in model.parameters():
-    param.requires_grad = False  # Alles einfrieren
-
-# Layer 3, Layer 4 und die Fully Connected Layer freigeben
+    param.requires_grad = False  # Erstmal alle Gewichte einfrieren
+for param in model.layer1.parameters():
+    param.requires_grad = True
+for param in model.layer2.parameters():
+    param.requires_grad = True
 for param in model.layer3.parameters():
-    param.requires_grad = True
-
+    param.requires_grad = True  # 3. Block von ResNet freigeben
 for param in model.layer4.parameters():
-    param.requires_grad = True
-
+    param.requires_grad = True  # 4. Block von ResNet freigeben
 for param in model.fc.parameters():
     param.requires_grad = True
-
-
 
 # Optimierung & Loss
 optimizer = optim.Adam(model.parameters(), lr=config.LEARNING_RATE, weight_decay=config.WEIGHT_DECAY)
@@ -131,28 +128,25 @@ if config.RESUME_TRAINING:
 # Training
 train_accuracy_list = []
 accuracy_list = []
+top5_accuracy_list = []
 epoch_times = []
 training_start_time = time.time()
 
 for epoch in range(start_epoch, config.EPOCHS):
-    # 🚀 Mixup Dynamik anpassen
     if epoch >= config.MIXUP_REDUCTION_EPOCH and config.USE_MIXUP:
-        config.MIXUP_ALPHA *= 0.9
-        print(f"📉 Mixup Alpha reduziert auf {config.MIXUP_ALPHA:.4f} ab Epoche {epoch + 1}")
-        if config.MIXUP_ALPHA < 0.05:
+        config.MIXUP_ALPHA *= 0.95
+        if config.MIXUP_ALPHA < 0.1:  # Wenn Alpha sehr klein wird, Mixup deaktivieren
             config.USE_MIXUP = False
-            print(f"❌ Mixup deaktiviert ab Epoche {epoch + 1}")
-
-    # 🔄 Speicher optimieren (freigeben, bevor neue Epoche beginnt)
-    gc.collect()
-    torch.cuda.empty_cache()
+            print(f" Mixup deaktiviert ab Epoche {epoch + 1}")
 
     epoch_start_time = time.time()
+    gc.collect()
+    torch.cuda.empty_cache()
     model.train()
     running_loss = 0.0
     correct, total = 0, 0
 
-    tqdm_loader = tqdm(train_loader, desc=f"Epoch {epoch+1}/{config.EPOCHS}")
+    tqdm_loader = tqdm(train_loader, desc=f"Epoch {epoch+1}/{config.EPOCHS}")  # Fortschrittsanzeige
 
     for inputs, labels in tqdm_loader:
         inputs, labels = inputs.to(config.DEVICE), labels.to(config.DEVICE)
@@ -182,9 +176,10 @@ for epoch in range(start_epoch, config.EPOCHS):
     epoch_acc = correct / total
     train_accuracy_list.append(epoch_acc)
 
-    # 🔄 Validierung
+    # Validierung
     model.eval()
     val_loss, val_correct, val_total = 0.0, 0, 0
+    top5_correct = 0
     with torch.no_grad():
         for inputs, labels in val_loader:
             inputs, labels = inputs.to(config.DEVICE), labels.to(config.DEVICE)
@@ -193,23 +188,27 @@ for epoch in range(start_epoch, config.EPOCHS):
             val_loss += loss.item()
             _, predicted = torch.max(outputs, 1)
             val_correct += (predicted == labels).sum().item()
+            # Top-5
+            top5_preds = outputs.topk(5, dim=1).indices
+            for pred, label in zip(top5_preds, labels):
+               if label in pred:
+                  top5_correct += 1
             val_total += labels.size(0)
-
     val_acc = val_correct / val_total
     accuracy_list.append(val_acc)
+    top5_acc = top5_correct / val_total
+    top5_accuracy_list.append(top5_acc)
 
     print(
-        f"✅ Epoch [{epoch}/{config.EPOCHS}], Train Loss: {epoch_loss:.4f}, Train Acc: {epoch_acc:.4f}, "
-        f"Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}"
+        f"Epoch [{epoch}/{config.EPOCHS}], "
+        f"Train Loss: {epoch_loss:.4f}, Train Acc: {epoch_acc:.4f}, "
+        f"Val Loss: {val_loss:.4f}, Val Acc (Top-1): {val_acc:.4f}, Top-5 Acc: {top5_acc:.4f}"
     )
 
-    # 📉 **LR-Scheduler updaten (CosineAnnealingLR)**
     scheduler.step()
-
     save_checkpoint(model, optimizer, epoch, config.CHECKPOINT_PATH.format(epoch))
     epoch_times.append(time.time() - epoch_start_time)
 
-# ⏳ Trainingszeit loggen
 total_training_time = time.time() - training_start_time
 
 # Speichern der finalen Konfiguration
@@ -224,6 +223,11 @@ config_data = {
     'DEVICE': config.DEVICE,
     'TRAIN_DIR': config.TRAIN_DIR,
     'VAL_DIR': config.VAL_DIR,
+    'TOP5_VAL_ACC':top5_accuracy_list,
+    'TRAIN_ACC': train_accuracy_list,
+    'VAL_ACC': accuracy_list,
+    'BEST_VAL_ACC': max(accuracy_list),
+    'BEST_TOP5_ACC': max(top5_accuracy_list),
     'TEST_DIR': config.TEST_DIR,
     'CHECKPOINT_PATH': config.CHECKPOINT_PATH,
     'RESUME_TRAINING': config.RESUME_TRAINING,
@@ -239,7 +243,5 @@ config_data = {
 }
 with open(config_filename, 'w') as f:
     json.dump(config_data, f, indent=4)
-
 print(f"Modelle gespeichert als: {model_filename}")
-
-print(f"✅ Konfiguration gespeichert als: {config_filename}")
+print(f"Konfiguration gespeichert als: {config_filename}")

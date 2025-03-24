@@ -8,7 +8,7 @@ VAL_DIR = os.path.join(DATASET_DIR, "images_val")
 TEST_DIR = os.path.join(DATASET_DIR, "images_test")
 
 # Mindestanzahl an Bildern pro Klasse
-MIN_IMAGES = 50
+MIN_IMAGES = 5
 
 
 def delete_small_folders(base_dir, min_images):
