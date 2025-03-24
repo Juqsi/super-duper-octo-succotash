@@ -1,11 +1,11 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { RouterView } from 'vue-router'
-import ImageUpload from "@/components/imageUpload.vue";
-import {Toaster} from "vue-sonner";
+import { Toaster } from 'vue-sonner'
 </script>
 
 <template>
-  <ImageUpload />
-  <RouterView />
-  <Toaster rich-colors />
+  <div class="w-screen p-2 flex flex-col items-center justify-center mt-4">
+    <RouterView />
+  </div>
+  <Toaster position="top-center" richColors />
 </template>
