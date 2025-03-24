@@ -5,47 +5,56 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { TrashIcon } from 'lucide-vue-next'
 
-const images = ref([])
-const imageFiles = ref([])
-const { uploadImages, isUploading, error } = useImageUpload('http://localhost:8000/upload')
+// Typ für gespeicherte Bilder
+interface ImagePreview {
+  name: string
+  src: string
+}
 
-const handleFileChange = (event) => {
-  const files = Array.from(event.target.files)
-  if (!files.length) return
+const images = ref<ImagePreview[]>([])
+const imageFiles = ref<File[]>([])
+const { uploadImages, isUploading } = useImageUpload('http://localhost:8000/upload')
+
+// Datei hochladen
+const handleFileChange = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  if (!input.files) return
+
+  const files = Array.from(input.files) as File[]
+  if (files.length === 0) return
 
   files.forEach((file) => {
     const reader = new FileReader()
     reader.onload = (e) => {
-      images.value.push({ name: file.name, src: e.target.result })
+      if (e.target?.result) {
+        images.value.push({ name: file.name, src: e.target.result as string })
+        imageFiles.value.push(file)
+      }
     }
     reader.readAsDataURL(file)
-    imageFiles.value.push(file)
   })
 }
 
-const removeFile = (index) => {
+// Datei entfernen
+const removeFile = (index: number) => {
   images.value.splice(index, 1)
   imageFiles.value.splice(index, 1)
 }
 
+// Bilder hochladen
 const submitImages = async () => {
   if (imageFiles.value.length === 0) return
 
   const response = await uploadImages(imageFiles.value)
   if (response) {
-    // Nach erfolgreichem Upload Liste leeren
     images.value = []
     imageFiles.value = []
-  }
-
-  if (error.value) {
-    console.error('Upload-Fehler:', error.value)
   }
 }
 </script>
 
 <template>
-  <div class="flex flex-col items-center gap-4 p-6">
+  <div class="flex flex-col items-center gap-4">
     <Card class="w-full max-w-md p-4 border border-gray-200 shadow-md rounded-2xl">
       <CardContent class="flex flex-col gap-4">
         <input
