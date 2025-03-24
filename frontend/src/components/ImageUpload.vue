@@ -62,7 +62,7 @@ const submitImages = async () => {
       class="cursor-pointer p-4 border border-dashed border-gray-300 rounded-xl text-gray-600 text-center hover:bg-gray-50 transition-colors duration-200 w-full"
       for="file-upload"
     >
-      Upload image
+      Bilder hochladen
     </label>
 
     <div v-if="images.length" class="grid grid-cols-3 gap-2">
