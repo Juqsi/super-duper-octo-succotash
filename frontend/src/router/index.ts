@@ -1,8 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import UploadPhotoView from '@/views/UploadPhotoView.vue'
-import PlantInformationView from '@/views/PlantInformationView.vue'
 import HomeView from '@/views/HomeView.vue'
-import HistoryView from '@/views/HistoryView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,22 +12,27 @@ const router = createRouter({
     {
       path: '/history',
       name: 'history',
-      component: () => import(HistoryView),
+      component: () => import('@/views/HistoryView.vue'),
     },
     {
       path: '/upload',
       name: 'upload',
-      component: () => import(UploadPhotoView),
+      component: () => import('@/views/UploadPhotoView.vue'),
     },
     {
       path: '/last/:number',
       name: 'Plant',
-      component: () => import(PlantInformationView),
+      component: () => import('@/views/PlantInformationView.vue'),
+    },
+    {
+      path: '/search',
+      name: 'SearchPlant',
+      component: () => import('@/views/SearchPlantView.vue'),
     },
     {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
-      component: () => import('../views/404view.vue'),
+      component: () => import('@/views/404View.vue'),
     },
   ],
 })

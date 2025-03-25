@@ -60,29 +60,23 @@ const formatTimestamp = (timestamp: number) => {
                 :key="index"
                 class="border p-2 rounded"
               >
-                <p><strong>Name:</strong> {{ rec.name }}</p>
-                <p>
-                  <strong>Probability:</strong>
-                  {{ (rec.probability * 100).toFixed(2) }}%
-                </p>
-                <div v-if="rec.plant">
-                  <p><strong>Common Name:</strong> {{ rec.plant.common_name }}</p>
+                <router-link :to="'/search?name=' + (rec.plant?.scientific_name ?? rec.name)">
+                  <p><strong>Name:</strong> {{ rec.name }}</p>
                   <p>
-                    <strong>Scientific Name:</strong>
-                    {{ rec.plant.scientific_name }}
+                    <strong>Probability:</strong>
+                    {{ (rec.probability ?? 0).toFixed(2) }}%
                   </p>
-                </div>
-                <div v-else>
-                  <p>Plant information not available.</p>
-                </div>
-                <a
-                  :href="rec.wikipedia"
-                  class="text-blue-500 hover:underline"
-                  rel="noopener"
-                  target="_blank"
-                >
-                  Wikipedia
-                </a>
+                  <div v-if="rec.plant">
+                    <p><strong>Common Name:</strong> {{ rec.plant.common_name }}</p>
+                    <p>
+                      <strong>Scientific Name:</strong>
+                      {{ rec.plant.scientific_name }}
+                    </p>
+                  </div>
+                  <div v-else>
+                    <p>Plant information not available.</p>
+                  </div>
+                </router-link>
               </div>
             </div>
           </div>

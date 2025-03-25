@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { usePlantHistory } from '@/stores/usePlantHistory'
 import PlantInformationCard from '@/components/PlantInformationCard.vue'
 import { useRoute } from 'vue-router'
+import NavBar from '@/components/NavBar.vue'
 
 const plantHistory = usePlantHistory()
 const route = useRoute()
@@ -19,6 +20,7 @@ const selectedImage = computed(() => recognizedImages.value[selectedImageIndex.v
 </script>
 
 <template>
+  <NavBar />
   <div class="min-h-screen p-4 bg-gradient-to-br from-green-100 to-blue-100">
     <h1 class="mx-auto text-3xl font-bold mb-4 max-w-2xl">Recognized plants</h1>
 

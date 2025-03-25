@@ -27,7 +27,11 @@ const props = defineProps<{ recognition: Recognition }>()
           <div>
             {{ props.recognition.plant.common_name }}
           </div>
-          <div>{{ props.recognition.probability }}%</div>
+          <div>
+            {{
+              props.recognition.probability ? props.recognition.probability.toFixed(2) + '%' : ''
+            }}
+          </div>
         </CardTitle>
         <CardDescription class="text-muted-foreground italic">
           {{ props.recognition.plant.scientific_name }}
