@@ -1,11 +1,12 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { RouterView } from 'vue-router'
-import ImageUpload from "@/components/imageUpload.vue";
-import {Toaster} from "vue-sonner";
+import { Toaster } from 'vue-sonner'
 </script>
 
 <template>
-  <ImageUpload />
-  <RouterView />
-  <Toaster rich-colors />
+  <div class="min-h-svh bg-gradient-to-br from-green-100 to-blue-100">
+    <RouterView />
+  </div>
+
+  <Toaster position="bottom-center" richColors />
 </template>

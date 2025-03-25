@@ -109,14 +109,16 @@ async def classify_plant(image_data: dict):
     if "images" not in image_data:
         raise HTTPException(status_code=400, detail="Fehlende Bilddaten.")
 
-    predictions = []
+    # predictions = []
     for image_base64 in image_data["images"]:
         # image_path = (
         decode_and_save_image(image_base64)  # )
-        prediction = ""  # run_plant_classifier(image_path)
-        predictions.append(prediction)
+        # prediction = run_plant_classifier(image_path)
+        # predictions.append(prediction)
 
-    return {"prediction": predictions}
+    results = []  # run_plant_data_api(predictions)
+
+    return {"results": results}
 
 
 @app.get("/")
