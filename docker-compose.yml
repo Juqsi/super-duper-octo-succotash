@@ -1,6 +1,6 @@
 services:
   pytorch_container:
-    image: rocm/pytorch:latest
+    build: .
     container_name: pytorch_container1
     stdin_open: true
     tty: true
@@ -12,15 +12,6 @@ services:
     group_add:
       - video
     ipc: host
-    ports:
-      - "2022:22"
     volumes:
       - .:/workspace
-    command: bash -c "
-      apt-get update && apt-get install -y openssh-server && \
-      echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config && \
-      echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config && \
-      echo 'root:Test123!' | chpasswd && \
-      mkdir -p /var/run/sshd && \
-      pip install albumentations timm torchmetrics && \
-      service ssh start && bash"
+    working_dir: /workspace

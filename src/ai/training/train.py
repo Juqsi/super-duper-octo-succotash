@@ -13,8 +13,10 @@ from torch.utils.data import DataLoader, WeightedRandomSampler
 from torchvision import datasets, transforms
 from tqdm import tqdm
 import config
+from src.ai.training.stats import save_confusion_matrix, plot_training_progress
 from utils import save_checkpoint, load_checkpoint
 from torchvision.models import ResNet50_Weights
+from torchvision.transforms import RandAugment
 
 
 # Focal Loss für besseres Lernen seltener Klassen
@@ -44,13 +46,28 @@ def mixup_data(x, y, alpha=0.4):
 def mixup_criterion(criterion, pred, y_a, y_b, lam):
     return lam * criterion(pred, y_a) + (1 - lam) * criterion(pred, y_b)
 
+def cutmix_box(width, height, lam):
+    cut_rat = np.sqrt(1. - lam)
+    cut_w = int(width * cut_rat)
+    cut_h = int(height * cut_rat)
+
+    cx = np.random.randint(width)
+    cy = np.random.randint(height)
+
+    bbx1 = np.clip(cx - cut_w // 2, 0, width)
+    bby1 = np.clip(cy - cut_h // 2, 0, height)
+    bbx2 = np.clip(cx + cut_w // 2, 0, width)
+    bby2 = np.clip(cy + cut_h // 2, 0, height)
+
+    return bbx1, bby1, bbx2, bby2
+
+
 # Datentransformation mit Augmentation
 transform = transforms.Compose([
     transforms.Resize((256, 256)),
     transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),
     transforms.RandomHorizontalFlip(),
-    transforms.RandomRotation(30),
-    transforms.RandomAutocontrast(),
+    RandAugment(num_ops=2, magnitude=9),  # oder magnitude=10 für aggressiver
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
@@ -124,6 +141,7 @@ if config.RESUME_TRAINING:
     checkpoint_path = config.CHECKPOINT_PATH.format(config.LAST_EPOCH)
     if os.path.exists(checkpoint_path):
         model, optimizer, start_epoch = load_checkpoint(model, optimizer, checkpoint_path, config.DEVICE)
+        scheduler.last_epoch = start_epoch -1
 
 # Training
 train_accuracy_list = []
@@ -132,6 +150,7 @@ top5_accuracy_list = []
 epoch_times = []
 training_start_time = time.time()
 
+print("start training")
 for epoch in range(start_epoch, config.EPOCHS):
     if epoch >= config.MIXUP_REDUCTION_EPOCH and config.USE_MIXUP:
         config.MIXUP_ALPHA *= 0.95
@@ -153,10 +172,20 @@ for epoch in range(start_epoch, config.EPOCHS):
         optimizer.zero_grad()
 
         if config.USE_MIXUP:
-            # Mixup aktiv
-            inputs, y_a, y_b, lam = mixup_data(inputs, labels, config.MIXUP_ALPHA)
-            outputs = model(inputs)
-            loss = mixup_criterion(criterion, outputs, y_a, y_b, lam)
+            if config.USE_CUTMIX and np.random.rand() < config.CUTMIX_PROB:
+                # CutMix
+                lam = np.random.beta(config.MIXUP_ALPHA, config.MIXUP_ALPHA)
+                rand_index = torch.randperm(inputs.size(0)).to(inputs.device)
+                y_a, y_b = labels, labels[rand_index]
+                bbx1, bby1, bbx2, bby2 = cutmix_box(inputs.size(2), inputs.size(3), lam)
+                inputs[:, :, bbx1:bbx2, bby1:bby2] = inputs[rand_index, :, bbx1:bbx2, bby1:bby2]
+                outputs = model(inputs)
+                loss = mixup_criterion(criterion, outputs, y_a, y_b, lam)
+            else:
+                # Mixup
+                inputs, y_a, y_b, lam = mixup_data(inputs, labels, config.MIXUP_ALPHA)
+                outputs = model(inputs)
+                loss = mixup_criterion(criterion, outputs, y_a, y_b, lam)
         else:
             # Standard-Training ohne Mixup
             outputs = model(inputs)
@@ -207,6 +236,9 @@ for epoch in range(start_epoch, config.EPOCHS):
 
     scheduler.step()
     save_checkpoint(model, optimizer, epoch, config.CHECKPOINT_PATH.format(epoch))
+    if (epoch + 1) % 10 == 0 or epoch == 0:
+        print("save confusion Matrix")
+        save_confusion_matrix(model, val_loader, selected_classes, config.DEVICE, epoch + 1, config.CHECKPOINT_DIR)
     epoch_times.append(time.time() - epoch_start_time)
 
 total_training_time = time.time() - training_start_time
@@ -244,4 +276,5 @@ config_data = {
 with open(config_filename, 'w') as f:
     json.dump(config_data, f, indent=4)
 print(f"Modelle gespeichert als: {model_filename}")
+plot_training_progress(train_accuracy_list, accuracy_list, top5_accuracy_list, config.MODEL_DIR)
 print(f"Konfiguration gespeichert als: {config_filename}")

@@ -14,6 +14,10 @@ USE_MIXUP = True
 MIXUP_ALPHA = 0.6  # Anfangswert
 MIXUP_REDUCTION_EPOCH = 20
 
+USE_CUTMIX = True
+CUTMIX_PROB = 0.5  # 50 % Wahrscheinlichkeit für CutMix statt Mixup
+
+
 # Hyperparameter
 BATCH_SIZE = 128 # Reduziert auf 64 für besseres Generalisieren
 LEARNING_RATE = 5e-5
