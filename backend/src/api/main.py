@@ -118,7 +118,7 @@ async def classify_plant(image_data: dict):
 
     results = []  # run_plant_data_api(predictions)
 
-    return {"plants": results}
+    return {"results": results}
 
 
 @app.get("/")
