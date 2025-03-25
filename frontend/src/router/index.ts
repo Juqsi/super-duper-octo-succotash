@@ -15,17 +15,22 @@ const router = createRouter({
     {
       path: '/history',
       name: 'history',
-      component: HistoryView,
+      component: () => import(HistoryView),
     },
     {
       path: '/upload',
       name: 'upload',
-      component: UploadPhotoView,
+      component: () => import(UploadPhotoView),
     },
     {
       path: '/last/:number',
       name: 'Plant',
-      component: PlantInformationView,
+      component: () => import(PlantInformationView),
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: () => import('../views/404view.vue'),
     },
   ],
 })
