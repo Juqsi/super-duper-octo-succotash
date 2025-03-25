@@ -56,7 +56,7 @@ def test_classify_plant_valid_image():
         "/uploads", json={"images": [valid_base64_image]}
     )
     assert response.status_code == 200
-    assert "plants" in response.json()
+    assert "results" in response.json()
 
 
 def test_classify_plant_multiple_images():
