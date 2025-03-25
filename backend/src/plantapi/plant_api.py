@@ -17,7 +17,7 @@ class _PlantApi:
         """
         Initializes a new Instance of  the PlantApi class and creates a session object.
         """
-        load_dotenv(dotenv_path='../../.env')
+        load_dotenv(dotenv_path='../../../.env')
         self.api_key = os.getenv("PLANT_API_KEY")
         self.session = Session()
         self.session.headers.update(Authorization=self.api_key)
@@ -63,7 +63,6 @@ class _PlantApi:
             url: str = self.plant_base_url + name
             plant_data = self.session.get(url, timeout=3.05).json()
             return plant_data
-
 
         except ValueError as value_error:
             raise ValueError(f'{value_error} Input was not a List of Strings')
@@ -142,5 +141,5 @@ class PlantGetter:
                     }
                     if response:
                         data["Plant"] = response[0]
-                data_list.append(data)
+                    data_list.append(data)
             return data_list
