@@ -12,7 +12,7 @@ export function useImageUpload(apiUrl = BASE_PATH) {
 
   const uploadImages = async (imageSources) => {
     if (!imageSources.length) {
-      toast.error('Bitte wähle zuerst Bilder aus.')
+      toast.error('Please select images first.')
       return
     }
 
@@ -23,7 +23,7 @@ export function useImageUpload(apiUrl = BASE_PATH) {
         (file) => file.size > MAX_FILE_SIZE_MB * 1024 * 1024,
       )
       if (oversizedFiles.length) {
-        toast.warning(`Einige Dateien sind zu groß (max. ${MAX_FILE_SIZE_MB} MB).`)
+        toast.warning(`Image is too large (max. ${MAX_FILE_SIZE_MB} MB).`)
         return
       }
 
@@ -43,7 +43,7 @@ export function useImageUpload(apiUrl = BASE_PATH) {
     }
 
     const payload = { images: base64Images }
-    const toastId = toast.loading('Bilder werden hochgeladen...')
+    const toastId = toast.loading('Upload image...')
 
     isUploading.value = true
     error.value = null
@@ -58,7 +58,7 @@ export function useImageUpload(apiUrl = BASE_PATH) {
       })
 
       if (!response.ok) {
-        throw new Error(`Fehler: ${response.statusText}`)
+        throw new Error(`Error: ${response.statusText}`)
       }
 
       const data = await response.json()
@@ -70,13 +70,13 @@ export function useImageUpload(apiUrl = BASE_PATH) {
         })
       })
 
-      toast.success('Bilder erfolgreich hochgeladen!', { id: toastId })
+      toast.success('Upload successfully completed', { id: toastId })
       return data
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unbekannter Fehler'
-      console.error('Upload fehlgeschlagen:', errorMessage)
+      const errorMessage = err instanceof Error ? err.message : 'Unknown Error'
+      console.error('Upload error:', errorMessage)
       error.value = errorMessage
-      toast.error(`Fehler: ${errorMessage}`, { id: toastId })
+      toast.error(`Error: ${errorMessage}`, { id: toastId })
     } finally {
       isUploading.value = false
     }

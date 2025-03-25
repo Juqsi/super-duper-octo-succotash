@@ -22,7 +22,7 @@ export interface Recognition {
   name: string
   plant: Plant | null
   wikipedia: string
-  probability: number
+  probability?: number
 }
 
 export interface RecognizedImage {

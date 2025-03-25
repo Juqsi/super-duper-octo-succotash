@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Search } from 'lucide-vue-next'
+import SearchBar from '@/components/SearchBar.vue'
 </script>
 <template>
   <div
@@ -34,18 +34,7 @@ import { Search } from 'lucide-vue-next'
         Identify plants with a photo or search by name
       </p>
 
-      <div
-        class="w-full max-w-xl flex items-center bg-white/80 backdrop-blur rounded-full overflow-hidden shadow"
-      >
-        <input
-          class="flex-grow px-5 py-3 text-gray-800 bg-transparent placeholder-gray-600 focus:outline-none"
-          placeholder="Search for a plant..."
-          type="text"
-        />
-        <button class="bg-primary hover:bg-green-700 text-white p-3 rounded-full m-1 transition">
-          <Search />
-        </button>
-      </div>
+      <SearchBar class="max-w-md" />
     </div>
 
     <div class="absolute bottom-2 right-4 text-xs text-white/80 z-10">
