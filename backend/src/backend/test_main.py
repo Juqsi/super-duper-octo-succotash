@@ -4,8 +4,8 @@ from io import BytesIO
 from PIL import Image
 from fastapi.testclient import TestClient
 
-from main import MAX_IMAGE_SIZE
 from main import app
+from .main import MAX_IMAGE_SIZE
 
 client = TestClient(app)
 
@@ -56,7 +56,24 @@ def test_classify_plant_valid_image():
         "/uploads", json={"images": [valid_base64_image]}
     )
     assert response.status_code == 200
-    assert "prediction" in response.json()
+    assert "plants" in response.json()
+
+
+def test_classify_plant_multiple_images():
+    """
+    Tests the "/uploads" endpoint with multiple Base64 images.
+
+    Assertions:
+        - The HTTP status code must be 200.
+        - The JSON response must contain predictions for each uploaded image.
+    """
+    valid_base64_image1 = generate_base64_image()
+    valid_base64_image2 = generate_base64_image()
+
+    response = client.post(
+        "/uploads", json={"images": [valid_base64_image1, valid_base64_image2]}
+    )
+    assert response.status_code == 200
 
 
 def test_classify_plant_invalid_image():
@@ -91,3 +108,18 @@ def test_image_too_large():
     )
     assert response.status_code == 413
     assert response.json()["detail"] == "Das Bild überschreitet die maximale Dateigröße von 5 MB."
+
+
+def test_classify_plant_empty_image_list():
+    """
+    Tests the "/uploads" endpoint with an empty image list.
+
+    Assertions:
+        - The HTTP status code must be 400.
+        - The JSON response must contain the appropriate error message for missing images.
+    """
+    response = client.post(
+        "/uploads", json={}
+    )
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Fehlende Bilddaten."
