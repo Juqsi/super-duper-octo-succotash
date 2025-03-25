@@ -1,4 +1,6 @@
 fastapi==0.115.11
+python-dotenv==1.0.1
+requests==2.32.3
 flake8==7.1.2
 pytest==8.3.5
 httpx==0.28.1
