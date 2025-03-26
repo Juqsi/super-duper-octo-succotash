@@ -5,7 +5,6 @@ import os
 import json
 import numpy as np
 import torchvision.models as models
-import glob
 from datetime import datetime
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from torch import nn, optim
@@ -13,14 +12,24 @@ from torch.utils.data import DataLoader, WeightedRandomSampler
 from torchvision import datasets, transforms
 from tqdm import tqdm
 import config
-from src.ai.training.stats import save_confusion_matrix, plot_training_progress
+from ai_training.src.training.stats import save_confusion_matrix, plot_training_progress
 from utils import save_checkpoint, load_checkpoint
 from torchvision.models import ResNet50_Weights
 from torchvision.transforms import RandAugment
 
 
-# Focal Loss für besseres Lernen seltener Klassen
 class FocalLoss(nn.Module):
+    """
+    Focal Loss zur Verbesserung des Lernens seltener Klassen.
+
+    Diese Loss-Funktion reduziert den Einfluss gut klassifizierter Beispiele und fokussiert das Training
+    stärker auf schwerere Beispiele. Sie wird häufig bei unausgewogenen Klassifikationsproblemen eingesetzt.
+
+    Args:
+        alpha (float, optional): Skalierungsfaktor für die Focal Loss. Standard ist 0.25.
+        gamma (float, optional): Fokussierungsparameter zur Gewichtung schwerer Beispiele. Standard ist 2.0.
+        reduction (str, optional): Methode zur Aggregation des Loss ('mean' oder 'sum'). Standard ist 'mean'.
+    """
     def __init__(self, alpha=0.25, gamma=2.0, reduction='mean'):
         super(FocalLoss, self).__init__()
         self.alpha = alpha
@@ -28,14 +37,41 @@ class FocalLoss(nn.Module):
         self.reduction = reduction
 
     def forward(self, inputs, targets):
+        """
+        Berechnet den Focal Loss zwischen den Eingaben und den Zielklassen.
+
+        Args:
+            inputs (Tensor): Vorhersagen des Modells (Rohlogits).
+            targets (Tensor): Zielklassen.
+
+        Returns:
+            Tensor: Berechneter Focal Loss, aggregiert gemäß der angegebenen Reduktionsmethode.
+        """
         ce_loss = nn.CrossEntropyLoss(reduction='none')(inputs, targets)
         p_t = torch.exp(-ce_loss)
         focal_loss = self.alpha * (1 - p_t) ** self.gamma * ce_loss
         return focal_loss.mean() if self.reduction == 'mean' else focal_loss.sum()
 
 
-# Mixup für verbesserte Generalisierung
 def mixup_data(x, y, alpha=0.4):
+    """
+    Wendet Mixup-Datenaugmentation an.
+
+    Diese Funktion mischt Eingabedaten und Zielklassen durch eine gewichtete Kombination zweier Beispiele,
+    basierend auf einer Beta-Verteilung mit Parameter alpha.
+
+    Args:
+        x (Tensor): Eingabedaten.
+        y (Tensor): Zielklassen.
+        alpha (float, optional): Parameter der Beta-Verteilung. Standard ist 0.4.
+
+    Returns:
+        tuple: (mixed_x, y_a, y_b, lam)
+            - mixed_x (Tensor): Gemischte Eingabedaten.
+            - y_a (Tensor): Originale Zielklassen.
+            - y_b (Tensor): Zielklassen des zufällig ausgewählten Beispiels.
+            - lam (float): Mixup-Koeffizient, der die Mischung bestimmt.
+    """
     lam = np.random.beta(alpha, alpha)
     index = torch.randperm(x.size(0)).to(x.device)
     mixed_x = lam * x + (1 - lam) * x[index, :]
@@ -44,9 +80,39 @@ def mixup_data(x, y, alpha=0.4):
 
 
 def mixup_criterion(criterion, pred, y_a, y_b, lam):
+    """
+    Berechnet den Verlust für Mixup-Datenaugmentation.
+
+    Kombiniert den Verlust zweier Zielklassen basierend auf dem Mixup-Koeffizienten lam.
+
+    Args:
+        criterion (Callable): Verlustfunktion (z.B. CrossEntropyLoss).
+        pred (Tensor): Vorhersagen des Modells.
+        y_a (Tensor): Erste Menge von Zielklassen.
+        y_b (Tensor): Zweite Menge von Zielklassen.
+        lam (float): Mixup-Koeffizient, der den Anteil der Mischung bestimmt.
+
+    Returns:
+        Tensor: Kombinierter Verlustwert.
+    """
     return lam * criterion(pred, y_a) + (1 - lam) * criterion(pred, y_b)
 
+
 def cutmix_box(width, height, lam):
+    """
+    Berechnet die Koordinaten für den CutMix-Bereich.
+
+    Diese Funktion bestimmt zufällig einen Bereich (Bounding Box) innerhalb eines Bildes basierend auf dessen
+    Abmessungen und dem Mixup-Koeffizienten lam, der den Anteil des auszuschneidenden Bereichs steuert.
+
+    Args:
+        width (int): Breite des Bildes.
+        height (int): Höhe des Bildes.
+        lam (float): Mixup-Koeffizient, der den Anteil des auszuschneidenden Bereichs bestimmt.
+
+    Returns:
+        tuple: (bbx1, bby1, bbx2, bby2) – Die Koordinaten der Bounding Box.
+    """
     cut_rat = np.sqrt(1. - lam)
     cut_w = int(width * cut_rat)
     cut_h = int(height * cut_rat)
@@ -60,6 +126,29 @@ def cutmix_box(width, height, lam):
     bby2 = np.clip(cy + cut_h // 2, 0, height)
 
     return bbx1, bby1, bbx2, bby2
+
+
+def load_dataset(root_dir):
+    """
+    Lädt einen Datensatz aus einem Verzeichnis und filtert nach ausgewählten Klassen.
+
+    Diese Funktion verwendet ImageFolder, wendet definierte Transformationen an und filtert die
+    Samples so, dass nur die in 'selected_classes' enthaltenen Klassen berücksichtigt werden.
+    Anschließend wird das Mapping der Klassen auf Indizes neu zugeordnet.
+
+    Args:
+        root_dir (str): Pfad zum Wurzelverzeichnis des Datensatzes.
+
+    Returns:
+        Dataset: Gefilterter Datensatz mit angewandten Transformationen und aktualisierter Klassenzuordnung.
+    """
+    dataset = datasets.ImageFolder(root_dir, transform=transform)
+    dataset.samples = [s for s in dataset.samples if dataset.classes[s[1]] in selected_classes]
+    class_to_idx = {cls: i for i, cls in enumerate(selected_classes)}
+    dataset.class_to_idx = class_to_idx
+    dataset.samples = [(s[0], class_to_idx[dataset.classes[s[1]]]) for s in dataset.samples]
+    dataset.classes = selected_classes
+    return dataset
 
 
 # Datentransformation mit Augmentation
@@ -76,18 +165,6 @@ transform = transforms.Compose([
 selected_classes = os.listdir(config.TRAIN_DIR)
 selected_classes.remove('.DS_Store')
 print(len(selected_classes), selected_classes)
-#selected_classes = ['1356126', '1363128', '1356022', '1357330', '1355978', '1363740', '1364172', '1355937', '1361656','1363021', '1385937', '1356421', '1358094', '1384485', '1393614']
-
-
-def load_dataset(root_dir):
-    dataset = datasets.ImageFolder(root_dir, transform=transform)
-    dataset.samples = [s for s in dataset.samples if dataset.classes[s[1]] in selected_classes]
-    class_to_idx = {cls: i for i, cls in enumerate(selected_classes)}
-    dataset.class_to_idx = class_to_idx
-    dataset.samples = [(s[0], class_to_idx[dataset.classes[s[1]]]) for s in dataset.samples]
-    dataset.classes = selected_classes
-    return dataset
-
 
 train_dataset = load_dataset(config.TRAIN_DIR)
 val_dataset = load_dataset(config.VAL_DIR)
@@ -141,7 +218,7 @@ if config.RESUME_TRAINING:
     checkpoint_path = config.CHECKPOINT_PATH.format(config.LAST_EPOCH)
     if os.path.exists(checkpoint_path):
         model, optimizer, start_epoch = load_checkpoint(model, optimizer, checkpoint_path, config.DEVICE)
-        scheduler.last_epoch = start_epoch -1
+        scheduler.last_epoch = start_epoch - 1
 
 # Training
 train_accuracy_list = []
@@ -220,8 +297,8 @@ for epoch in range(start_epoch, config.EPOCHS):
             # Top-5
             top5_preds = outputs.topk(5, dim=1).indices
             for pred, label in zip(top5_preds, labels):
-               if label in pred:
-                  top5_correct += 1
+                if label in pred:
+                    top5_correct += 1
             val_total += labels.size(0)
     val_acc = val_correct / val_total
     accuracy_list.append(val_acc)
@@ -255,7 +332,7 @@ config_data = {
     'DEVICE': config.DEVICE,
     'TRAIN_DIR': config.TRAIN_DIR,
     'VAL_DIR': config.VAL_DIR,
-    'TOP5_VAL_ACC':top5_accuracy_list,
+    'TOP5_VAL_ACC': top5_accuracy_list,
     'TRAIN_ACC': train_accuracy_list,
     'VAL_ACC': accuracy_list,
     'BEST_VAL_ACC': max(accuracy_list),

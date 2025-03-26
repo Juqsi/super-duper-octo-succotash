@@ -1,8 +1,14 @@
+"""
+Dieses Skript dient zur Bereinigung von Datensatzverzeichnissen, indem Klassenordner, die weniger als eine bestimmte Mindestanzahl an Bildern enthalten, gelöscht werden.
+Es werden drei Verzeichnisse verarbeitet: images_train, images_val und images_test des PlantNet 300K Datensatzes.
+Zunächst werden zu kleine Ordner im Trainingsdatensatz gelöscht. Anschließend werden die gleichen Ordner in den Validierungs- und Testdatensätzen entfernt.
+"""
+
 import os
 import shutil
 
 # Verzeichnisse definieren
-DATASET_DIR = "../../../dataset/plantnet_300K"
+DATASET_DIR = "../../dataset/plantnet_300K"
 TRAIN_DIR = os.path.join(DATASET_DIR, "images_train")
 VAL_DIR = os.path.join(DATASET_DIR, "images_val")
 TEST_DIR = os.path.join(DATASET_DIR, "images_test")
@@ -12,7 +18,19 @@ MIN_IMAGES = 5
 
 
 def delete_small_folders(base_dir, min_images):
-    """Löscht Unterordner, die weniger als `min_images` Dateien enthalten."""
+    """
+    Löscht Unterordner im angegebenen Basisverzeichnis, die weniger als 'min_images' Dateien enthalten.
+
+    Durchläuft alle Unterordner in 'base_dir' und entfernt diejenigen, in denen die Anzahl der Dateien kleiner
+    als 'min_images' ist. Dabei werden nur Ordner berücksichtigt, die tatsächlich existieren und Dateien enthalten.
+
+    Args:
+        base_dir (str): Das Verzeichnis, in dem nach Unterordnern gesucht wird.
+        min_images (int): Mindestanzahl an Dateien, die ein Unterordner enthalten muss, um nicht gelöscht zu werden.
+
+    Returns:
+        list: Eine Liste der Namen der gelöschten Unterordner.
+    """
     deleted_folders = []
 
     for class_folder in os.listdir(base_dir):

@@ -1,3 +1,14 @@
+"""
+Dieses Skript erstellt eine Merge Map für die PlantNet 300K Species Names.
+Es führt folgende Schritte durch:
+    1. Laden der Spezies-Namen aus einer JSON-Datei.
+    2. Gruppierung der Klasseneinträge basierend auf exakten Namensübereinstimmungen.
+    3. Erzeugung einer Merge Map, bei der Duplikate auf eine primäre ID abgebildet werden.
+    4. Optional: Einsatz von Fuzzy-Matching, um zusätzlich ähnlich klingende Einträge (über einen Schwellenwert)
+       zu identifizieren und zu mergen.
+    5. Speichern der resultierenden Merge Map in einer JSON-Datei.
+"""
+
 import json
 import difflib
 from collections import defaultdict
@@ -12,7 +23,6 @@ for cid, name in entries:
     name_to_ids[name].append(cid)
 
 merge_map = {}
-
 for name, ids in name_to_ids.items():
     if len(ids) > 1:
         primary_id = ids[0]

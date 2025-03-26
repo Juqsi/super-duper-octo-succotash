@@ -2,7 +2,26 @@ import torch
 import torch.nn as nn
 
 class MyModel(nn.Module):
+    """
+    Convolutional Neural Network (CNN) für Bildklassifikation.
+
+    Dieses Modell besteht aus mehreren Convolutional-Blöcken mit Batch-Normalisierung,
+    ReLU-Aktivierung, Dropout und Pooling-Schichten. Anschließend werden die extrahierten
+    Merkmale durch voll verbundene Schichten geleitet, um die finale Klassifizierung durchzuführen.
+
+    Args:
+        num_classes (int): Anzahl der Ausgabeklassen für die Klassifikation. Standardwert ist 15.
+    """
     def __init__(self, num_classes=15):
+        """
+        Initialisiert das MyModel und definiert die Netzwerkarchitektur.
+
+        Erstellt die Convolutional-, Batch-Normalisierungs-, Dropout-, Pooling- und Fully-Connected-Schichten
+        des Netzwerks.
+
+        Args:
+            num_classes (int): Anzahl der Ausgabeklassen. Standard ist 15.
+        """
         super(MyModel, self).__init__()
 
         self.conv1 = nn.Conv2d(3, 64, kernel_size=3, padding=1)
@@ -29,6 +48,20 @@ class MyModel(nn.Module):
         self.fc2 = nn.Linear(1024, num_classes)
 
     def forward(self, x):
+        """
+        Führt einen Forward-Pass des Modells durch.
+
+        Verarbeitet die Eingabe durch eine Abfolge von Convolutional-Blöcken,
+        die jeweils aus Convolution, Batch-Normalisierung, ReLU, Pooling und Dropout bestehen.
+        Anschließend wird mittels adaptivem Pooling der Feature-Vektor reduziert und durch
+        voll verbundene Schichten geleitet, um die finale Klassifizierung zu berechnen.
+
+        Args:
+            x (torch.Tensor): Eingabetensor der Form (N, C, H, W), wobei N die Batch-Größe darstellt.
+
+        Returns:
+            torch.Tensor: Ausgabe des Netzwerks (Logits) für jede Klasse.
+        """
         x = self.pool(torch.relu(self.bn1(self.conv1(x))))
         x = self.dropout1(x)  # Dropout nach dem ersten Block
 

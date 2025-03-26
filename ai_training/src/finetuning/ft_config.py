@@ -2,8 +2,8 @@ import os
 import torch
 
 # === Verzeichnisse ===
-DATA_DIR = '../../../dataset/plantnet_300K'
-MODEL_DIR = '../../../models'
+DATA_DIR = '../../dataset/plantnet_300K'
+MODEL_DIR = '../../models'
 CHECKPOINT_DIR = '../../../checkpoints'
 PRETRAINED_MODEL_PATH = os.path.join(MODEL_DIR, 'resnet50.pth')
 # Vorheriger Trainingsstand für Finetuning

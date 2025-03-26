@@ -2,8 +2,8 @@ import os
 import torch
 
 # Verzeichnisse
-DATA_DIR = '../../../dataset/plantnet_300K'
-MODEL_DIR = '../../../models'
+DATA_DIR = '../../dataset/plantnet_300K'
+MODEL_DIR = '../../models'
 CHECKPOINT_DIR = '../../../checkpoints'
 
 # Lokales Speichern des vortrainierten Modells

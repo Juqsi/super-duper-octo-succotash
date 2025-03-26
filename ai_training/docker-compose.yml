@@ -1,6 +1,6 @@
 services:
   pytorch_container:
-    build: .
+    build: ..
     container_name: pytorch_container1
     stdin_open: true
     tty: true
