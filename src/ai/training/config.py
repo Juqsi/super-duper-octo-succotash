@@ -9,13 +9,13 @@ CHECKPOINT_DIR = '../../../checkpoints'
 # Lokales Speichern des vortrainierten Modells
 PRETRAINED_MODEL_PATH = "../../../models/resnet50.pth"
 
-USE_MIXUP = True
+USE_MIXUP = False
 
-MIXUP_ALPHA = 0.6  # Anfangswert
+MIXUP_ALPHA = 0.6
 MIXUP_REDUCTION_EPOCH = 20
 
-USE_CUTMIX = True
-CUTMIX_PROB = 0.5  # 50 % Wahrscheinlichkeit für CutMix statt Mixup
+USE_CUTMIX = False
+CUTMIX_PROB = 0.5
 
 
 # Hyperparameter
@@ -31,8 +31,8 @@ TEST_DIR = os.path.join(DATA_DIR, 'images_test')
 
 # Checkpoints
 CHECKPOINT_PATH = os.path.join(CHECKPOINT_DIR, 'checkpoint_epoch_{}.pth')
-RESUME_TRAINING = False # Wenn True, lädt er den letzten Checkpoint
-LAST_EPOCH = 83  # Hier die letzte Epoche eintragen, ab der weitertrainiert wird
+RESUME_TRAINING = True
+LAST_EPOCH = 118
 
 NUM_WORKERS = 12
 WEIGHT_DECAY = 0.001
