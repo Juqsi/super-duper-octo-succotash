@@ -123,6 +123,37 @@ async def classify_plant(image_data: dict):
     Raises:
         HTTPException (400): If the 'images' field is missing in the request.
         HTTPException (500): For unexpected errors in processing or classification.
+
+    Example request:
+        {
+            "images": [
+                "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/...",
+                "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/..."
+            ]
+        }
+
+    Example response:
+        {
+            "results": [
+                {
+                    "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/...",
+                    "recognitions": [
+                        {
+                            "name": "Rosa indica",
+                            "plant": { ... },  # Additional plant data
+                            "wikipedia": "https://en.wikipedia.org/wiki/Rosa_indica",
+                            "probability": 0.98
+                        },
+                        {
+                            "name": "Rosa rugosa",
+                            "plant": { ... },  # Additional plant data
+                            "wikipedia": "https://en.wikipedia.org/wiki/Rosa_rugosa",
+                            "probability": 0.85
+                        }
+                    ]
+                }
+            ]
+        }
     """
     if "images" not in image_data:
         raise HTTPException(status_code=400, detail="Missing image data.")
@@ -158,6 +189,47 @@ async def classify_plant(image_data: dict):
         finally:
             if os.path.exists(image_path):
                 os.remove(image_path)
+
+    return {"results": results}
+
+
+@app.post("/search")
+async def search_plant(plant_data: dict):
+    """
+    Endpoint for searching plants by their names and retrieving additional data.
+
+    Args:
+        plant_data (dict): A dictionary containing the plant name(s) under the "name" key.
+            The "name" key can contain a single plant name (string) or a list of plant names.
+
+    Returns:
+        dict: A dictionary containing the results of the search with additional plant information.
+            The results include the plant name, its associated data, and a link to the Wikipedia page.
+
+    Raises:
+        HTTPException (400): If the 'name' field is missing in the request or if it's an invalid input.
+
+    Example request:
+        {
+            "name": "Rosa indica"
+        }
+
+    Example response:
+        {
+            "results": [
+                {
+                    "name": "Rosa indica",
+                    "plant": { ... },  # Additional plant data
+                    "wikipedia": "https://en.wikipedia.org/wiki/Rosa_indica"
+                }
+            ]
+        }
+    """
+    if "name" not in plant_data:
+        raise HTTPException(status_code=400, detail="Missing plant name.")
+
+    plant_names = plant_data["name"] if isinstance(plant_data["name"], list) else [plant_data["name"]]
+    results = run_plant_getter(plant_names)
 
     return {"results": results}
 

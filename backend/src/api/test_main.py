@@ -174,3 +174,50 @@ def test_classify_plant_empty_image_list():
     )
     assert response.status_code == 400
     assert response.json()["detail"] == "Missing image data."
+
+
+@patch.object(PlantGetter, 'get_plant_list_data')
+def test_search_plant_missing_name(mock_get_plant_list_data, client_mock):
+    """
+    Tests the "/search" endpoint with missing 'name' field in the request.
+
+    Assertions:
+        - The HTTP status code must be 400.
+        - The JSON response must contain the error message "Missing plant name."
+    """
+    response = client.post(
+        "/search", json={}
+    )
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Missing plant name."
+
+
+@patch.object(PlantGetter, 'get_plant_list_data')
+def test_search_plant_valid_name(mock_get_plant_list_data, client_mock):
+    """
+    Tests the "/search" endpoint with a valid plant name.
+
+    Assertions:
+        - The HTTP status code must be 200.
+        - The JSON response must contain the 'results' key.
+        - The 'results' should contain the plant data and its associated Wikipedia link.
+    """
+    # Mocking the response from PlantGetter's get_plant_list_data method
+    mock_get_plant_list_data.return_value = [
+        {
+            "name": "Rosa indica",
+            "plant": {"scientific_name": "Rosa indica", "family": "Rosaceae"},
+            "wikipedia": "https://en.wikipedia.org/wiki/Rosa_indica"
+        }
+    ]
+
+    response = client.post(
+        "/search", json={"name": "Rosa indica"}
+    )
+    print(response.json())
+    assert response.status_code == 200
+    assert "results" in response.json()
+    assert len(response.json()["results"]) == 1
+    assert response.json()["results"][0]["name"] == "Rosa indica"
+    assert "wikipedia" in response.json()["results"][0]
+    assert response.json()["results"][0]["wikipedia"] == "https://en.wikipedia.org/wiki/Rosa_indica"
