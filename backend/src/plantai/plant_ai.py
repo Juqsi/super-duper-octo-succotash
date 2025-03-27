@@ -20,8 +20,8 @@ class PlantClassifier:
         """
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         content_root = Path(__file__).resolve().parent
-        model_path = content_root / "ki" / "final_model_2025-03-21_13-36-43.pth"
-        config_path = content_root / "ki" / "config_2025-03-21_13-36-43.json"
+        model_path = content_root / "ki" / "finetuned_model_2025-03-27_09-38-24.pth"
+        config_path = content_root / "ki" / "config_finetune_2025-03-27_09-38-24.json"
         class_map_path = content_root / "ki" / "plantnet300K_species_names.json"
 
         # Klassen laden
