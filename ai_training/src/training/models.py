@@ -4,31 +4,31 @@ import torch.nn as nn
 
 class MyModel(nn.Module):
     """
-    Convolutional Neural Network (CNN) für Bildklassifikation.
+    Convolutional Neural Network (CNN) for image classification.
 
-    Dieses Modell besteht aus mehreren Convolutional-Blöcken mit Batch-Normalisierung,
-    ReLU-Aktivierung, Dropout und Pooling-Schichten. Anschließend werden die extrahierten
-    Merkmale durch voll verbundene Schichten geleitet, um die finale Klassifizierung durchzuführen.
+    This model consists of several convolutional blocks with batch normalization,
+    ReLU activation, dropout, and pooling layers. The extracted features are then
+    passed through fully connected layers to perform the final classification.
 
     Args:
-        num_classes (int): Anzahl der Ausgabeklassen für die Klassifikation. Standardwert ist 15.
+        num_classes (int): Number of output classes for classification. Default is 15.
     """
 
     def __init__(self, num_classes=15):
         """
-        Initialisiert das MyModel und definiert die Netzwerkarchitektur.
+        Initializes the MyModel and defines the network architecture.
 
-        Erstellt die Convolutional-, Batch-Normalisierungs-, Dropout-, Pooling- und Fully-Connected-Schichten
-        des Netzwerks.
+        Creates the convolutional, batch normalization, dropout, pooling, and
+        fully connected layers of the network.
 
         Args:
-            num_classes (int): Anzahl der Ausgabeklassen. Standard ist 15.
+            num_classes (int): Number of output classes. Default is 15.
         """
         super(MyModel, self).__init__()
 
         self.conv1 = nn.Conv2d(3, 64, kernel_size=3, padding=1)
         self.bn1 = nn.BatchNorm2d(64)
-        self.dropout1 = nn.Dropout(0.05)  # Weniger Dropout in frühen CNN-Layern
+        self.dropout1 = nn.Dropout(0.05)  # Lower dropout in early CNN layers
 
         self.conv2 = nn.Conv2d(64, 128, kernel_size=3, padding=1)
         self.bn2 = nn.BatchNorm2d(128)
@@ -46,26 +46,26 @@ class MyModel(nn.Module):
         self.adaptive_pool = nn.AdaptiveAvgPool2d((1, 1))
 
         self.fc1 = nn.Linear(512, 1024)
-        self.dropout_fc = nn.Dropout(0.6)  # Hoher Wert in der FC-Schicht
+        self.dropout_fc = nn.Dropout(0.6)  # Higher dropout value in the FC layer
         self.fc2 = nn.Linear(1024, num_classes)
 
     def forward(self, x):
         """
-        Führt einen Forward-Pass des Modells durch.
+        Performs a forward pass of the model.
 
-        Verarbeitet die Eingabe durch eine Abfolge von Convolutional-Blöcken,
-        die jeweils aus Convolution, Batch-Normalisierung, ReLU, Pooling und Dropout bestehen.
-        Anschließend wird mittels adaptivem Pooling der Feature-Vektor reduziert und durch
-        voll verbundene Schichten geleitet, um die finale Klassifizierung zu berechnen.
+        Processes the input through a sequence of convolutional blocks,
+        each consisting of convolution, batch normalization, ReLU, pooling,
+        and dropout. Then applies adaptive pooling to reduce the feature vector
+        and passes it through fully connected layers for the final classification.
 
         Args:
-            x (torch.Tensor): Eingabetensor der Form (N, C, H, W), wobei N die Batch-Größe darstellt.
+            x (torch.Tensor): Input tensor with shape (N, C, H, W), where N is the batch size.
 
         Returns:
-            torch.Tensor: Ausgabe des Netzwerks (Logits) für jede Klasse.
+            torch.Tensor: Network output (logits) for each class.
         """
         x = self.pool(torch.relu(self.bn1(self.conv1(x))))
-        x = self.dropout1(x)  # Dropout nach dem ersten Block
+        x = self.dropout1(x)  # Dropout after the first block
 
         x = self.pool(torch.relu(self.bn2(self.conv2(x))))
         x = self.dropout2(x)
@@ -80,7 +80,7 @@ class MyModel(nn.Module):
         x = torch.flatten(x, 1)
 
         x = torch.relu(self.fc1(x))
-        x = self.dropout_fc(x)  # Dropout vor der letzten Schicht
+        x = self.dropout_fc(x)  # Dropout before the final layer
         x = self.fc2(x)
 
         return x

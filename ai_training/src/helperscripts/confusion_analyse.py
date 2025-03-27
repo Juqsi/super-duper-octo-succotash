@@ -1,26 +1,24 @@
 """
-Dieses Skript analysiert normalisierte Confusion Matrices aus verschiedenen Trainings-Epochen,
-ermittelt die häufigsten Fehlklassifikationen (mit einem Schwellenwert > 0.2) und erstellt
-eine Übersicht, in der überprüft wird, ob die verwechselteten Klassen derselben Gattung angehören.
+This script analyzes normalized confusion matrices from different training epochs,
+identifies the most frequent misclassifications (with a threshold > 0.2), and creates
+an overview that checks whether the confused classes belong to the same genus.
 
-Folgende Schritte werden durchgeführt:
-1. Laden der Speziesnamen aus einer JSON-Datei.
-2. Definition der Dateipfade zu den CSV-Dateien mit den normalisierten Confusion Matrices.
-3. Iteration über die CSV-Dateien, um für jede wahre Klasse die häufigste Fehlklassifikation zu ermitteln.
-4. Zusammenführen der Ergebnisse über alle Epochen.
-5. Erstellung eines DataFrames, der unter anderem angibt, ob die verwechselteten Klassen zum selben Genus gehören.
+The following steps are performed:
+1. Loading species names from a JSON file.
+2. Defining file paths to the CSV files containing the normalized confusion matrices.
+3. Iterating through the CSV files to find the most frequent misclassification for each true class.
+4. Merging the results across all epochs.
+5. Creating a DataFrame that indicates whether the confused classes belong to the same genus.
 """
-
 import json
 import os
 
 import pandas as pd
 
-with open(
-        os.path.abspath(
-            os.path.join(
-                os.path.dirname(__file__), "../../dataset/plantnet_300K/plantnet300K_species_names.json"
-            )), "r", encoding="utf-8") as f:
+with open(os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__), "../../dataset/plantnet_300K/plantnet300K_species_names.json"
+        )), "r", encoding="utf-8") as f:
     species_names = json.load(f)
 
 conf_matrix_files = [

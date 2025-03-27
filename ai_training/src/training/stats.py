@@ -9,22 +9,22 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 def save_confusion_matrix(model, val_loader, selected_classes, device, epoch, output_dir):
     """
-    Speichert die normalisierte Confusion Matrix als PNG und CSV-Datei und gibt die häufigsten Fehlklassifikationen aus.
+    Saves the normalized confusion matrix as PNG and CSV files and prints the most common misclassifications.
 
-    Diese Funktion führt folgende Schritte durch:
-      1. Berechnet Vorhersagen des Modells auf dem Validierungs-Dataset.
-      2. Erzeugt eine normalisierte Confusion Matrix.
-      3. Visualisiert die Matrix mit Hilfe von Matplotlib und speichert das Diagramm als PNG-Datei.
-      4. Speichert die normalisierte Matrix als CSV-Datei.
-      5. Findet und gibt die Top-N (standardmäßig 30) häufigsten Fehlklassifikationen (außerhalb der Diagonale) aus.
+    This function performs the following steps:
+      1. Computes model predictions on the validation dataset.
+      2. Generates a normalized confusion matrix.
+      3. Visualizes the matrix using Matplotlib and saves the plot as a PNG file.
+      4. Saves the normalized matrix as a CSV file.
+      5. Identifies and prints the top-N (default 30) most frequent misclassifications (excluding diagonal entries).
 
     Args:
-        model (torch.nn.Module): Das zu evaluierende Modell.
-        val_loader (torch.utils.data.DataLoader): DataLoader für den Validierungsdatensatz.
-        selected_classes (list): Liste der Klassennamen.
-        device (torch.device or str): Das Gerät, auf dem die Berechnungen durchgeführt werden (z. B. "cpu" oder "cuda").
-        epoch (int): Aktuelle Epoche, die zur Kennzeichnung der gespeicherten Dateien verwendet wird.
-        output_dir (str): Verzeichnis, in dem die Bild- und CSV-Dateien gespeichert werden.
+        model (torch.nn.Module): The model to be evaluated.
+        val_loader (torch.utils.data.DataLoader): DataLoader for the validation dataset.
+        selected_classes (list): List of class names.
+        device (torch.device or str): Device on which calculations are performed (e.g., "cpu" or "cuda").
+        epoch (int): Current epoch for labeling saved files.
+        output_dir (str): Directory where the image and CSV files will be saved.
 
     Returns:
         None
@@ -44,7 +44,7 @@ def save_confusion_matrix(model, val_loader, selected_classes, device, epoch, ou
     cm = confusion_matrix(all_labels, all_preds)
     cm_normalized = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
 
-    # Erstellen und speichern der Confusion Matrix Visualisierung
+    # Create and save the confusion matrix visualization
     fig, ax = plt.subplots(figsize=(12, 10))
     disp = ConfusionMatrixDisplay(confusion_matrix=cm_normalized, display_labels=selected_classes)
     disp.plot(ax=ax, cmap='Blues', xticks_rotation=90, values_format=".2f")
@@ -54,41 +54,41 @@ def save_confusion_matrix(model, val_loader, selected_classes, device, epoch, ou
     os.makedirs(output_dir, exist_ok=True)
     plt.savefig(os.path.join(output_dir, f"confusion_matrix_epoch_{epoch}.png"))
 
-    # Speichern der normalisierten Confusion Matrix als CSV-Datei
+    # Save the normalized confusion matrix as a CSV file
     df_cm = pd.DataFrame(cm_normalized, index=selected_classes, columns=selected_classes)
     df_cm.to_csv(os.path.join(output_dir, f"confusion_matrix_normalized_epoch_{epoch}.csv"))
 
-    # Top-N Fehlklassifikationen ermitteln (außerhalb der Diagonale)
-    N = 30  # Anzahl der häufigsten Fehler
+    # Identify top-N most frequent misclassifications (excluding diagonal)
+    N = 30  # Number of top errors
     error_matrix = cm_normalized.copy()
-    np.fill_diagonal(error_matrix, 0)  # Diagonale ignorieren = keine Treffer
-    flat_indices = np.argsort(error_matrix.ravel())[::-1][:N]  # Top-N Fehler
+    np.fill_diagonal(error_matrix, 0)  # Ignore diagonal = correct predictions
+    flat_indices = np.argsort(error_matrix.ravel())[::-1][:N]  # Top-N errors
     top_misclassifications = [np.unravel_index(idx, error_matrix.shape) for idx in flat_indices]
 
-    print(f"\nTop-{N} häufigste Verwechslungen in Epoche {epoch}:")
+    print(f"\nTop-{N} most frequent misclassifications in Epoch {epoch}:")
     for i, j in top_misclassifications:
         true_label = selected_classes[i]
         predicted_label = selected_classes[j]
         confusion_value = error_matrix[i, j]
         print(f"  {true_label} → {predicted_label}: {confusion_value:.2f}")
 
-    # Diagramm schließen
+    # Close the plot
     plt.close()
 
 
 def plot_training_progress(train_acc, val_acc, top5_acc, output_dir):
     """
-    Zeichnet und speichert den Verlauf der Trainings- und Validierungsgenauigkeiten über die Epochen.
+    Plots and saves the training and validation accuracy progress over epochs.
 
-    Diese Funktion erstellt einen Plot, der die Trainingsgenauigkeit, die Validierungsgenauigkeit (Top-1)
-    sowie die Validierungsgenauigkeit (Top-5) im Verlauf der Epochen anzeigt. Der resultierende Plot
-    wird als PNG-Datei im angegebenen Ausgabeverzeichnis gespeichert.
+    This function creates a plot that displays training accuracy, validation accuracy (Top-1),
+    and validation accuracy (Top-5) over epochs. The resulting plot is saved as a PNG file
+    in the specified output directory.
 
     Args:
-        train_acc (list): Liste der Trainingsgenauigkeiten pro Epoche.
-        val_acc (list): Liste der Validierungsgenauigkeiten (Top-1) pro Epoche.
-        top5_acc (list): Liste der Validierungsgenauigkeiten (Top-5) pro Epoche.
-        output_dir (str): Verzeichnis, in dem der Plot gespeichert werden soll.
+        train_acc (list): List of training accuracies per epoch.
+        val_acc (list): List of validation accuracies (Top-1) per epoch.
+        top5_acc (list): List of validation accuracies (Top-5) per epoch.
+        output_dir (str): Directory where the plot should be saved.
 
     Returns:
         None
