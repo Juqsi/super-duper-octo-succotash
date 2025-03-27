@@ -6,6 +6,7 @@ from io import BytesIO
 
 from PIL import Image, UnidentifiedImageError
 from fastapi import FastAPI, HTTPException
+from starlette.middleware.cors import CORSMiddleware
 
 from plantai.plant_ai import PlantClassifier
 from plantapi.plant_api import PlantGetter
@@ -18,6 +19,24 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 MAX_IMAGE_SIZE = int(os.getenv("MAX_IMAGE_SIZE", "5242880"))
 
 app = FastAPI()
+
+origins = [
+    "https://localhost:443",
+    "https://localhost",
+    "https://127.0.0.1:443",
+    "https://127.0.0.1",
+    "https://api.ase.juqsi.de",
+    "https://ase.juqsi.de",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 classifier = PlantClassifier()
 getter = PlantGetter()
 
