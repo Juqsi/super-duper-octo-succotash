@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useImageUpload } from '@/composable/useImageUpload'
 import { Button } from '@/components/ui/button'
 import { TrashIcon } from 'lucide-vue-next'
+import router from '@/router'
 
 interface ImagePreview {
   name: string
@@ -41,9 +42,11 @@ const submitImages = async () => {
   if (imageFiles.value.length === 0) return
 
   const response = await uploadImages(imageFiles.value)
+  const len = images.value.length
   if (response) {
     images.value = []
     imageFiles.value = []
+    router.push('/last/' + len)
   }
 }
 </script>
@@ -62,7 +65,7 @@ const submitImages = async () => {
       class="cursor-pointer p-4 border border-dashed border-gray-300 rounded-xl text-gray-600 text-center hover:bg-gray-50 transition-colors duration-200 w-full"
       for="file-upload"
     >
-      Bilder hochladen
+      Select Images
     </label>
 
     <div v-if="images.length" class="grid grid-cols-3 gap-2">
@@ -84,7 +87,7 @@ const submitImages = async () => {
     </div>
 
     <Button :disabled="images.length === 0 || isUploading" class="w-full" @click="submitImages">
-      {{ isUploading ? 'Wird hochgeladen...' : 'Bilder absenden' }}
+      {{ isUploading ? 'Upload...' : 'Upload Images' }}
     </Button>
   </div>
 </template>

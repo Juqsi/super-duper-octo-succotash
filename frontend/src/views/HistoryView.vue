@@ -60,8 +60,10 @@ const formatTimestamp = (timestamp: number) => {
                 :key="index"
                 class="border p-2 rounded"
               >
-                <router-link :to="'/search?name=' + (rec.plant?.scientific_name ?? rec.name)">
-                  <p><strong>Name:</strong> {{ rec.name }}</p>
+                <router-link
+                  :to="'/search?name=' + (rec.plant?.scientific_name ?? rec.name.replace('_', ' '))"
+                >
+                  <p><strong>Name:</strong> {{ rec.name.replace('_', ' ') }}</p>
                   <p>
                     <strong>Probability:</strong>
                     {{ (rec.probability ?? 0).toFixed(2) }}%

@@ -44,7 +44,7 @@ const selectedImage = computed(() => recognizedImages.value[selectedImageIndex.v
       <h2 class="text-xl font-semibold mb-2 w-full max-w-2xl">
         Image from {{ new Date(selectedImage.timestamp).toLocaleString() }}
       </h2>
-      <div class="grid gap-4 w-full justify-items-center">
+      <div class="grid gap-4 w-full justify-items-center max-w-full">
         <template v-for="(rec, index) in selectedImage.recognitions" :key="index">
           <PlantInformationCard :recognition="rec" />
         </template>

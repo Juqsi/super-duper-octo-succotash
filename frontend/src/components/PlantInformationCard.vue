@@ -23,7 +23,7 @@ const props = defineProps<{ recognition: Recognition }>()
   <template v-if="props.recognition.plant">
     <Card class="max-w-2xl w-full rounded-2xl shadow-lg">
       <CardHeader>
-        <CardTitle class="text-2xl font-bold flex justify-between">
+        <CardTitle class="text-2xl font-bold flex justify-between max-w-full">
           <div>
             {{ props.recognition.plant.common_name }}
           </div>
@@ -124,13 +124,13 @@ const props = defineProps<{ recognition: Recognition }>()
       <CardHeader>
         <CardTitle class="text-2xl font-bold flex justify-between">
           <div>
-            {{ props.recognition.name }}
+            {{ props.recognition.name.replace('_', ' ') }}
           </div>
           <div>{{ props.recognition.probability }}%</div>
         </CardTitle>
       </CardHeader>
       <CardContent>Plant information not available in our Database.</CardContent>
-      <CardFooter>
+      <CardFooter v-if="props.recognition.wikipedia">
         <div class="text-center w-full">
           <a :href="props.recognition.wikipedia" class="text-blue-400 hover:underline">wikipedia</a>
         </div>
