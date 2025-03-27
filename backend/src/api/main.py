@@ -24,36 +24,35 @@ getter = PlantGetter()
 
 def decode_and_save_image(image_base64: str) -> str:
     """
-    Decodes a Base64-encoded image and saves it as a JPG file.
+    Decodes a Base64-encoded image and saves it as a JPG file in the upload folder.
 
     Args:
-        image_base64 (str): Base64-encoded image string.
+        image_base64 (str): The Base64-encoded image string (can include data URL prefix).
 
     Returns:
-        str: The file path of the saved JPG image.
+        str: The absolute file path of the saved JPG image.
 
     Raises:
-        HTTPException: If the image size exceeds the limit,
-                        if the Base64 format is invalid,
-                        or if the image format is unsupported.
+        HTTPException (413): If the image size exceeds the configured limit.
+        HTTPException (400): If the Base64 format is invalid or the image format is unsupported.
+        HTTPException (500): If an unknown error occurs during processing.
     """
     if "," in image_base64:
         image_base64 = image_base64.split(",")[1]
 
     if len(image_base64) > MAX_IMAGE_SIZE:
         raise HTTPException(
-            status_code=413, detail="Das Bild überschreitet die maximale Dateigröße von 5 MB.")
+            status_code=413, detail="The image exceeds the maximum file size of 5 MB."
+        )
 
     try:
         image_data = base64.b64decode(image_base64)
 
     except binascii.Error:
-        raise HTTPException(
-            status_code=400, detail="Ungültiges Base64-Format.")
+        raise HTTPException(status_code=400, detail="Invalid Base64 format.")
 
     try:
         image = Image.open(BytesIO(image_data))
-
         unique_filename = f"{uuid.uuid4().hex}.jpg"
         save_path = os.path.join(UPLOAD_FOLDER, unique_filename)
         image.convert("RGB").save(save_path, "JPEG")
@@ -61,61 +60,98 @@ def decode_and_save_image(image_base64: str) -> str:
         return save_path
 
     except UnidentifiedImageError:
-        raise HTTPException(
-            status_code=400, detail="Das Bildformat wird nicht unterstützt.")
+        raise HTTPException(status_code=400, detail="The image format is not supported.")
 
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Unbekannter Fehler: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Unknown error: {str(e)}")
 
 
 def run_plant_classifier(image_path: str) -> list:
     """
-    Executes the plant classifier script with the given image path.
+    Executes the plant classifier model using the provided image path.
 
     Args:
-        image_path (str): Path to the image file to be classified.
+        image_path (str): The absolute path to the saved image file.
 
     Returns:
-        str: The classification result from the script.
+        list: A list of predicted plant classifications, each containing plant details and probabilities.
 
     Raises:
-        HTTPException: If the classification script encounters an error.
+        HTTPException (500): If an error occurs during model prediction.
     """
     try:
         predictions = classifier.predict_from_image_path(image_path, num_of_results=5)
+
         return predictions
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Fehler im KI-Skript: {e}")
+        raise HTTPException(status_code=500, detail=f"Error in AI script: {e}")
+
+
+def run_plant_getter(plant_names: list) -> list:
+    """
+    Fetches detailed plant information for the given list of plant names.
+
+    Args:
+        plant_names (list): A list of plant names obtained from the classifier.
+
+    Returns:
+        list: A list containing detailed plant information, including Wikipedia links.
+
+    Raises:
+        HTTPException (500): If an error occurs while fetching the plant data.
+    """
+    try:
+        return getter.get_plant_list_data(plant_names)
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching plant data: {e}")
 
 
 @app.post("/uploads")
 async def classify_plant(image_data: dict):
     """
-    Endpoint for classifying multiple images.
+    Endpoint for classifying multiple Base64-encoded images of plants.
 
     Args:
-        image_data (dict): JSON data containing a list of Base64-encoded images.
+        image_data (dict): JSON data containing a list of Base64-encoded image strings.
 
     Returns:
-        dict: A dictionary with classification predictions for each uploaded image.
+        dict: A dictionary containing results for each processed image, including recognized plant names,
+              additional data, and probabilities.
 
     Raises:
-        HTTPException: If the 'images' field is missing in the request.
+        HTTPException (400): If the 'images' field is missing in the request.
+        HTTPException (500): For unexpected errors in processing or classification.
     """
     if "images" not in image_data:
-        raise HTTPException(status_code=400, detail="Fehlende Bilddaten.")
+        raise HTTPException(status_code=400, detail="Missing image data.")
 
     results = []
     for image_base64 in image_data["images"]:
         image_path = decode_and_save_image(image_base64)
 
         try:
+            predictions = run_plant_classifier(image_path)
+            plant_names = [prediction["plant_name"] for prediction in predictions]
+            plant_info = run_plant_getter(plant_names)
+
             image_results = {
                 "image": image_base64,
                 "recognitions": []
             }
+
+            for i, prediction in enumerate(predictions):
+                plant_name = prediction["plant_name"]
+                plant_data = plant_info[i] if i < len(plant_info) else None
+
+                recognition = {
+                    "name": plant_name,
+                    "plant": plant_data["plant"] if plant_data else None,
+                    "wikipedia": plant_data["wikipedia"] if plant_data else None,
+                    "probability": prediction["probability"]
+                }
+                image_results["recognitions"].append(recognition)
 
             results.append(image_results)
 
@@ -129,10 +165,10 @@ async def classify_plant(image_data: dict):
 @app.get("/")
 async def hello_world():
     """
-    A simple endpoint to verify that the API is running.
+    A simple endpoint to verify that the API is online.
 
     Returns:
-        dict: A message confirming the API is online.
+        dict: A greeting message confirming the API is active.
     """
     return {"message": "Hello World 🌍"}
 

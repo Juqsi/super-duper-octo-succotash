@@ -24,7 +24,7 @@ def generate_base64_image(image_filename="test_img.jpg"):
     image_path = script_dir / image_filename
 
     if not image_path.exists():
-        raise FileNotFoundError(f"Das Bild '{image_filename}' wurde nicht im Ordner gefunden.")
+        raise FileNotFoundError(f"The image '{image_filename}' was not found in the folder.")
 
     with open(image_path, "rb") as image_file:
         base64_image = base64.b64encode(image_file.read()).decode("utf-8")
@@ -95,7 +95,7 @@ def test_classify_plant_invalid_image():
         "/uploads", json={"images": [invalid_base64_image]}
     )
     assert response.status_code == 400
-    assert response.json()["detail"] == "Ungültiges Base64-Format."
+    assert response.json()["detail"] == "Invalid Base64 format."
 
 
 def test_image_too_large():
@@ -112,7 +112,7 @@ def test_image_too_large():
         "/uploads", json={"images": [large_base64_image]}
     )
     assert response.status_code == 413
-    assert response.json()["detail"] == "Das Bild überschreitet die maximale Dateigröße von 5 MB."
+    assert response.json()["detail"] == "The image exceeds the maximum file size of 5 MB."
 
 
 def test_classify_plant_empty_image_list():
@@ -127,4 +127,4 @@ def test_classify_plant_empty_image_list():
         "/uploads", json={}
     )
     assert response.status_code == 400
-    assert response.json()["detail"] == "Fehlende Bilddaten."
+    assert response.json()["detail"] == "Missing image data."

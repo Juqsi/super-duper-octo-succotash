@@ -1,7 +1,9 @@
 """
-Dieses Skript dient zur Bereinigung von Datensatzverzeichnissen, indem Klassenordner, die weniger als eine bestimmte Mindestanzahl an Bildern enthalten, gelöscht werden.
+Dieses Skript dient zur Bereinigung von Datensatzverzeichnissen, indem Klassenordner, die weniger als eine bestimmte
+Mindestanzahl an Bildern enthalten, gelöscht werden.
 Es werden drei Verzeichnisse verarbeitet: images_train, images_val und images_test des PlantNet 300K Datensatzes.
-Zunächst werden zu kleine Ordner im Trainingsdatensatz gelöscht. Anschließend werden die gleichen Ordner in den Validierungs- und Testdatensätzen entfernt.
+Zunächst werden zu kleine Ordner im Trainingsdatensatz gelöscht. Anschließend werden die gleichen Ordner in den
+Validierungs- und Testdatensätzen entfernt.
 """
 
 import os
