@@ -1,0 +1,37 @@
+helperscripts package
+=====================
+
+Submodules
+----------
+
+helperscripts.cleanDataset module
+---------------------------------
+
+.. automodule:: helperscripts.cleanDataset
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+helperscripts.confusion\_analyse module
+---------------------------------------
+
+.. automodule:: helperscripts.confusion_analyse
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+helperscripts.generate\_merge\_map module
+-----------------------------------------
+
+.. automodule:: helperscripts.generate_merge_map
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: helperscripts
+   :members:
+   :undoc-members:
+   :show-inheritance:

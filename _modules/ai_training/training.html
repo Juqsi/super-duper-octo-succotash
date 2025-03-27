@@ -1,0 +1,368 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>training package &mdash; super-duper-octo-succotash  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="helperscripts package" href="helperscripts.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            super-duper-octo-succotash
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../backend/modules.html">src</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="helperscripts.html">helperscripts package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">training package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-training.config">training.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#training-finetuning-module">training.finetuning module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-training.ft_config">training.ft_config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#training-main-module">training.main module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-training.models">training.models module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#training.models.MyModel"><code class="docutils literal notranslate"><span class="pre">MyModel</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-training.stats">training.stats module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#training.stats.plot_training_progress"><code class="docutils literal notranslate"><span class="pre">plot_training_progress()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#training.stats.save_confusion_matrix"><code class="docutils literal notranslate"><span class="pre">save_confusion_matrix()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#training-train-module">training.train module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-training.utils">training.utils module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#training.utils.load_checkpoint"><code class="docutils literal notranslate"><span class="pre">load_checkpoint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#training.utils.save_checkpoint"><code class="docutils literal notranslate"><span class="pre">save_checkpoint()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-training">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">super-duper-octo-succotash</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">src</a></li>
+      <li class="breadcrumb-item active">training package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/_modules/ai_training/training.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="training-package">
+<h1>training package<a class="headerlink" href="#training-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-training.config">
+<span id="training-config-module"></span><h2>training.config module<a class="headerlink" href="#module-training.config" title="Link to this heading"></a></h2>
+<p>This script contains the configuration settings for training a deep learning model using PyTorch.</p>
+<p>It defines important paths, hyperparameters, and options for data preprocessing, training, and checkpoint management.</p>
+<p>Paths:
+- DATA_DIR: Directory containing the dataset.
+- MODEL_DIR: Directory where the model is stored.
+- CHECKPOINT_DIR: Directory for saving and loading model checkpoints.
+- PRETRAINED_MODEL_PATH: Path to the pre-trained model to be used for transfer learning.
+- TRAIN_DIR, VAL_DIR, TEST_DIR: Directories containing the training, validation, and test datasets respectively.</p>
+<p>Training Parameters:
+- BATCH_SIZE: Number of samples per batch during training.
+- LEARNING_RATE: Learning rate for the optimizer.
+- EPOCHS: Total number of epochs for training.
+- DEVICE: Computation device, either ‘cuda’ for GPU or ‘cpu’ for CPU.</p>
+<p>Regularization and Augmentation:
+- USE_MIXUP: Whether to apply the MixUp augmentation technique.
+- MIXUP_ALPHA: Alpha value for MixUp, controlling the mixing strength.
+- MIXUP_REDUCTION_EPOCH: Epoch at which MixUp will be reduced.
+- USE_CUTMIX: Whether to apply the CutMix augmentation technique.
+- CUTMIX_PROB: Probability of applying CutMix during training.</p>
+<p>Checkpointing and Resume Training:
+- CHECKPOINT_PATH: Path format for saving model checkpoints at each epoch.
+- RESUME_TRAINING: Whether to resume training from the last checkpoint.
+- LAST_EPOCH: Epoch from which to resume training.</p>
+<p>Miscellaneous:
+- NUM_WORKERS: Number of workers for data loading in parallel.
+- WEIGHT_DECAY: Regularization parameter for the optimizer.</p>
+<p>This configuration script ensures that the training process is streamlined and reproducible across different
+environments.</p>
+</section>
+<section id="training-finetuning-module">
+<h2>training.finetuning module<a class="headerlink" href="#training-finetuning-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-training.ft_config">
+<span id="training-ft-config-module"></span><h2>training.ft_config module<a class="headerlink" href="#module-training.ft_config" title="Link to this heading"></a></h2>
+<p>This script contains the configuration settings for training and fine-tuning a deep learning model using PyTorch.</p>
+<p>It defines the file paths, hyperparameters, and options for data loading, training, and model checkpointing.</p>
+<p>Paths:
+- DATA_DIR: Directory containing the dataset (e.g., images for training, validation, and testing).
+- MODEL_DIR: Directory where pre-trained models are stored.
+- CHECKPOINT_DIR: Directory for saving and loading model checkpoints.
+- PRETRAINED_MODEL_PATH: Path to the pre-trained ResNet50 model for fine-tuning.
+- PREVIOUS_CHECKPOINT: Path to the checkpoint for resuming training from a specific epoch.
+- MERGE_MAP_PATH: Path to the JSON file for the merge map used in the model.</p>
+<p>Training Parameters:
+- BATCH_SIZE: Number of samples per batch during training.
+- LEARNING_RATE: Learning rate for the optimizer.
+- EPOCHS: Total number of epochs to train the model.
+- WEIGHT_DECAY: Regularization parameter to prevent overfitting.
+- NUM_WORKERS: Number of workers to use for data loading in parallel.
+- DEVICE: The computation device, either ‘cuda’ for GPU or ‘cpu’ for CPU.</p>
+<p>Checkpointing:
+- CHECKPOINT_PATH: Path format for saving the model checkpoint at each epoch.
+- RESUME_TRAINING: Flag indicating whether to resume training from the previous checkpoint.
+- LAST_EPOCH: The last epoch number if resuming training, to continue from the right point.</p>
+<p>This configuration script provides a centralized place for controlling key aspects of the model training and
+fine-tuning process, including dataset locations, hyperparameters, checkpointing, and pre-trained model usage.</p>
+</section>
+<section id="training-main-module">
+<h2>training.main module<a class="headerlink" href="#training-main-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-training.models">
+<span id="training-models-module"></span><h2>training.models module<a class="headerlink" href="#module-training.models" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="training.models.MyModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">training.models.</span></span><span class="sig-name descname"><span class="pre">MyModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../training/models.html#MyModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#training.models.MyModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Convolutional Neural Network (CNN) für Bildklassifikation.</p>
+<p>Dieses Modell besteht aus mehreren Convolutional-Blöcken mit Batch-Normalisierung,
+ReLU-Aktivierung, Dropout und Pooling-Schichten. Anschließend werden die extrahierten
+Merkmale durch voll verbundene Schichten geleitet, um die finale Klassifizierung durchzuführen.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_classes</strong> (<em>int</em>) – Anzahl der Ausgabeklassen für die Klassifikation. Standardwert ist 15.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="training.models.MyModel.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../training/models.html#MyModel.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#training.models.MyModel.forward" title="Link to this definition"></a></dt>
+<dd><p>Führt einen Forward-Pass des Modells durch.</p>
+<p>Verarbeitet die Eingabe durch eine Abfolge von Convolutional-Blöcken,
+die jeweils aus Convolution, Batch-Normalisierung, ReLU, Pooling und Dropout bestehen.
+Anschließend wird mittels adaptivem Pooling der Feature-Vektor reduziert und durch
+voll verbundene Schichten geleitet, um die finale Klassifizierung zu berechnen.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>torch.Tensor</em>) – Eingabetensor der Form (N, C, H, W), wobei N die Batch-Größe darstellt.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Ausgabe des Netzwerks (Logits) für jede Klasse.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-training.stats">
+<span id="training-stats-module"></span><h2>training.stats module<a class="headerlink" href="#module-training.stats" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="training.stats.plot_training_progress">
+<span class="sig-prename descclassname"><span class="pre">training.stats.</span></span><span class="sig-name descname"><span class="pre">plot_training_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top5_acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../training/stats.html#plot_training_progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#training.stats.plot_training_progress" title="Link to this definition"></a></dt>
+<dd><p>Zeichnet und speichert den Verlauf der Trainings- und Validierungsgenauigkeiten über die Epochen.</p>
+<p>Diese Funktion erstellt einen Plot, der die Trainingsgenauigkeit, die Validierungsgenauigkeit (Top-1)
+sowie die Validierungsgenauigkeit (Top-5) im Verlauf der Epochen anzeigt. Der resultierende Plot
+wird als PNG-Datei im angegebenen Ausgabeverzeichnis gespeichert.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>train_acc</strong> (<em>list</em>) – Liste der Trainingsgenauigkeiten pro Epoche.</p></li>
+<li><p><strong>val_acc</strong> (<em>list</em>) – Liste der Validierungsgenauigkeiten (Top-1) pro Epoche.</p></li>
+<li><p><strong>top5_acc</strong> (<em>list</em>) – Liste der Validierungsgenauigkeiten (Top-5) pro Epoche.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – Verzeichnis, in dem der Plot gespeichert werden soll.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="training.stats.save_confusion_matrix">
+<span class="sig-prename descclassname"><span class="pre">training.stats.</span></span><span class="sig-name descname"><span class="pre">save_confusion_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../training/stats.html#save_confusion_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#training.stats.save_confusion_matrix" title="Link to this definition"></a></dt>
+<dd><p>Speichert die normalisierte Confusion Matrix als PNG und CSV-Datei und gibt die häufigsten Fehlklassifikationen aus.</p>
+<dl class="simple">
+<dt>Diese Funktion führt folgende Schritte durch:</dt><dd><ol class="arabic simple">
+<li><p>Berechnet Vorhersagen des Modells auf dem Validierungs-Dataset.</p></li>
+<li><p>Erzeugt eine normalisierte Confusion Matrix.</p></li>
+<li><p>Visualisiert die Matrix mit Hilfe von Matplotlib und speichert das Diagramm als PNG-Datei.</p></li>
+<li><p>Speichert die normalisierte Matrix als CSV-Datei.</p></li>
+<li><p>Findet und gibt die Top-N (standardmäßig 30) häufigsten Fehlklassifikationen (außerhalb der Diagonale) aus.</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – Das zu evaluierende Modell.</p></li>
+<li><p><strong>val_loader</strong> (<em>torch.utils.data.DataLoader</em>) – DataLoader für den Validierungsdatensatz.</p></li>
+<li><p><strong>selected_classes</strong> (<em>list</em>) – Liste der Klassennamen.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em><em> or </em><em>str</em>) – Das Gerät, auf dem die Berechnungen durchgeführt werden (z. B. “cpu” oder “cuda”).</p></li>
+<li><p><strong>epoch</strong> (<em>int</em>) – Aktuelle Epoche, die zur Kennzeichnung der gespeicherten Dateien verwendet wird.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – Verzeichnis, in dem die Bild- und CSV-Dateien gespeichert werden.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="training-train-module">
+<h2>training.train module<a class="headerlink" href="#training-train-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-training.utils">
+<span id="training-utils-module"></span><h2>training.utils module<a class="headerlink" href="#module-training.utils" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="training.utils.load_checkpoint">
+<span class="sig-prename descclassname"><span class="pre">training.utils.</span></span><span class="sig-name descname"><span class="pre">load_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../training/utils.html#load_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#training.utils.load_checkpoint" title="Link to this definition"></a></dt>
+<dd><p>Lädt einen gespeicherten Checkpoint und stellt den Zustand von Modell und Optimizer wieder her.</p>
+<p>Diese Funktion lädt einen Checkpoint von dem angegebenen Pfad, stellt den Zustand des Modells und
+des Optimizers wieder her und gibt die geladene Epoche zurück.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – Das Modell, in das der gespeicherte Zustand geladen wird.</p></li>
+<li><p><strong>optimizer</strong> (<em>torch.optim.Optimizer</em>) – Der Optimizer, in den der gespeicherte Zustand geladen wird.</p></li>
+<li><p><strong>path</strong> (<em>str</em>) – Der Pfad zur Checkpoint-Datei.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em><em> or </em><em>str</em>) – Das Gerät, auf das die geladenen Daten gemappt werden sollen.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Ein Tupel (model, optimizer, epoch) bestehend aus dem Modell mit geladenem Zustand,</dt><dd><p>dem Optimizer mit geladenem Zustand und der zuletzt gespeicherten Epoche.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Side Effects:</dt><dd><ul class="simple">
+<li><p>Gibt Statusmeldungen auf der Konsole aus.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="training.utils.save_checkpoint">
+<span class="sig-prename descclassname"><span class="pre">training.utils.</span></span><span class="sig-name descname"><span class="pre">save_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkpoint_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../training/utils.html#save_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#training.utils.save_checkpoint" title="Link to this definition"></a></dt>
+<dd><p>Speichert den aktuellen Zustand des Modells und Optimizers als Checkpoint.</p>
+<p>Diese Funktion speichert den Zustand des Modells, des Optimizers und die aktuelle Epoche
+in einem Dictionary und schreibt dieses Dictionary in eine Datei, die durch ‘checkpoint_path’
+spezifiziert ist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – Das zu speichernde Modell.</p></li>
+<li><p><strong>optimizer</strong> (<em>torch.optim.Optimizer</em>) – Der Optimizer, dessen Zustand ebenfalls gespeichert wird.</p></li>
+<li><p><strong>epoch</strong> (<em>int</em>) – Die aktuelle Epoche, die im Checkpoint vermerkt wird.</p></li>
+<li><p><strong>checkpoint_path</strong> (<em>str</em>) – Der Dateipfad, an dem der Checkpoint gespeichert wird.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Side Effects:</dt><dd><ul class="simple">
+<li><p>Speichert einen Checkpoint auf der Festplatte.</p></li>
+<li><p>Gibt eine Bestätigung auf der Konsole aus.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-training">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-training" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="helperscripts.html" class="btn btn-neutral float-left" title="helperscripts package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Lukas Maier, Justus Siegert, Timon Kleinknecht.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

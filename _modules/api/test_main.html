@@ -41,7 +41,8 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../modules.html">src</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../backend/modules.html">src</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai_training/modules.html">src</a></li>
 </ul>
 
         </div>
@@ -84,7 +85,7 @@
 
 
 <div class="viewcode-block" id="client_mock">
-<a class="viewcode-back" href="../api.html#api.test_main.client_mock">[docs]</a>
+<a class="viewcode-back" href="../backend/api.html#api.test_main.client_mock">[docs]</a>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">client_mock</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Fixture to create a test client for the FastAPI app.&quot;&quot;&quot;</span>
@@ -94,7 +95,7 @@
 
 
 <div class="viewcode-block" id="generate_base64_image">
-<a class="viewcode-back" href="../api.html#api.test_main.generate_base64_image">[docs]</a>
+<a class="viewcode-back" href="../backend/api.html#api.test_main.generate_base64_image">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">generate_base64_image</span><span class="p">(</span><span class="n">image_filename</span><span class="o">=</span><span class="s2">&quot;test_img.jpg&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reads an existing image from the same folder as this script,</span>
@@ -120,7 +121,7 @@
 
 
 <div class="viewcode-block" id="test_hello_world">
-<a class="viewcode-back" href="../api.html#api.test_main.test_hello_world">[docs]</a>
+<a class="viewcode-back" href="../backend/api.html#api.test_main.test_hello_world">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_hello_world</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tests the root endpoint (&quot;/&quot;) and verifies that the expected</span>
@@ -137,7 +138,7 @@
 
 
 <div class="viewcode-block" id="test_classify_plant_valid_image">
-<a class="viewcode-back" href="../api.html#api.test_main.test_classify_plant_valid_image">[docs]</a>
+<a class="viewcode-back" href="../backend/api.html#api.test_main.test_classify_plant_valid_image">[docs]</a>
 <span class="nd">@patch</span><span class="o">.</span><span class="n">object</span><span class="p">(</span><span class="n">PlantGetter</span><span class="p">,</span> <span class="s1">&#39;get_plant_list_data&#39;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_classify_plant_valid_image</span><span class="p">(</span><span class="n">mock_get_plant_list_data</span><span class="p">,</span> <span class="n">client_mock</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -170,7 +171,7 @@
 
 
 <div class="viewcode-block" id="test_classify_plant_multiple_images">
-<a class="viewcode-back" href="../api.html#api.test_main.test_classify_plant_multiple_images">[docs]</a>
+<a class="viewcode-back" href="../backend/api.html#api.test_main.test_classify_plant_multiple_images">[docs]</a>
 <span class="nd">@patch</span><span class="o">.</span><span class="n">object</span><span class="p">(</span><span class="n">PlantGetter</span><span class="p">,</span> <span class="s1">&#39;get_plant_list_data&#39;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_classify_plant_multiple_images</span><span class="p">(</span><span class="n">mock_get_plant_list_data</span><span class="p">,</span> <span class="n">client_mock</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -214,7 +215,7 @@
 
 
 <div class="viewcode-block" id="test_classify_plant_invalid_image">
-<a class="viewcode-back" href="../api.html#api.test_main.test_classify_plant_invalid_image">[docs]</a>
+<a class="viewcode-back" href="../backend/api.html#api.test_main.test_classify_plant_invalid_image">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_classify_plant_invalid_image</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tests the &quot;/uploads&quot; endpoint with an invalid Base64 string.</span>
@@ -234,7 +235,7 @@
 
 
 <div class="viewcode-block" id="test_image_too_large">
-<a class="viewcode-back" href="../api.html#api.test_main.test_image_too_large">[docs]</a>
+<a class="viewcode-back" href="../backend/api.html#api.test_main.test_image_too_large">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_image_too_large</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tests the &quot;/uploads&quot; endpoint with an oversized image.</span>
@@ -254,7 +255,7 @@
 
 
 <div class="viewcode-block" id="test_classify_plant_empty_image_list">
-<a class="viewcode-back" href="../api.html#api.test_main.test_classify_plant_empty_image_list">[docs]</a>
+<a class="viewcode-back" href="../backend/api.html#api.test_main.test_classify_plant_empty_image_list">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_classify_plant_empty_image_list</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tests the &quot;/uploads&quot; endpoint with an empty image list.</span>
@@ -272,7 +273,7 @@
 
 
 <div class="viewcode-block" id="test_search_plant_missing_name">
-<a class="viewcode-back" href="../api.html#api.test_main.test_search_plant_missing_name">[docs]</a>
+<a class="viewcode-back" href="../backend/api.html#api.test_main.test_search_plant_missing_name">[docs]</a>
 <span class="nd">@patch</span><span class="o">.</span><span class="n">object</span><span class="p">(</span><span class="n">PlantGetter</span><span class="p">,</span> <span class="s1">&#39;get_plant_list_data&#39;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_search_plant_missing_name</span><span class="p">(</span><span class="n">mock_get_plant_list_data</span><span class="p">,</span> <span class="n">client_mock</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -291,7 +292,7 @@
 
 
 <div class="viewcode-block" id="test_search_plant_valid_name">
-<a class="viewcode-back" href="../api.html#api.test_main.test_search_plant_valid_name">[docs]</a>
+<a class="viewcode-back" href="../backend/api.html#api.test_main.test_search_plant_valid_name">[docs]</a>
 <span class="nd">@patch</span><span class="o">.</span><span class="n">object</span><span class="p">(</span><span class="n">PlantGetter</span><span class="p">,</span> <span class="s1">&#39;get_plant_list_data&#39;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_search_plant_valid_name</span><span class="p">(</span><span class="n">mock_get_plant_list_data</span><span class="p">,</span> <span class="n">client_mock</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -331,7 +332,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Lukas.</p>
+    <p>&#169; Copyright 2025, Lukas Maier, Justus Siegert, Timon Kleinknecht.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

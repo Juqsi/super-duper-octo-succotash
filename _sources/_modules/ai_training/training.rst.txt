@@ -1,0 +1,77 @@
+training package
+================
+
+Submodules
+----------
+
+training.config module
+----------------------
+
+.. automodule:: training.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+training.finetuning module
+--------------------------
+
+.. automodule:: training.finetuning
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+training.ft\_config module
+--------------------------
+
+.. automodule:: training.ft_config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+training.main module
+--------------------
+
+.. automodule:: training.main
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+training.models module
+----------------------
+
+.. automodule:: training.models
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+training.stats module
+---------------------
+
+.. automodule:: training.stats
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+training.train module
+---------------------
+
+.. automodule:: training.train
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+training.utils module
+---------------------
+
+.. automodule:: training.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: training
+   :members:
+   :undoc-members:
+   :show-inheritance:

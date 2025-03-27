@@ -1,0 +1,179 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>helperscripts package &mdash; super-duper-octo-succotash  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="training package" href="training.html" />
+    <link rel="prev" title="src" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            super-duper-octo-succotash
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../backend/modules.html">src</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">helperscripts package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-helperscripts.cleanDataset">helperscripts.cleanDataset module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#helperscripts.cleanDataset.delete_small_folders"><code class="docutils literal notranslate"><span class="pre">delete_small_folders()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#helperscripts-confusion-analyse-module">helperscripts.confusion_analyse module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-helperscripts.generate_merge_map">helperscripts.generate_merge_map module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-helperscripts">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="training.html">training package</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">super-duper-octo-succotash</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">src</a></li>
+      <li class="breadcrumb-item active">helperscripts package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/_modules/ai_training/helperscripts.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="helperscripts-package">
+<h1>helperscripts package<a class="headerlink" href="#helperscripts-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-helperscripts.cleanDataset">
+<span id="helperscripts-cleandataset-module"></span><h2>helperscripts.cleanDataset module<a class="headerlink" href="#module-helperscripts.cleanDataset" title="Link to this heading"></a></h2>
+<p>Dieses Skript dient zur Bereinigung von Datensatzverzeichnissen, indem Klassenordner, die weniger als eine bestimmte
+Mindestanzahl an Bildern enthalten, gelöscht werden.
+Es werden drei Verzeichnisse verarbeitet: images_train, images_val und images_test des PlantNet 300K Datensatzes.
+Zunächst werden zu kleine Ordner im Trainingsdatensatz gelöscht. Anschließend werden die gleichen Ordner in den
+Validierungs- und Testdatensätzen entfernt.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="helperscripts.cleanDataset.delete_small_folders">
+<span class="sig-prename descclassname"><span class="pre">helperscripts.cleanDataset.</span></span><span class="sig-name descname"><span class="pre">delete_small_folders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_images</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../helperscripts/cleanDataset.html#delete_small_folders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#helperscripts.cleanDataset.delete_small_folders" title="Link to this definition"></a></dt>
+<dd><p>Löscht Unterordner im angegebenen Basisverzeichnis, die weniger als ‘min_images’ Dateien enthalten.</p>
+<p>Durchläuft alle Unterordner in ‘base_dir’ und entfernt diejenigen, in denen die Anzahl der Dateien kleiner
+als ‘min_images’ ist. Dabei werden nur Ordner berücksichtigt, die tatsächlich existieren und Dateien enthalten.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_dir</strong> (<em>str</em>) – Das Verzeichnis, in dem nach Unterordnern gesucht wird.</p></li>
+<li><p><strong>min_images</strong> (<em>int</em>) – Mindestanzahl an Dateien, die ein Unterordner enthalten muss, um nicht gelöscht zu werden.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Eine Liste der Namen der gelöschten Unterordner.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="helperscripts-confusion-analyse-module">
+<h2>helperscripts.confusion_analyse module<a class="headerlink" href="#helperscripts-confusion-analyse-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-helperscripts.generate_merge_map">
+<span id="helperscripts-generate-merge-map-module"></span><h2>helperscripts.generate_merge_map module<a class="headerlink" href="#module-helperscripts.generate_merge_map" title="Link to this heading"></a></h2>
+<p>Dieses Skript erstellt eine Merge Map für die PlantNet 300K Species Names.
+Es führt folgende Schritte durch:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Laden der Spezies-Namen aus einer JSON-Datei.</p></li>
+<li><p>Gruppierung der Klasseneinträge basierend auf exakten Namensübereinstimmungen.</p></li>
+<li><p>Erzeugung einer Merge Map, bei der Duplikate auf eine primäre ID abgebildet werden.</p></li>
+<li><p>Optional: Einsatz von Fuzzy-Matching, um zusätzlich ähnlich klingende Einträge (über einen Schwellenwert)
+zu identifizieren und zu mergen.</p></li>
+<li><p>Speichern der resultierenden Merge Map in einer JSON-Datei.</p></li>
+</ol>
+</div></blockquote>
+</section>
+<section id="module-helperscripts">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-helperscripts" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="src" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="training.html" class="btn btn-neutral float-right" title="training package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Lukas Maier, Justus Siegert, Timon Kleinknecht.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -41,7 +41,8 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../modules.html">src</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../backend/modules.html">src</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai_training/modules.html">src</a></li>
 </ul>
 
         </div>
@@ -94,7 +95,7 @@
 
 
 <div class="viewcode-block" id="decode_and_save_image">
-<a class="viewcode-back" href="../api.html#api.main.decode_and_save_image">[docs]</a>
+<a class="viewcode-back" href="../backend/api.html#api.main.decode_and_save_image">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">decode_and_save_image</span><span class="p">(</span><span class="n">image_base64</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decodes a Base64-encoded image and saves it as a JPG file in the upload folder.</span>
@@ -141,7 +142,7 @@
 
 
 <div class="viewcode-block" id="run_plant_classifier">
-<a class="viewcode-back" href="../api.html#api.main.run_plant_classifier">[docs]</a>
+<a class="viewcode-back" href="../backend/api.html#api.main.run_plant_classifier">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run_plant_classifier</span><span class="p">(</span><span class="n">image_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Executes the plant classifier model using the provided image path.</span>
@@ -166,7 +167,7 @@
 
 
 <div class="viewcode-block" id="run_plant_getter">
-<a class="viewcode-back" href="../api.html#api.main.run_plant_getter">[docs]</a>
+<a class="viewcode-back" href="../backend/api.html#api.main.run_plant_getter">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run_plant_getter</span><span class="p">(</span><span class="n">plant_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetches detailed plant information for the given list of plant names.</span>
@@ -189,7 +190,7 @@
 
 
 <div class="viewcode-block" id="classify_plant">
-<a class="viewcode-back" href="../api.html#api.main.classify_plant">[docs]</a>
+<a class="viewcode-back" href="../backend/api.html#api.main.classify_plant">[docs]</a>
 <span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/uploads&quot;</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">classify_plant</span><span class="p">(</span><span class="n">image_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -210,8 +211,7 @@
 <span class="sd">        {</span>
 <span class="sd">            &quot;images&quot;: [</span>
 <span class="sd">                &quot;data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/...&quot;,</span>
-<span class="sd">                &quot;data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/...&quot;</span>
-<span class="sd">            ]</span>
+<span class="sd">                &quot;data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/...&quot;]</span>
 <span class="sd">        }</span>
 
 <span class="sd">    Example response:</span>
@@ -277,7 +277,7 @@
 
 
 <div class="viewcode-block" id="search_plant">
-<a class="viewcode-back" href="../api.html#api.main.search_plant">[docs]</a>
+<a class="viewcode-back" href="../backend/api.html#api.main.search_plant">[docs]</a>
 <span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/search&quot;</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">search_plant</span><span class="p">(</span><span class="n">plant_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -321,7 +321,7 @@
 
 
 <div class="viewcode-block" id="hello_world">
-<a class="viewcode-back" href="../api.html#api.main.hello_world">[docs]</a>
+<a class="viewcode-back" href="../backend/api.html#api.main.hello_world">[docs]</a>
 <span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">hello_world</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -346,7 +346,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Lukas.</p>
+    <p>&#169; Copyright 2025, Lukas Maier, Justus Siegert, Timon Kleinknecht.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

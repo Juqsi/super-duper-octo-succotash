@@ -15,5 +15,6 @@ documentation for details.
    :maxdepth: 2
    :caption: Contents:
 
-   _modules/modules
+   _modules/backend/modules
+   _modules/ai_training/modules
 
