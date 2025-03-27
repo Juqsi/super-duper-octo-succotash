@@ -52,9 +52,11 @@
 <li class="toctree-l4"><a class="reference internal" href="#api.main.decode_and_save_image"><code class="docutils literal notranslate"><span class="pre">decode_and_save_image()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#api.main.hello_world"><code class="docutils literal notranslate"><span class="pre">hello_world()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#api.main.run_plant_classifier"><code class="docutils literal notranslate"><span class="pre">run_plant_classifier()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api.main.run_plant_getter"><code class="docutils literal notranslate"><span class="pre">run_plant_getter()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-api.test_main">api.test_main module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#api.test_main.client_mock"><code class="docutils literal notranslate"><span class="pre">client_mock()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#api.test_main.generate_base64_image"><code class="docutils literal notranslate"><span class="pre">generate_base64_image()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#api.test_main.test_classify_plant_empty_image_list"><code class="docutils literal notranslate"><span class="pre">test_classify_plant_empty_image_list()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#api.test_main.test_classify_plant_invalid_image"><code class="docutils literal notranslate"><span class="pre">test_classify_plant_invalid_image()</span></code></a></li>
@@ -108,19 +110,26 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="api.main.classify_plant">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.main.</span></span><span class="sig-name descname"><span class="pre">classify_plant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="api/main.html#classify_plant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.main.classify_plant" title="Link to this definition"></a></dt>
-<dd><p>Endpoint for classifying multiple images.</p>
+<dd><p>Endpoint for classifying multiple Base64-encoded images of plants.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>image_data</strong> (<em>dict</em>) – JSON data containing a list of Base64-encoded images.</p>
+<dd class="field-odd"><p><strong>image_data</strong> (<em>dict</em>) – JSON data containing a list of Base64-encoded image strings.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A dictionary with classification predictions for each uploaded image.</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>A dictionary containing results for each processed image, including recognized plant names,</dt><dd><p>additional data, and probabilities.</p>
+</dd>
+</dl>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>HTTPException</strong> – If the ‘images’ field is missing in the request.</p>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>HTTPException</strong><strong> (</strong><strong>400</strong><strong>)</strong> – If the ‘images’ field is missing in the request.</p></li>
+<li><p><strong>HTTPException</strong><strong> (</strong><strong>500</strong><strong>)</strong> – For unexpected errors in processing or classification.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -128,21 +137,23 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="api.main.decode_and_save_image">
 <span class="sig-prename descclassname"><span class="pre">api.main.</span></span><span class="sig-name descname"><span class="pre">decode_and_save_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_base64</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="api/main.html#decode_and_save_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.main.decode_and_save_image" title="Link to this definition"></a></dt>
-<dd><p>Decodes a Base64-encoded image and saves it as a JPG file.</p>
+<dd><p>Decodes a Base64-encoded image and saves it as a JPG file in the upload folder.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>image_base64</strong> (<em>str</em>) – Base64-encoded image string.</p>
+<dd class="field-odd"><p><strong>image_base64</strong> (<em>str</em>) – The Base64-encoded image string (can include data URL prefix).</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The file path of the saved JPG image.</p>
+<dd class="field-even"><p>The absolute file path of the saved JPG image.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>HTTPException</strong> – If the image size exceeds the limit,
-    if the Base64 format is invalid,
-    or if the image format is unsupported.</p>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>HTTPException</strong><strong> (</strong><strong>413</strong><strong>)</strong> – If the image size exceeds the configured limit.</p></li>
+<li><p><strong>HTTPException</strong><strong> (</strong><strong>400</strong><strong>)</strong> – If the Base64 format is invalid or the image format is unsupported.</p></li>
+<li><p><strong>HTTPException</strong><strong> (</strong><strong>500</strong><strong>)</strong> – If an unknown error occurs during processing.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -150,10 +161,10 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="api.main.hello_world">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.main.</span></span><span class="sig-name descname"><span class="pre">hello_world</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="api/main.html#hello_world"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.main.hello_world" title="Link to this definition"></a></dt>
-<dd><p>A simple endpoint to verify that the API is running.</p>
+<dd><p>A simple endpoint to verify that the API is online.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A message confirming the API is online.</p>
+<dd class="field-odd"><p>A greeting message confirming the API is active.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>dict</p>
@@ -164,19 +175,39 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="api.main.run_plant_classifier">
 <span class="sig-prename descclassname"><span class="pre">api.main.</span></span><span class="sig-name descname"><span class="pre">run_plant_classifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="api/main.html#run_plant_classifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.main.run_plant_classifier" title="Link to this definition"></a></dt>
-<dd><p>Executes the plant classifier script with the given image path.</p>
+<dd><p>Executes the plant classifier model using the provided image path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>image_path</strong> (<em>str</em>) – Path to the image file to be classified.</p>
+<dd class="field-odd"><p><strong>image_path</strong> (<em>str</em>) – The absolute path to the saved image file.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The classification result from the script.</p>
+<dd class="field-even"><p>A list of predicted plant classifications, each containing plant details and probabilities.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-odd"><p>list</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>HTTPException</strong> – If the classification script encounters an error.</p>
+<dd class="field-even"><p><strong>HTTPException</strong><strong> (</strong><strong>500</strong><strong>)</strong> – If an error occurs during model prediction.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="api.main.run_plant_getter">
+<span class="sig-prename descclassname"><span class="pre">api.main.</span></span><span class="sig-name descname"><span class="pre">run_plant_getter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plant_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="api/main.html#run_plant_getter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.main.run_plant_getter" title="Link to this definition"></a></dt>
+<dd><p>Fetches detailed plant information for the given list of plant names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>plant_names</strong> (<em>list</em>) – A list of plant names obtained from the classifier.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list containing detailed plant information, including Wikipedia links.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong><strong> (</strong><strong>500</strong><strong>)</strong> – If an error occurs while fetching the plant data.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -184,6 +215,12 @@
 </section>
 <section id="module-api.test_main">
 <span id="api-test-main-module"></span><h2>api.test_main module<a class="headerlink" href="#module-api.test_main" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="api.test_main.client_mock">
+<span class="sig-prename descclassname"><span class="pre">api.test_main.</span></span><span class="sig-name descname"><span class="pre">client_mock</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="api/test_main.html#client_mock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.test_main.client_mock" title="Link to this definition"></a></dt>
+<dd><p>Fixture to create a test client for the FastAPI app.</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="api.test_main.generate_base64_image">
 <span class="sig-prename descclassname"><span class="pre">api.test_main.</span></span><span class="sig-name descname"><span class="pre">generate_base64_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'test_img.jpg'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="api/test_main.html#generate_base64_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.test_main.generate_base64_image" title="Link to this definition"></a></dt>
@@ -230,7 +267,7 @@ encodes it in Base64 format, and returns it as a string.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="api.test_main.test_classify_plant_multiple_images">
-<span class="sig-prename descclassname"><span class="pre">api.test_main.</span></span><span class="sig-name descname"><span class="pre">test_classify_plant_multiple_images</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="api/test_main.html#test_classify_plant_multiple_images"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.test_main.test_classify_plant_multiple_images" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">api.test_main.</span></span><span class="sig-name descname"><span class="pre">test_classify_plant_multiple_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_get_plant_list_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_mock</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="api/test_main.html#test_classify_plant_multiple_images"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.test_main.test_classify_plant_multiple_images" title="Link to this definition"></a></dt>
 <dd><p>Tests the “/uploads” endpoint with multiple Base64 images.</p>
 <dl class="simple">
 <dt>Assertions:</dt><dd><ul class="simple">
@@ -243,12 +280,12 @@ encodes it in Base64 format, and returns it as a string.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="api.test_main.test_classify_plant_valid_image">
-<span class="sig-prename descclassname"><span class="pre">api.test_main.</span></span><span class="sig-name descname"><span class="pre">test_classify_plant_valid_image</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="api/test_main.html#test_classify_plant_valid_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.test_main.test_classify_plant_valid_image" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">api.test_main.</span></span><span class="sig-name descname"><span class="pre">test_classify_plant_valid_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_get_plant_list_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_mock</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="api/test_main.html#test_classify_plant_valid_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.test_main.test_classify_plant_valid_image" title="Link to this definition"></a></dt>
 <dd><p>Tests the “/uploads” endpoint with a valid Base64 image.</p>
 <dl class="simple">
 <dt>Assertions:</dt><dd><ul class="simple">
 <li><p>The HTTP status code must be 200.</p></li>
-<li><p>The JSON response must contain the key “prediction”.</p></li>
+<li><p>The JSON response must contain the key “results”.</p></li>
 </ul>
 </dd>
 </dl>

@@ -97,36 +97,35 @@
 <a class="viewcode-back" href="../api.html#api.main.decode_and_save_image">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">decode_and_save_image</span><span class="p">(</span><span class="n">image_base64</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Decodes a Base64-encoded image and saves it as a JPG file.</span>
+<span class="sd">    Decodes a Base64-encoded image and saves it as a JPG file in the upload folder.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        image_base64 (str): Base64-encoded image string.</span>
+<span class="sd">        image_base64 (str): The Base64-encoded image string (can include data URL prefix).</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        str: The file path of the saved JPG image.</span>
+<span class="sd">        str: The absolute file path of the saved JPG image.</span>
 
 <span class="sd">    Raises:</span>
-<span class="sd">        HTTPException: If the image size exceeds the limit,</span>
-<span class="sd">                        if the Base64 format is invalid,</span>
-<span class="sd">                        or if the image format is unsupported.</span>
+<span class="sd">        HTTPException (413): If the image size exceeds the configured limit.</span>
+<span class="sd">        HTTPException (400): If the Base64 format is invalid or the image format is unsupported.</span>
+<span class="sd">        HTTPException (500): If an unknown error occurs during processing.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="s2">&quot;,&quot;</span> <span class="ow">in</span> <span class="n">image_base64</span><span class="p">:</span>
         <span class="n">image_base64</span> <span class="o">=</span> <span class="n">image_base64</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_base64</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">MAX_IMAGE_SIZE</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
-            <span class="n">status_code</span><span class="o">=</span><span class="mi">413</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Das Bild überschreitet die maximale Dateigröße von 5 MB.&quot;</span><span class="p">)</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="mi">413</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;The image exceeds the maximum file size of 5 MB.&quot;</span>
+        <span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">image_data</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">image_base64</span><span class="p">)</span>
 
     <span class="k">except</span> <span class="n">binascii</span><span class="o">.</span><span class="n">Error</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
-            <span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Ungültiges Base64-Format.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Invalid Base64 format.&quot;</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">image_data</span><span class="p">))</span>
-
         <span class="n">unique_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="si">}</span><span class="s2">.jpg&quot;</span>
         <span class="n">save_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">UPLOAD_FOLDER</span><span class="p">,</span> <span class="n">unique_filename</span><span class="p">)</span>
         <span class="n">image</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;JPEG&quot;</span><span class="p">)</span>
@@ -134,12 +133,10 @@
         <span class="k">return</span> <span class="n">save_path</span>
 
     <span class="k">except</span> <span class="n">UnidentifiedImageError</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
-            <span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Das Bildformat wird nicht unterstützt.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;The image format is not supported.&quot;</span><span class="p">)</span>
 
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
-            <span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Unbekannter Fehler: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Unknown error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 
@@ -147,23 +144,47 @@
 <a class="viewcode-back" href="../api.html#api.main.run_plant_classifier">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run_plant_classifier</span><span class="p">(</span><span class="n">image_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Executes the plant classifier script with the given image path.</span>
+<span class="sd">    Executes the plant classifier model using the provided image path.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        image_path (str): Path to the image file to be classified.</span>
+<span class="sd">        image_path (str): The absolute path to the saved image file.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        str: The classification result from the script.</span>
+<span class="sd">        list: A list of predicted plant classifications, each containing plant details and probabilities.</span>
 
 <span class="sd">    Raises:</span>
-<span class="sd">        HTTPException: If the classification script encounters an error.</span>
+<span class="sd">        HTTPException (500): If an error occurs during model prediction.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">predictions</span> <span class="o">=</span> <span class="n">classifier</span><span class="o">.</span><span class="n">predict_from_image_path</span><span class="p">(</span><span class="n">image_path</span><span class="p">,</span> <span class="n">num_of_results</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">predictions</span>
 
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Fehler im KI-Skript: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error in AI script: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run_plant_getter">
+<a class="viewcode-back" href="../api.html#api.main.run_plant_getter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_plant_getter</span><span class="p">(</span><span class="n">plant_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fetches detailed plant information for the given list of plant names.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        plant_names (list): A list of plant names obtained from the classifier.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: A list containing detailed plant information, including Wikipedia links.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        HTTPException (500): If an error occurs while fetching the plant data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">getter</span><span class="o">.</span><span class="n">get_plant_list_data</span><span class="p">(</span><span class="n">plant_names</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error fetching plant data: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 
@@ -172,29 +193,47 @@
 <span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/uploads&quot;</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">classify_plant</span><span class="p">(</span><span class="n">image_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Endpoint for classifying multiple images.</span>
+<span class="sd">    Endpoint for classifying multiple Base64-encoded images of plants.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        image_data (dict): JSON data containing a list of Base64-encoded images.</span>
+<span class="sd">        image_data (dict): JSON data containing a list of Base64-encoded image strings.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        dict: A dictionary with classification predictions for each uploaded image.</span>
+<span class="sd">        dict: A dictionary containing results for each processed image, including recognized plant names,</span>
+<span class="sd">              additional data, and probabilities.</span>
 
 <span class="sd">    Raises:</span>
-<span class="sd">        HTTPException: If the &#39;images&#39; field is missing in the request.</span>
+<span class="sd">        HTTPException (400): If the &#39;images&#39; field is missing in the request.</span>
+<span class="sd">        HTTPException (500): For unexpected errors in processing or classification.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="s2">&quot;images&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">image_data</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Fehlende Bilddaten.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Missing image data.&quot;</span><span class="p">)</span>
 
     <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">image_base64</span> <span class="ow">in</span> <span class="n">image_data</span><span class="p">[</span><span class="s2">&quot;images&quot;</span><span class="p">]:</span>
         <span class="n">image_path</span> <span class="o">=</span> <span class="n">decode_and_save_image</span><span class="p">(</span><span class="n">image_base64</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
+            <span class="n">predictions</span> <span class="o">=</span> <span class="n">run_plant_classifier</span><span class="p">(</span><span class="n">image_path</span><span class="p">)</span>
+            <span class="n">plant_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">prediction</span><span class="p">[</span><span class="s2">&quot;plant_name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">prediction</span> <span class="ow">in</span> <span class="n">predictions</span><span class="p">]</span>
+            <span class="n">plant_info</span> <span class="o">=</span> <span class="n">run_plant_getter</span><span class="p">(</span><span class="n">plant_names</span><span class="p">)</span>
+
             <span class="n">image_results</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="n">image_base64</span><span class="p">,</span>
                 <span class="s2">&quot;recognitions&quot;</span><span class="p">:</span> <span class="p">[]</span>
             <span class="p">}</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">prediction</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">predictions</span><span class="p">):</span>
+                <span class="n">plant_name</span> <span class="o">=</span> <span class="n">prediction</span><span class="p">[</span><span class="s2">&quot;plant_name&quot;</span><span class="p">]</span>
+                <span class="n">plant_data</span> <span class="o">=</span> <span class="n">plant_info</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">plant_info</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+
+                <span class="n">recognition</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">plant_name</span><span class="p">,</span>
+                    <span class="s2">&quot;plant&quot;</span><span class="p">:</span> <span class="n">plant_data</span><span class="p">[</span><span class="s2">&quot;plant&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">plant_data</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="s2">&quot;wikipedia&quot;</span><span class="p">:</span> <span class="n">plant_data</span><span class="p">[</span><span class="s2">&quot;wikipedia&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">plant_data</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="s2">&quot;probability&quot;</span><span class="p">:</span> <span class="n">prediction</span><span class="p">[</span><span class="s2">&quot;probability&quot;</span><span class="p">]</span>
+                <span class="p">}</span>
+                <span class="n">image_results</span><span class="p">[</span><span class="s2">&quot;recognitions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">recognition</span><span class="p">)</span>
 
             <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image_results</span><span class="p">)</span>
 
@@ -211,10 +250,10 @@
 <span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">hello_world</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A simple endpoint to verify that the API is running.</span>
+<span class="sd">    A simple endpoint to verify that the API is online.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        dict: A message confirming the API is online.</span>
+<span class="sd">        dict: A greeting message confirming the API is active.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello World 🌍&quot;</span><span class="p">}</span></div>
 
