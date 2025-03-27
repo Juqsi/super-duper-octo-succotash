@@ -128,8 +128,7 @@ async def classify_plant(image_data: dict):
         {
             "images": [
                 "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/...",
-                "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/..."
-            ]
+                "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/..."]
         }
 
     Example response:

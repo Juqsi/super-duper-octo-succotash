@@ -1,13 +1,14 @@
 import os
+
 import torch
 
 # Verzeichnisse
-DATA_DIR = '../../dataset/plantnet_300K'
-MODEL_DIR = '../../models'
-CHECKPOINT_DIR = '../../../checkpoints'
+DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../dataset/plantnet_300K"))
+MODEL_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../models"))
+CHECKPOINT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../checkpoints"))
 
 # Lokales Speichern des vortrainierten Modells
-PRETRAINED_MODEL_PATH = "../../../models/resnet50.pth"
+PRETRAINED_MODEL_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../models/resenet50.pth"))
 
 USE_MIXUP = False
 
@@ -19,9 +20,9 @@ CUTMIX_PROB = 0.5
 
 
 # Hyperparameter
-BATCH_SIZE = 128 # Reduziert auf 64 für besseres Generalisieren
+BATCH_SIZE = 128  # Reduziert auf 64 für besseres Generalisieren
 LEARNING_RATE = 5e-5
-EPOCHS = 120 
+EPOCHS = 120
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # Datasets

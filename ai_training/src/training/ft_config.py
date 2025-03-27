@@ -1,10 +1,11 @@
 import os
+
 import torch
 
 # === Verzeichnisse ===
-DATA_DIR = '../../dataset/plantnet_300K'
-MODEL_DIR = '../../models'
-CHECKPOINT_DIR = '../../../checkpoints'
+DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../dataset/plantnet_300K"))
+MODEL_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../models"))
+CHECKPOINT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../dcheckpoints"))
 PRETRAINED_MODEL_PATH = os.path.join(MODEL_DIR, 'resnet50.pth')
 # Vorheriger Trainingsstand für Finetuning
 PREVIOUS_CHECKPOINT = os.path.join(CHECKPOINT_DIR, 'checkpoint_epoch_116.pth')
@@ -29,4 +30,4 @@ DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 CHECKPOINT_PATH = os.path.join(CHECKPOINT_DIR, 'finetune_checkpoint_epoch_{}.pth')
 
 # === Merge-Konfiguration ===
-MERGE_MAP_PATH = '../evaluation/merge_map.json'
+MERGE_MAP_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../helperscripts/merge_map.json'))
