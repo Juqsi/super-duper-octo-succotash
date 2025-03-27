@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch
-from .plant_api import PlantGetter, _PlantApi, _WikiApi  # Adjust the import to match your module name
+from plantapi.plant_api import PlantGetter, _PlantApi, _WikiApi  # Adjust the import to match your module name
 
 
 def test_get_plant_data_success():

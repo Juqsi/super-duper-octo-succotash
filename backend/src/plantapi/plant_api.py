@@ -28,7 +28,7 @@ class _PlantApi:
             allowed_methods={'GET'},
         )
         self.session.mount('https://', HTTPAdapter(max_retries=retries))
-        self.plant_base_url = 'https://ASE.Juqsi.de/plants/search?name='
+        self.plant_base_url: str = 'https://ASE.Juqsi.de/plants/search?name='
 
     def __enter__(self):
         """
@@ -61,7 +61,7 @@ class _PlantApi:
         """
         try:
             url: str = self.plant_base_url + name
-            plant_data = self.session.get(url, timeout=3.05).json()
+            plant_data: list = self.session.get(url, timeout=3.05).json()
             return plant_data
 
         except ValueError as value_error:
