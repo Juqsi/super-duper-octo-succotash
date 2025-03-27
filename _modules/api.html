@@ -53,6 +53,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#api.main.hello_world"><code class="docutils literal notranslate"><span class="pre">hello_world()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#api.main.run_plant_classifier"><code class="docutils literal notranslate"><span class="pre">run_plant_classifier()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#api.main.run_plant_getter"><code class="docutils literal notranslate"><span class="pre">run_plant_getter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api.main.search_plant"><code class="docutils literal notranslate"><span class="pre">search_plant()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-api.test_main">api.test_main module</a><ul>
@@ -64,6 +65,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#api.test_main.test_classify_plant_valid_image"><code class="docutils literal notranslate"><span class="pre">test_classify_plant_valid_image()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#api.test_main.test_hello_world"><code class="docutils literal notranslate"><span class="pre">test_hello_world()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#api.test_main.test_image_too_large"><code class="docutils literal notranslate"><span class="pre">test_image_too_large()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api.test_main.test_search_plant_missing_name"><code class="docutils literal notranslate"><span class="pre">test_search_plant_missing_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api.test_main.test_search_plant_valid_name"><code class="docutils literal notranslate"><span class="pre">test_search_plant_valid_name()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-api">Module contents</a></li>
@@ -130,6 +133,53 @@
 <li><p><strong>HTTPException</strong><strong> (</strong><strong>400</strong><strong>)</strong> – If the ‘images’ field is missing in the request.</p></li>
 <li><p><strong>HTTPException</strong><strong> (</strong><strong>500</strong><strong>)</strong> – For unexpected errors in processing or classification.</p></li>
 </ul>
+</dd>
+</dl>
+<dl>
+<dt>Example request:</dt><dd><dl>
+<dt>{</dt><dd><dl class="simple">
+<dt>“images”: [</dt><dd><p>“<a class="reference external" href="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/">data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/</a>…”,
+“<a class="reference external" href="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/">data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/</a>…”</p>
+</dd>
+</dl>
+<p>]</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+<dt>Example response:</dt><dd><dl>
+<dt>{</dt><dd><dl>
+<dt>“results”: [</dt><dd><dl>
+<dt>{</dt><dd><p>“image”: “<a class="reference external" href="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/">data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/</a>…”,
+“recognitions”: [</p>
+<blockquote>
+<div><dl class="simple">
+<dt>{</dt><dd><p>“name”: “Rosa indica”,
+“plant”: { … },  # Additional plant data
+“wikipedia”: “<a class="reference external" href="https://en.wikipedia.org/wiki/Rosa_indica">https://en.wikipedia.org/wiki/Rosa_indica</a>”,
+“probability”: 0.98</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div><p>“name”: “Rosa rugosa”,
+“plant”: { … },  # Additional plant data
+“wikipedia”: “<a class="reference external" href="https://en.wikipedia.org/wiki/Rosa_rugosa">https://en.wikipedia.org/wiki/Rosa_rugosa</a>”,
+“probability”: 0.85</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>]</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+<p>]</p>
+</dd>
+</dl>
+<p>}</p>
 </dd>
 </dl>
 </dd></dl>
@@ -208,6 +258,55 @@
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>HTTPException</strong><strong> (</strong><strong>500</strong><strong>)</strong> – If an error occurs while fetching the plant data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="api.main.search_plant">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.main.</span></span><span class="sig-name descname"><span class="pre">search_plant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plant_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="api/main.html#search_plant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.main.search_plant" title="Link to this definition"></a></dt>
+<dd><p>Endpoint for searching plants by their names and retrieving additional data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>plant_data</strong> (<em>dict</em>) – A dictionary containing the plant name(s) under the “name” key.
+The “name” key can contain a single plant name (string) or a list of plant names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A dictionary containing the results of the search with additional plant information.</dt><dd><p>The results include the plant name, its associated data, and a link to the Wikipedia page.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong><strong> (</strong><strong>400</strong><strong>)</strong> – If the ‘name’ field is missing in the request or if it’s an invalid input.</p>
+</dd>
+</dl>
+<dl>
+<dt>Example request:</dt><dd><dl class="simple">
+<dt>{</dt><dd><p>“name”: “Rosa indica”</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+<dt>Example response:</dt><dd><dl>
+<dt>{</dt><dd><dl>
+<dt>“results”: [</dt><dd><dl class="simple">
+<dt>{</dt><dd><p>“name”: “Rosa indica”,
+“plant”: { … },  # Additional plant data
+“wikipedia”: “<a class="reference external" href="https://en.wikipedia.org/wiki/Rosa_indica">https://en.wikipedia.org/wiki/Rosa_indica</a>”</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+<p>]</p>
+</dd>
+</dl>
+<p>}</p>
 </dd>
 </dl>
 </dd></dl>
@@ -313,6 +412,33 @@ encodes it in Base64 format, and returns it as a string.</p>
 <dt>Assertions:</dt><dd><ul class="simple">
 <li><p>The HTTP status code must be 413.</p></li>
 <li><p>The JSON response must contain the appropriate error message indicating size limit exceeded.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="api.test_main.test_search_plant_missing_name">
+<span class="sig-prename descclassname"><span class="pre">api.test_main.</span></span><span class="sig-name descname"><span class="pre">test_search_plant_missing_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_get_plant_list_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_mock</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="api/test_main.html#test_search_plant_missing_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.test_main.test_search_plant_missing_name" title="Link to this definition"></a></dt>
+<dd><p>Tests the “/search” endpoint with missing ‘name’ field in the request.</p>
+<dl class="simple">
+<dt>Assertions:</dt><dd><ul class="simple">
+<li><p>The HTTP status code must be 400.</p></li>
+<li><p>The JSON response must contain the error message “Missing plant name.”</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="api.test_main.test_search_plant_valid_name">
+<span class="sig-prename descclassname"><span class="pre">api.test_main.</span></span><span class="sig-name descname"><span class="pre">test_search_plant_valid_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_get_plant_list_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_mock</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="api/test_main.html#test_search_plant_valid_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.test_main.test_search_plant_valid_name" title="Link to this definition"></a></dt>
+<dd><p>Tests the “/search” endpoint with a valid plant name.</p>
+<dl class="simple">
+<dt>Assertions:</dt><dd><ul class="simple">
+<li><p>The HTTP status code must be 200.</p></li>
+<li><p>The JSON response must contain the ‘results’ key.</p></li>
+<li><p>The ‘results’ should contain the plant data and its associated Wikipedia link.</p></li>
 </ul>
 </dd>
 </dl>

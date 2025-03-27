@@ -269,6 +269,59 @@
     <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">400</span>
     <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;detail&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Missing image data.&quot;</span></div>
 
+
+
+<div class="viewcode-block" id="test_search_plant_missing_name">
+<a class="viewcode-back" href="../api.html#api.test_main.test_search_plant_missing_name">[docs]</a>
+<span class="nd">@patch</span><span class="o">.</span><span class="n">object</span><span class="p">(</span><span class="n">PlantGetter</span><span class="p">,</span> <span class="s1">&#39;get_plant_list_data&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_search_plant_missing_name</span><span class="p">(</span><span class="n">mock_get_plant_list_data</span><span class="p">,</span> <span class="n">client_mock</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests the &quot;/search&quot; endpoint with missing &#39;name&#39; field in the request.</span>
+
+<span class="sd">    Assertions:</span>
+<span class="sd">        - The HTTP status code must be 400.</span>
+<span class="sd">        - The JSON response must contain the error message &quot;Missing plant name.&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="s2">&quot;/search&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{}</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">400</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;detail&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Missing plant name.&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_search_plant_valid_name">
+<a class="viewcode-back" href="../api.html#api.test_main.test_search_plant_valid_name">[docs]</a>
+<span class="nd">@patch</span><span class="o">.</span><span class="n">object</span><span class="p">(</span><span class="n">PlantGetter</span><span class="p">,</span> <span class="s1">&#39;get_plant_list_data&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_search_plant_valid_name</span><span class="p">(</span><span class="n">mock_get_plant_list_data</span><span class="p">,</span> <span class="n">client_mock</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests the &quot;/search&quot; endpoint with a valid plant name.</span>
+
+<span class="sd">    Assertions:</span>
+<span class="sd">        - The HTTP status code must be 200.</span>
+<span class="sd">        - The JSON response must contain the &#39;results&#39; key.</span>
+<span class="sd">        - The &#39;results&#39; should contain the plant data and its associated Wikipedia link.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Mocking the response from PlantGetter&#39;s get_plant_list_data method</span>
+    <span class="n">mock_get_plant_list_data</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosa indica&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;plant&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;scientific_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosa indica&quot;</span><span class="p">,</span> <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosaceae&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;wikipedia&quot;</span><span class="p">:</span> <span class="s2">&quot;https://en.wikipedia.org/wiki/Rosa_indica&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="s2">&quot;/search&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosa indica&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+    <span class="k">assert</span> <span class="s2">&quot;results&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Rosa indica&quot;</span>
+    <span class="k">assert</span> <span class="s2">&quot;wikipedia&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;wikipedia&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;https://en.wikipedia.org/wiki/Rosa_indica&quot;</span></div>
+
 </pre></div>
 
            </div>
