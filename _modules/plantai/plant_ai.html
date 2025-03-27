@@ -94,8 +94,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span>
         <span class="n">content_root</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
-        <span class="n">model_path</span> <span class="o">=</span> <span class="n">content_root</span> <span class="o">/</span> <span class="s2">&quot;ki&quot;</span> <span class="o">/</span> <span class="s2">&quot;final_model_2025-03-21_13-36-43.pth&quot;</span>
-        <span class="n">config_path</span> <span class="o">=</span> <span class="n">content_root</span> <span class="o">/</span> <span class="s2">&quot;ki&quot;</span> <span class="o">/</span> <span class="s2">&quot;config_2025-03-21_13-36-43.json&quot;</span>
+        <span class="n">model_path</span> <span class="o">=</span> <span class="n">content_root</span> <span class="o">/</span> <span class="s2">&quot;ki&quot;</span> <span class="o">/</span> <span class="s2">&quot;finetuned_model_2025-03-27_09-38-24.pth&quot;</span>
+        <span class="n">config_path</span> <span class="o">=</span> <span class="n">content_root</span> <span class="o">/</span> <span class="s2">&quot;ki&quot;</span> <span class="o">/</span> <span class="s2">&quot;config_finetune_2025-03-27_09-38-24.json&quot;</span>
         <span class="n">class_map_path</span> <span class="o">=</span> <span class="n">content_root</span> <span class="o">/</span> <span class="s2">&quot;ki&quot;</span> <span class="o">/</span> <span class="s2">&quot;plantnet300K_species_names.json&quot;</span>
 
         <span class="c1"># Klassen laden</span>

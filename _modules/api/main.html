@@ -90,15 +90,13 @@
 <span class="c1"># Load maximum image size from .env file (default: 5 MB)</span>
 <span class="n">MAX_IMAGE_SIZE</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MAX_IMAGE_SIZE&quot;</span><span class="p">,</span> <span class="s2">&quot;5242880&quot;</span><span class="p">))</span>
 
+<span class="c1"># Load Host domain</span>
+<span class="n">HOST</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;HOST&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 <span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
 
 <span class="n">origins</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;https://localhost:443&quot;</span><span class="p">,</span>
     <span class="s2">&quot;https://localhost&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;https://127.0.0.1:443&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;https://127.0.0.1&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;https://api.ase.juqsi.de&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;https://ase.juqsi.de&quot;</span><span class="p">,</span>
+    <span class="n">HOST</span>
 <span class="p">]</span>
 
 <span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span>
