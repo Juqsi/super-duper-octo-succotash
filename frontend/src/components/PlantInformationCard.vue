@@ -75,7 +75,7 @@ const props = defineProps<{ recognition: Recognition }>()
         <Accordion class="mt-4 border-t pt-4" collapsible>
           <AccordionItem value="watering">
             <AccordionTrigger class="flex items-center gap-2">
-              <Droplet class="w-4 h-4" />
+              <Droplet class="!rotate-0 w-4 h-4" />
               <span>Watering Details</span>
             </AccordionTrigger>
             <AccordionContent class="text-sm text-muted-foreground">
@@ -84,7 +84,7 @@ const props = defineProps<{ recognition: Recognition }>()
           </AccordionItem>
           <AccordionItem value="sunlight">
             <AccordionTrigger class="flex items-center gap-2">
-              <Sun class="w-4 h-4" />
+              <Sun class="!rotate-0 w-4 h-4" />
               <span>Sunlight Requirements</span>
             </AccordionTrigger>
             <AccordionContent class="text-sm text-muted-foreground">
@@ -93,7 +93,7 @@ const props = defineProps<{ recognition: Recognition }>()
           </AccordionItem>
           <AccordionItem value="pruning">
             <AccordionTrigger class="flex items-center gap-2">
-              <Leaf class="w-4 h-4" />
+              <Leaf class="!rotate-0 w-4 h-4" />
               <span>Pruning Guide</span>
             </AccordionTrigger>
             <AccordionContent class="text-sm text-muted-foreground">

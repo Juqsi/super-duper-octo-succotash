@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { toast } from 'vue-sonner'
+import type {Recognition} from '@/stores/usePlantHistory'
 
 export const BASE_PATH = import.meta.env.VITE_API_BASE || ''
 
@@ -7,7 +8,7 @@ export function useSearch(apiUrl: string = BASE_PATH) {
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
-  const searchPlant = async (name: string) => {
+  const searchPlant = async (name: string):Promise<Recognition[] | undefined> => {
     const toastId = toast.loading('Search plant...')
     isLoading.value = true
     error.value = null
@@ -26,7 +27,7 @@ export function useSearch(apiUrl: string = BASE_PATH) {
 
       const data = await response.json()
       toast.success('Search successful!', { id: toastId })
-      return data
+      return data.results
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error'
       console.error('Search failed:', errorMessage)
