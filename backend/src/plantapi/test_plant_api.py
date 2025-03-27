@@ -1,5 +1,7 @@
-import pytest
 from unittest.mock import patch
+
+import pytest
+
 from .plant_api import PlantGetter, _PlantApi, _WikiApi  # Adjust the import to match your module name
 
 
@@ -69,12 +71,12 @@ def test_get_plant_list_data_success():
     assert results == [
         {
             "name": "Rosa indica",
-            "Plant": {"scientific_name": "Rosa indica", "family": "Rosaceae"},
+            "plant": {"scientific_name": "Rosa indica", "family": "Rosaceae"},
             "wikipedia": "https://de.wikipedia.org/wiki/Rosa_indica"
         },
         {
             "name": "Tulipa gesneriana",
-            "Plant": {"scientific_name": "Tulipa gesneriana", "family": "Liliaceae"},
+            "plant": {"scientific_name": "Tulipa gesneriana", "family": "Liliaceae"},
             "wikipedia": "https://de.wikipedia.org/wiki/Tulipa_gesneriana"
         }
     ]
