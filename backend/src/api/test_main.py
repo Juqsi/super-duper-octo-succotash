@@ -1,12 +1,22 @@
 import base64
 from pathlib import Path
+from unittest.mock import patch
 
+import pytest
 from fastapi.testclient import TestClient
 
+from plantapi.plant_api import PlantGetter
 from .main import MAX_IMAGE_SIZE
 from .main import app
 
 client = TestClient(app)
+
+
+@pytest.fixture()
+def client_mock():
+    """Fixture to create a test client for the FastAPI app."""
+    client_mock = TestClient(app)
+    yield client_mock
 
 
 def generate_base64_image(image_filename="test_img.jpg"):
@@ -24,7 +34,7 @@ def generate_base64_image(image_filename="test_img.jpg"):
     image_path = script_dir / image_filename
 
     if not image_path.exists():
-        raise FileNotFoundError(f"Das Bild '{image_filename}' wurde nicht im Ordner gefunden.")
+        raise FileNotFoundError(f"The image '{image_filename}' was not found in the folder.")
 
     with open(image_path, "rb") as image_file:
         base64_image = base64.b64encode(image_file.read()).decode("utf-8")
@@ -46,24 +56,38 @@ def test_hello_world():
     assert response.json() == {"message": "Hello World 🌍"}
 
 
-def test_classify_plant_valid_image():
+@patch.object(PlantGetter, 'get_plant_list_data')
+def test_classify_plant_valid_image(mock_get_plant_list_data, client_mock):
     """
     Tests the "/uploads" endpoint with a valid Base64 image.
 
     Assertions:
         - The HTTP status code must be 200.
-        - The JSON response must contain the key "prediction".
+        - The JSON response must contain the key "results".
     """
     valid_base64_image = generate_base64_image()
+
+    # Mocking the response from PlantGetter's get_plant_list_data method
+    mock_get_plant_list_data.return_value = [
+        {
+            "name": "Rosa indica",
+            "plant": {"scientific_name": "Rosa indica", "family": "Rosaceae"},
+            "wikipedia": "https://de.wikipedia.org/wiki/Rosa_indica"
+        }
+    ]
 
     response = client.post(
         "/uploads", json={"images": [valid_base64_image]}
     )
+    print(response.json())
     assert response.status_code == 200
     assert "results" in response.json()
+    assert len(response.json()["results"]) == 1
+    assert "recognitions" in response.json()["results"][0]
 
 
-def test_classify_plant_multiple_images():
+@patch.object(PlantGetter, 'get_plant_list_data')
+def test_classify_plant_multiple_images(mock_get_plant_list_data, client_mock):
     """
     Tests the "/uploads" endpoint with multiple Base64 images.
 
@@ -74,11 +98,33 @@ def test_classify_plant_multiple_images():
     valid_base64_image1 = generate_base64_image()
     valid_base64_image2 = generate_base64_image()
 
+    # Mocking the response from PlantGetter's get_plant_list_data method
+    mock_get_plant_list_data.side_effect = [
+        [
+            {
+                "name": "Rosa indica",
+                "plant": {"scientific_name": "Rosa indica", "family": "Rosaceae"},
+                "wikipedia": "https://de.wikipedia.org/wiki/Rosa_indica"
+            }
+        ],
+        [
+            {
+                "name": "Tulipa gesneriana",
+                "plant": {"scientific_name": "Tulipa gesneriana", "family": "Liliaceae"},
+                "wikipedia": "https://de.wikipedia.org/wiki/Tulipa_gesneriana"
+            }
+        ]
+    ]
+
     response = client.post(
         "/uploads", json={"images": [valid_base64_image1, valid_base64_image2]}
     )
+    print(response.json())
     assert response.status_code == 200
     assert "results" in response.json()
+    assert len(response.json()["results"]) == 2
+    assert len(response.json()["results"][0]["recognitions"]) == 5
+    assert len(response.json()["results"][1]["recognitions"]) == 5
 
 
 def test_classify_plant_invalid_image():
@@ -95,7 +141,7 @@ def test_classify_plant_invalid_image():
         "/uploads", json={"images": [invalid_base64_image]}
     )
     assert response.status_code == 400
-    assert response.json()["detail"] == "Ungültiges Base64-Format."
+    assert response.json()["detail"] == "Invalid Base64 format."
 
 
 def test_image_too_large():
@@ -112,7 +158,7 @@ def test_image_too_large():
         "/uploads", json={"images": [large_base64_image]}
     )
     assert response.status_code == 413
-    assert response.json()["detail"] == "Das Bild überschreitet die maximale Dateigröße von 5 MB."
+    assert response.json()["detail"] == "The image exceeds the maximum file size of 5 MB."
 
 
 def test_classify_plant_empty_image_list():
@@ -127,4 +173,4 @@ def test_classify_plant_empty_image_list():
         "/uploads", json={}
     )
     assert response.status_code == 400
-    assert response.json()["detail"] == "Fehlende Bilddaten."
+    assert response.json()["detail"] == "Missing image data."

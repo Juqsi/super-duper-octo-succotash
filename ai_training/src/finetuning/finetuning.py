@@ -12,24 +12,24 @@ Dieses Skript führt folgende Schritte durch:
     8. Speichern des finalen Modells, Konfiguration und Visualisierung des Trainingsverlaufs.
 """
 
-import os
 import gc
-import time
 import json
+import os
+import time
+from datetime import datetime
+
 import torch
 import torchvision.models as models
-from datetime import datetime
 from torch import nn, optim
+from torch.optim.lr_scheduler import CosineAnnealingLR
 from torch.utils.data import DataLoader, WeightedRandomSampler
 from torchvision import datasets, transforms
-from torchvision.models import ResNet50_Weights
 from torchvision.transforms import RandAugment
-from torch.optim.lr_scheduler import CosineAnnealingLR
 from tqdm import tqdm
 
 import ft_config as config
-from ai_training.src.training.utils import save_checkpoint
 from ai_training.src.training.stats import save_confusion_matrix, plot_training_progress
+from ai_training.src.training.utils import save_checkpoint
 
 # --- Merge Map laden und Klassen zusammenführen ---
 
