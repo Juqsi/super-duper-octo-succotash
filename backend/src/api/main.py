@@ -90,14 +90,6 @@ def run_plant_classifier(image_path: str) -> list:
         raise HTTPException(status_code=500, detail=f"Fehler im KI-Skript: {e}")
 
 
-def run_plant_getter(plant_names: list) -> dict:
-    try:
-        return getter.get_plant_list_data(plant_names)
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Fehler beim Abrufen der Pflanzendaten: {e}")
-
-
 @app.post("/uploads")
 async def classify_plant(image_data: dict):
     """
@@ -120,46 +112,16 @@ async def classify_plant(image_data: dict):
         image_path = decode_and_save_image(image_base64)
 
         try:
-            predictions = run_plant_classifier(image_path)
-
-            plant_names = [prediction["plant_name"] for prediction in predictions]
-
-            plant_info = run_plant_getter(plant_names)
-
             image_results = {
                 "image": image_base64,
                 "recognitions": []
             }
-
-            for i, prediction in enumerate(predictions):
-                plant_name = prediction["plant_name"]
-                plant_data = plant_info[i] if i < len(plant_info) else None
-
-                recognition = {
-                    "name": plant_name,
-                    "plant": plant_data["plant"] if plant_data else None,
-                    "wikipedia": plant_data["wikipedia"] if plant_data else None,
-                    "probability": prediction["probability"]
-                }
-
-                image_results["recognitions"].append(recognition)
 
             results.append(image_results)
 
         finally:
             if os.path.exists(image_path):
                 os.remove(image_path)
-
-    return {"results": results}
-
-
-@app.post("/search")
-async def search_plant(plant_data: dict):
-    if "name" not in plant_data:
-        raise HTTPException(status_code=400, detail="Fehlender Pflanzenname.")
-
-    plant_names = plant_data["name"] if isinstance(plant_data["name"], list) else [plant_data["name"]]
-    results = run_plant_getter(plant_names)
 
     return {"results": results}
 
