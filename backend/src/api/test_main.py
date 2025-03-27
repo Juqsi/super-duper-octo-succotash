@@ -1,7 +1,6 @@
 import base64
-from io import BytesIO
+from pathlib import Path
 
-from PIL import Image
 from fastapi.testclient import TestClient
 
 from .main import MAX_IMAGE_SIZE
@@ -10,20 +9,25 @@ from .main import app
 client = TestClient(app)
 
 
-def generate_base64_image():
+def generate_base64_image(image_filename="test_img.jpg"):
     """
-    Generates a 1x1 pixel white test image and encodes it in Base64 format.
+    Reads an existing image from the same folder as this script,
+    encodes it in Base64 format, and returns it as a string.
+
+    Args:
+        image_filename (str): Name of the image file to encode.
 
     Returns:
-        str: Base64-encoded string of the test image in JPEG format.
+        str: Base64-encoded string of the image in JPEG format.
     """
-    image = Image.new("RGB", (1, 1), color=(255, 255, 255))
+    script_dir = Path(__file__).resolve().parent
+    image_path = script_dir / image_filename
 
-    buffer = BytesIO()
-    image.save(buffer, format="JPEG")
-    buffer.seek(0)
+    if not image_path.exists():
+        raise FileNotFoundError(f"Das Bild '{image_filename}' wurde nicht im Ordner gefunden.")
 
-    base64_image = base64.b64encode(buffer.read()).decode("utf-8")
+    with open(image_path, "rb") as image_file:
+        base64_image = base64.b64encode(image_file.read()).decode("utf-8")
 
     return f"data:image/jpeg;base64,{base64_image}"
 
@@ -74,6 +78,7 @@ def test_classify_plant_multiple_images():
         "/uploads", json={"images": [valid_base64_image1, valid_base64_image2]}
     )
     assert response.status_code == 200
+    assert "results" in response.json()
 
 
 def test_classify_plant_invalid_image():

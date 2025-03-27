@@ -1,12 +1,14 @@
 import base64
 import binascii
 import os
-import subprocess
 import uuid
 from io import BytesIO
 
 from PIL import Image, UnidentifiedImageError
 from fastapi import FastAPI, HTTPException
+
+from plantai.plant_ai import PlantClassifier
+from plantapi.plant_api import PlantGetter
 
 # Create image upload folder
 UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "classify")
@@ -16,6 +18,8 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 MAX_IMAGE_SIZE = int(os.getenv("MAX_IMAGE_SIZE", "5242880"))
 
 app = FastAPI()
+classifier = PlantClassifier()
+getter = PlantGetter()
 
 
 def decode_and_save_image(image_base64: str) -> str:
@@ -65,7 +69,7 @@ def decode_and_save_image(image_base64: str) -> str:
             status_code=500, detail=f"Unbekannter Fehler: {str(e)}")
 
 
-def run_plant_classifier(image_path: str) -> str:
+def run_plant_classifier(image_path: str) -> list:
     """
     Executes the plant classifier script with the given image path.
 
@@ -79,17 +83,11 @@ def run_plant_classifier(image_path: str) -> str:
         HTTPException: If the classification script encounters an error.
     """
     try:
-        result = subprocess.run(
-            ["python", "plant_classifier.py", image_path],
-            capture_output=True, text=True, check=True
-        )
-        return result.stdout.strip()
-    except subprocess.CalledProcessError as e:
-        raise HTTPException(
-            status_code=500, detail=f"Fehler im KI-Skript: {e}")
-    finally:
-        if os.path.exists(image_path):
-            os.remove(image_path)
+        predictions = classifier.predict_from_image_path(image_path, num_of_results=5)
+        return predictions
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Fehler im KI-Skript: {e}")
 
 
 @app.post("/uploads")
@@ -109,14 +107,21 @@ async def classify_plant(image_data: dict):
     if "images" not in image_data:
         raise HTTPException(status_code=400, detail="Fehlende Bilddaten.")
 
-    # predictions = []
+    results = []
     for image_base64 in image_data["images"]:
-        # image_path = (
-        decode_and_save_image(image_base64)  # )
-        # prediction = run_plant_classifier(image_path)
-        # predictions.append(prediction)
+        image_path = decode_and_save_image(image_base64)
 
-    results = []  # run_plant_data_api(predictions)
+        try:
+            image_results = {
+                "image": image_base64,
+                "recognitions": []
+            }
+
+            results.append(image_results)
+
+        finally:
+            if os.path.exists(image_path):
+                os.remove(image_path)
 
     return {"results": results}
 

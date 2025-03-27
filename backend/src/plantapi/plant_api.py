@@ -2,6 +2,7 @@
 This module implements the PlantGetter class which can be used for getting additional Data for a list of plants.
 """
 import os
+
 from dotenv import load_dotenv
 from requests import Session
 from requests.adapters import HTTPAdapter
@@ -17,7 +18,7 @@ class _PlantApi:
         """
         Initializes a new Instance of  the PlantApi class and creates a session object.
         """
-        load_dotenv(dotenv_path='../../../.env')
+        load_dotenv()
         self.api_key = os.getenv("PLANT_API_KEY")
         self.session = Session()
         self.session.headers.update(Authorization=self.api_key)
@@ -136,10 +137,10 @@ class PlantGetter:
                     response: list = Plant_api.get_plant_data(plant_name)
                     data = {
                         "name": plant_name.replace("_", " "),
-                        "Plant": None,
+                        "plant": None,
                         "wikipedia": wiki_api.get_wikipedia_link(plant_name),
                     }
                     if response:
-                        data["Plant"] = response[0]
+                        data["plant"] = response[0]
                     data_list.append(data)
             return data_list
