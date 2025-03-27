@@ -3,24 +3,23 @@ import torch
 
 def save_checkpoint(model, optimizer, epoch, checkpoint_path):
     """
-    Speichert den aktuellen Zustand des Modells und Optimizers als Checkpoint.
+    Saves the current state of the model and optimizer as a checkpoint.
 
-    Diese Funktion speichert den Zustand des Modells, des Optimizers und die aktuelle Epoche
-    in einem Dictionary und schreibt dieses Dictionary in eine Datei, die durch 'checkpoint_path'
-    spezifiziert ist.
+    This function stores the state of the model, optimizer, and the current epoch
+    in a dictionary and writes this dictionary to a file specified by 'checkpoint_path'.
 
     Args:
-        model (torch.nn.Module): Das zu speichernde Modell.
-        optimizer (torch.optim.Optimizer): Der Optimizer, dessen Zustand ebenfalls gespeichert wird.
-        epoch (int): Die aktuelle Epoche, die im Checkpoint vermerkt wird.
-        checkpoint_path (str): Der Dateipfad, an dem der Checkpoint gespeichert wird.
+        model (torch.nn.Module): The model to be saved.
+        optimizer (torch.optim.Optimizer): The optimizer whose state will also be saved.
+        epoch (int): The current epoch to record in the checkpoint.
+        checkpoint_path (str): The file path where the checkpoint will be saved.
 
     Returns:
         None
 
     Side Effects:
-        - Speichert einen Checkpoint auf der Festplatte.
-        - Gibt eine Bestätigung auf der Konsole aus.
+        - Saves a checkpoint on the disk.
+        - Prints a confirmation message to the console.
     """
     checkpoint = {
         'epoch': epoch,
@@ -28,33 +27,33 @@ def save_checkpoint(model, optimizer, epoch, checkpoint_path):
         'optimizer_state_dict': optimizer.state_dict(),
     }
     torch.save(checkpoint, checkpoint_path)
-    print(f"Checkpoint für Epoche {epoch} gespeichert.")
+    print(f"Checkpoint saved for epoch {epoch}.")
 
 
 def load_checkpoint(model, optimizer, path, device):
     """
-    Lädt einen gespeicherten Checkpoint und stellt den Zustand von Modell und Optimizer wieder her.
+    Loads a saved checkpoint and restores the state of the model and optimizer.
 
-    Diese Funktion lädt einen Checkpoint von dem angegebenen Pfad, stellt den Zustand des Modells und
-    des Optimizers wieder her und gibt die geladene Epoche zurück.
+    This function loads a checkpoint from the specified path, restores the model
+    and optimizer state, and returns the loaded epoch.
 
     Args:
-        model (torch.nn.Module): Das Modell, in das der gespeicherte Zustand geladen wird.
-        optimizer (torch.optim.Optimizer): Der Optimizer, in den der gespeicherte Zustand geladen wird.
-        path (str): Der Pfad zur Checkpoint-Datei.
-        device (torch.device or str): Das Gerät, auf das die geladenen Daten gemappt werden sollen.
+        model (torch.nn.Module): The model into which the saved state will be loaded.
+        optimizer (torch.optim.Optimizer): The optimizer into which the saved state will be loaded.
+        path (str): The path to the checkpoint file.
+        device (torch.device or str): The device on which the loaded data should be mapped.
 
     Returns:
-        tuple: Ein Tupel (model, optimizer, epoch) bestehend aus dem Modell mit geladenem Zustand,
-               dem Optimizer mit geladenem Zustand und der zuletzt gespeicherten Epoche.
+        tuple: A tuple (model, optimizer, epoch) containing the model with loaded state,
+               the optimizer with loaded state, and the last saved epoch.
 
     Side Effects:
-        - Gibt Statusmeldungen auf der Konsole aus.
+        - Prints status messages to the console.
     """
-    print(f"Lade Checkpoint von {path}...")
-    checkpoint = torch.load(path, map_location=device, weights_only=True)  # Sicherer laden
+    print(f"Loading checkpoint from {path}...")
+    checkpoint = torch.load(path, map_location=device, weights_only=True)  # Safer loading
     model.load_state_dict(checkpoint['model_state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
     epoch = checkpoint['epoch']
-    print(f"Checkpoint geladen (Epoche {epoch})")
+    print(f"Checkpoint loaded (Epoch {epoch})")
     return model, optimizer, epoch

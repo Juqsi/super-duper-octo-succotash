@@ -22,15 +22,15 @@ from utils import save_checkpoint, load_checkpoint
 
 class FocalLoss(nn.Module):
     """
-    Focal Loss zur Verbesserung des Lernens seltener Klassen.
+    Focal Loss to improve learning of rare classes.
 
-    Diese Loss-Funktion reduziert den Einfluss gut klassifizierter Beispiele und fokussiert das Training
-    stärker auf schwerere Beispiele. Sie wird häufig bei unausgewogenen Klassifikationsproblemen eingesetzt.
+    This loss function reduces the impact of well-classified examples and focuses training
+    more heavily on harder examples. It is often used in imbalanced classification problems.
 
     Args:
-        alpha (float, optional): Skalierungsfaktor für die Focal Loss. Standard ist 0.25.
-        gamma (float, optional): Fokussierungsparameter zur Gewichtung schwerer Beispiele. Standard ist 2.0.
-        reduction (str, optional): Methode zur Aggregation des Loss ('mean' oder 'sum'). Standard ist 'mean'.
+        alpha (float, optional): Scaling factor for Focal Loss. Default is 0.25.
+        gamma (float, optional): Focusing parameter for weighting hard examples. Default is 2.0.
+        reduction (str, optional): Method for aggregating the loss ('mean' or 'sum'). Default is 'mean'.
     """
 
     def __init__(self, alpha=0.25, gamma=2.0, reduction='mean'):
@@ -41,14 +41,14 @@ class FocalLoss(nn.Module):
 
     def forward(self, inputs, targets):
         """
-        Berechnet den Focal Loss zwischen den Eingaben und den Zielklassen.
+        Calculates the Focal Loss between inputs and target classes.
 
         Args:
-            inputs (Tensor): Vorhersagen des Modells (Rohlogits).
-            targets (Tensor): Zielklassen.
+            inputs (Tensor): Model predictions (raw logits).
+            targets (Tensor): Target classes.
 
         Returns:
-            Tensor: Berechneter Focal Loss, aggregiert gemäß der angegebenen Reduktionsmethode.
+            Tensor: Computed Focal Loss, aggregated according to the specified reduction method.
         """
         ce_loss = nn.CrossEntropyLoss(reduction='none')(inputs, targets)
         p_t = torch.exp(-ce_loss)
@@ -58,22 +58,22 @@ class FocalLoss(nn.Module):
 
 def mixup_data(x, y, alpha=0.4):
     """
-    Wendet Mixup-Datenaugmentation an.
+    Applies Mixup data augmentation.
 
-    Diese Funktion mischt Eingabedaten und Zielklassen durch eine gewichtete Kombination zweier Beispiele,
-    basierend auf einer Beta-Verteilung mit Parameter alpha.
+    This function mixes input data and target classes through a weighted combination of two examples,
+    based on a Beta distribution with parameter alpha.
 
     Args:
-        x (Tensor): Eingabedaten.
-        y (Tensor): Zielklassen.
-        alpha (float, optional): Parameter der Beta-Verteilung. Standard ist 0.4.
+        x (Tensor): Input data.
+        y (Tensor): Target classes.
+        alpha (float, optional): Parameter of the Beta distribution. Default is 0.4.
 
     Returns:
         tuple: (mixed_x, y_a, y_b, lam)
-            - mixed_x (Tensor): Gemischte Eingabedaten.
-            - y_a (Tensor): Originale Zielklassen.
-            - y_b (Tensor): Zielklassen des zufällig ausgewählten Beispiels.
-            - lam (float): Mixup-Koeffizient, der die Mischung bestimmt.
+            - mixed_x (Tensor): Mixed input data.
+            - y_a (Tensor): Original target classes.
+            - y_b (Tensor): Target classes of the randomly selected example.
+            - lam (float): Mixup coefficient determining the mixture ratio.
     """
     lam = np.random.beta(alpha, alpha)
     index = torch.randperm(x.size(0)).to(x.device)
@@ -84,37 +84,37 @@ def mixup_data(x, y, alpha=0.4):
 
 def mixup_criterion(criterion, pred, y_a, y_b, lam):
     """
-    Berechnet den Verlust für Mixup-Datenaugmentation.
+    Calculates the loss for Mixup data augmentation.
 
-    Kombiniert den Verlust zweier Zielklassen basierend auf dem Mixup-Koeffizienten lam.
+    Combines the loss of two target classes based on the Mixup coefficient lam.
 
     Args:
-        criterion (Callable): Verlustfunktion (z.B. CrossEntropyLoss).
-        pred (Tensor): Vorhersagen des Modells.
-        y_a (Tensor): Erste Menge von Zielklassen.
-        y_b (Tensor): Zweite Menge von Zielklassen.
-        lam (float): Mixup-Koeffizient, der den Anteil der Mischung bestimmt.
+        criterion (Callable): Loss function (e.g., CrossEntropyLoss).
+        pred (Tensor): Model predictions.
+        y_a (Tensor): First set of target classes.
+        y_b (Tensor): Second set of target classes.
+        lam (float): Mixup coefficient determining the mixture ratio.
 
     Returns:
-        Tensor: Kombinierter Verlustwert.
+        Tensor: Combined loss value.
     """
     return lam * criterion(pred, y_a) + (1 - lam) * criterion(pred, y_b)
 
 
 def cutmix_box(width, height, lam):
     """
-    Berechnet die Koordinaten für den CutMix-Bereich.
+    Calculates the coordinates for the CutMix region.
 
-    Diese Funktion bestimmt zufällig einen Bereich (Bounding Box) innerhalb eines Bildes basierend auf dessen
-    Abmessungen und dem Mixup-Koeffizienten lam, der den Anteil des auszuschneidenden Bereichs steuert.
+    This function randomly determines a bounding box area within an image based on its
+    dimensions and the Mixup coefficient lam, which controls the proportion of the cut-out area.
 
     Args:
-        width (int): Breite des Bildes.
-        height (int): Höhe des Bildes.
-        lam (float): Mixup-Koeffizient, der den Anteil des auszuschneidenden Bereichs bestimmt.
+        width (int): Image width.
+        height (int): Image height.
+        lam (float): Mixup coefficient controlling the size of the cut-out area.
 
     Returns:
-        tuple: (bbx1, bby1, bbx2, bby2) – Die Koordinaten der Bounding Box.
+        tuple: (bbx1, bby1, bbx2, bby2) – Coordinates of the bounding box.
     """
     cut_rat = np.sqrt(1. - lam)
     cut_w = int(width * cut_rat)
@@ -133,17 +133,16 @@ def cutmix_box(width, height, lam):
 
 def load_dataset(root_dir):
     """
-    Lädt einen Datensatz aus einem Verzeichnis und filtert nach ausgewählten Klassen.
+    Loads a dataset from a directory and filters it by selected classes.
 
-    Diese Funktion verwendet ImageFolder, wendet definierte Transformationen an und filtert die
-    Samples so, dass nur die in 'selected_classes' enthaltenen Klassen berücksichtigt werden.
-    Anschließend wird das Mapping der Klassen auf Indizes neu zugeordnet.
+    This function uses ImageFolder, applies defined transformations, and filters the
+    samples to include only those in 'selected_classes'.
 
     Args:
-        root_dir (str): Pfad zum Wurzelverzeichnis des Datensatzes.
+        root_dir (str): Path to the root directory of the dataset.
 
     Returns:
-        Dataset: Gefilterter Datensatz mit angewandten Transformationen und aktualisierter Klassenzuordnung.
+        Dataset: Filtered dataset with applied transformations and updated class mapping.
     """
     dataset = datasets.ImageFolder(root_dir, transform=transform)
     dataset.samples = [s for s in dataset.samples if dataset.classes[s[1]] in selected_classes]
@@ -154,7 +153,7 @@ def load_dataset(root_dir):
     return dataset
 
 
-# Datentransformation mit Augmentation
+# Data transformation with augmentation
 transform = transforms.Compose([
     transforms.Resize((256, 256)),
     transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),
@@ -164,7 +163,7 @@ transform = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
 
-# Lade Datensätze
+# Load datasets
 selected_classes = os.listdir(config.TRAIN_DIR)
 if '.DS_Store' in selected_classes:
     selected_classes.remove('.DS_Store')
@@ -174,7 +173,7 @@ train_dataset = load_dataset(config.TRAIN_DIR)
 val_dataset = load_dataset(config.VAL_DIR)
 test_dataset = load_dataset(config.TEST_DIR)
 
-# Weighted Sampling für Klassenbalance
+# Weighted sampling for class balance
 class_counts = [sum(1 for _, label in train_dataset.samples if label == idx) for idx in range(len(selected_classes))]
 class_weights = 1.0 / torch.tensor(class_counts, dtype=torch.float)
 sample_weights = [class_weights[label] for _, label in train_dataset.samples if label < len(selected_classes)]
@@ -185,38 +184,38 @@ val_loader = DataLoader(val_dataset, batch_size=config.BATCH_SIZE, shuffle=False
 test_loader = DataLoader(test_dataset, batch_size=config.BATCH_SIZE, shuffle=False, num_workers=config.NUM_WORKERS)
 
 
-# Modell (Transfer Learning mit ResNet50)
+# Model (transfer learning with ResNet50)
 if os.path.exists(config.PRETRAINED_MODEL_PATH):
-    print("Lade vortrainiertes Modell aus lokalem Speicher...")
+    print("Load trained model from local memory...")
     model = models.resnet50()
     model.load_state_dict(torch.load(config.PRETRAINED_MODEL_PATH))
 else:
-    print("Lade vortrainiertes Modell von torchvision (dauert länger)...")
+    print("Load trained model from torchvision (needs more time)...")
     model = models.resnet50(weights=ResNet50_Weights.IMAGENET1K_V1)
-    torch.save(model.state_dict(), config.PRETRAINED_MODEL_PATH)  # Modell lokal speichern
+    torch.save(model.state_dict(), config.PRETRAINED_MODEL_PATH)  # Save model locally
 
 model.fc = nn.Linear(model.fc.in_features, len(selected_classes))
 model = model.to(config.DEVICE)
 
 for param in model.parameters():
-    param.requires_grad = False  # Erstmal alle Gewichte einfrieren
+    param.requires_grad = False  # Freeze all weights
 for param in model.layer1.parameters():
     param.requires_grad = True
 for param in model.layer2.parameters():
     param.requires_grad = True
 for param in model.layer3.parameters():
-    param.requires_grad = True  # 3. Block von ResNet freigeben
+    param.requires_grad = True  # 3. Free block of ResNet
 for param in model.layer4.parameters():
-    param.requires_grad = True  # 4. Block von ResNet freigeben
+    param.requires_grad = True  # 4. Free block of ResNet
 for param in model.fc.parameters():
     param.requires_grad = True
 
-# Optimierung & Loss
+# Optimization & loss
 optimizer = optim.Adam(model.parameters(), lr=config.LEARNING_RATE, weight_decay=config.WEIGHT_DECAY)
 criterion = FocalLoss(alpha=0.25, gamma=2.0)
 scheduler = CosineAnnealingLR(optimizer, T_max=config.EPOCHS)
 
-# Falls Fortsetzung des Trainings
+# If training continues
 start_epoch = 0
 if config.RESUME_TRAINING:
     checkpoint_path = config.CHECKPOINT_PATH.format(config.LAST_EPOCH)
@@ -235,9 +234,9 @@ print("start training")
 for epoch in range(start_epoch, config.EPOCHS):
     if epoch >= config.MIXUP_REDUCTION_EPOCH and config.USE_MIXUP:
         config.MIXUP_ALPHA *= 0.95
-        if config.MIXUP_ALPHA < 0.1:  # Wenn Alpha sehr klein wird, Mixup deaktivieren
+        if config.MIXUP_ALPHA < 0.1:  # If alpha gets very small, deactivate Mixup
             config.USE_MIXUP = False
-            print(f" Mixup deaktiviert ab Epoche {epoch + 1}")
+            print(f" Mixup deactivated from Epoch {epoch + 1}")
 
     epoch_start_time = time.time()
     gc.collect()
@@ -246,7 +245,7 @@ for epoch in range(start_epoch, config.EPOCHS):
     running_loss = 0.0
     correct, total = 0, 0
 
-    tqdm_loader = tqdm(train_loader, desc=f"Epoch {epoch+1}/{config.EPOCHS}")  # Fortschrittsanzeige
+    tqdm_loader = tqdm(train_loader, desc=f"Epoch {epoch+1}/{config.EPOCHS}")  # Show progress
 
     for inputs, labels in tqdm_loader:
         inputs, labels = inputs.to(config.DEVICE), labels.to(config.DEVICE)
@@ -268,7 +267,7 @@ for epoch in range(start_epoch, config.EPOCHS):
                 outputs = model(inputs)
                 loss = mixup_criterion(criterion, outputs, y_a, y_b, lam)
         else:
-            # Standard-Training ohne Mixup
+            # Standard-training without Mixup
             outputs = model(inputs)
             loss = criterion(outputs, labels)
 
@@ -279,14 +278,14 @@ for epoch in range(start_epoch, config.EPOCHS):
         correct += (predicted == labels).sum().item()
         total += labels.size(0)
 
-        # Fortschritt in der Epoche anzeigen
+        # Show progress within epoch
         tqdm_loader.set_postfix(loss=loss.item(), acc=correct / total)
 
     epoch_loss = running_loss / len(train_loader)
     epoch_acc = correct / total
     train_accuracy_list.append(epoch_acc)
 
-    # Validierung
+    # Validation
     model.eval()
     val_loss, val_correct, val_total = 0.0, 0, 0
     top5_correct = 0
@@ -324,7 +323,7 @@ for epoch in range(start_epoch, config.EPOCHS):
 
 total_training_time = time.time() - training_start_time
 
-# Speichern der finalen Konfiguration
+# Save of final configuration
 model_filename = os.path.join(config.MODEL_DIR, f'final_model_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.pth')
 torch.save(model.state_dict(), model_filename)
 
@@ -356,6 +355,6 @@ config_data = {
 }
 with open(config_filename, 'w') as f:
     json.dump(config_data, f, indent=4)
-print(f"Modelle gespeichert als: {model_filename}")
+print(f"Models saved as: {model_filename}")
 plot_training_progress(train_accuracy_list, accuracy_list, top5_accuracy_list, config.MODEL_DIR)
-print(f"Konfiguration gespeichert als: {config_filename}")
+print(f"Configuration saved as: {config_filename}")

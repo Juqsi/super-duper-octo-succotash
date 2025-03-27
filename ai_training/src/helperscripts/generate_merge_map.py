@@ -1,12 +1,11 @@
 """
-Dieses Skript erstellt eine Merge Map für die PlantNet 300K Species Names.
-Es führt folgende Schritte durch:
-    1. Laden der Spezies-Namen aus einer JSON-Datei.
-    2. Gruppierung der Klasseneinträge basierend auf exakten Namensübereinstimmungen.
-    3. Erzeugung einer Merge Map, bei der Duplikate auf eine primäre ID abgebildet werden.
-    4. Optional: Einsatz von Fuzzy-Matching, um zusätzlich ähnlich klingende Einträge (über einen Schwellenwert)
-       zu identifizieren und zu mergen.
-    5. Speichern der resultierenden Merge Map in einer JSON-Datei.
+This script creates a merge map for the PlantNet 300K species names.
+It performs the following steps:
+    1. Load species names from a JSON file.
+    2. Group class entries based on exact name matches.
+    3. Generate a merge map where duplicates are mapped to a primary ID.
+    4. Optional: Use fuzzy matching to additionally identify and merge similar-sounding entries (above a threshold).
+    5. Save the resulting merge map in a JSON file.
 """
 import difflib
 import json
@@ -52,4 +51,4 @@ if use_fuzzy_matching:
 with open(os.path.abspath(os.path.join(os.path.dirname(__file__), "./merge_map.json")), "w", encoding="utf-8") as f:
     json.dump(merge_map, f, indent=4, ensure_ascii=False)
 
-print(f"Merge Map mit {len(merge_map)} Einträgen gespeichert als merge_map.json")
+print(f"MMerge map with {len(merge_map)} entries saved as merge_map.json")

@@ -180,6 +180,7 @@ async def classify_plant(image_data: dict):
 
         try:
             predictions = run_plant_classifier(image_path)
+            predictions = [prediction for prediction in predictions if prediction["probability"] >= 0.05]
             plant_names = [prediction["plant_name"] for prediction in predictions]
             plant_info = run_plant_getter(plant_names)
 

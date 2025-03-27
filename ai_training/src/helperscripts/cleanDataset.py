@@ -1,9 +1,9 @@
 """
-Dieses Skript dient zur Bereinigung von Datensatzverzeichnissen, indem Klassenordner, die weniger als eine bestimmte
-Mindestanzahl an Bildern enthalten, gelöscht werden.
-Es werden drei Verzeichnisse verarbeitet: images_train, images_val und images_test des PlantNet 300K Datensatzes.
-Zunächst werden zu kleine Ordner im Trainingsdatensatz gelöscht. Anschließend werden die gleichen Ordner in den
-Validierungs- und Testdatensätzen entfernt.
+This script is used to clean up dataset directories by deleting class folders that contain fewer than a specified
+minimum number of images. Three directories are processed: images_train, images_val, and images_test from the PlantNet
+300K dataset.
+First, class folders that are too small are deleted from the training dataset. Then, the same folders are removed from
+the validation and test datasets.
 """
 
 import os
@@ -27,17 +27,17 @@ MIN_IMAGES = 5
 
 def delete_small_folders(base_dir, min_images):
     """
-    Löscht Unterordner im angegebenen Basisverzeichnis, die weniger als 'min_images' Dateien enthalten.
+    Deletes subfolders in the given base directory that contain fewer than 'min_images' files.
 
-    Durchläuft alle Unterordner in 'base_dir' und entfernt diejenigen, in denen die Anzahl der Dateien kleiner
-    als 'min_images' ist. Dabei werden nur Ordner berücksichtigt, die tatsächlich existieren und Dateien enthalten.
+    Iterates over all subfolders in 'base_dir' and removes those that contain fewer than 'min_images' files.
+    Only folders that actually exist and contain files are considered.
 
     Args:
-        base_dir (str): Das Verzeichnis, in dem nach Unterordnern gesucht wird.
-        min_images (int): Mindestanzahl an Dateien, die ein Unterordner enthalten muss, um nicht gelöscht zu werden.
+        base_dir (str): The directory to search for subfolders in.
+        min_images (int): The minimum number of files a subfolder must contain to avoid deletion.
 
     Returns:
-        list: Eine Liste der Namen der gelöschten Unterordner.
+        list: A list of names of the deleted subfolders.
     """
     deleted_folders = []
 
@@ -50,7 +50,7 @@ def delete_small_folders(base_dir, min_images):
             if num_files < min_images:
                 shutil.rmtree(class_path)
                 deleted_folders.append(class_folder)
-                print(f"Gelöscht: {class_path} (nur {num_files} Dateien)")
+                print(f"Deleted: {class_path} (only {num_files} files)")
 
     return deleted_folders
 
@@ -65,6 +65,6 @@ for dataset_dir in [VAL_DIR, TEST_DIR]:
 
         if os.path.isdir(class_path):
             shutil.rmtree(class_path)
-            print(f"Gelöscht: {class_path}")
+            print(f"Deleted: {class_path}")
 
-print("Bereinigung abgeschlossen.")
+print("Cleanup complete.")
