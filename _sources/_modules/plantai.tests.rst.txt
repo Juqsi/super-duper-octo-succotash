@@ -1,0 +1,21 @@
+plantai.tests package
+=====================
+
+Submodules
+----------
+
+plantai.tests.test\_plant\_ai module
+------------------------------------
+
+.. automodule:: plantai.tests.test_plant_ai
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: plantai.tests
+   :members:
+   :undoc-members:
+   :show-inheritance:

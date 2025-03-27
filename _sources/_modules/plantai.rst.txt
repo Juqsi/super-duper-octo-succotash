@@ -1,0 +1,29 @@
+plantai package
+===============
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   plantai.tests
+
+Submodules
+----------
+
+plantai.plant\_ai module
+------------------------
+
+.. automodule:: plantai.plant_ai
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: plantai
+   :members:
+   :undoc-members:
+   :show-inheritance:
