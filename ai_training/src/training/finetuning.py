@@ -12,8 +12,11 @@ This script performs the following steps:
 7. Perform the fine-tuning process, including training, validation, and metric logging.
 8. Save the final model, configuration, and visualize the training progress.
 """
+
+import gc
 import json
 import os
+import time
 from datetime import datetime
 
 import torch
@@ -26,6 +29,8 @@ from torchvision.transforms import RandAugment
 from tqdm import tqdm
 
 from . import ft_config as config
+from .stats import save_confusion_matrix, plot_training_progress
+from .utils import save_checkpoint
 
 # --- Load Merge Map and Combine Classes ---
 with open(config.MERGE_MAP_PATH, "r") as f:
@@ -102,14 +107,14 @@ if config.RESUME_TRAINING:
     fc_shape = checkpoint['model_state_dict']['fc.weight'].shape[0]
     model.fc = nn.Linear(model.fc.in_features, fc_shape)
     model.load_state_dict(checkpoint['model_state_dict'], strict=False)
-    print(f"✅ Resume from {checkpoint_path}")
+    print(f"Resume from {checkpoint_path}")
     start_epoch = config.LAST_EPOCH + 1
 else:
     checkpoint = torch.load(config.PREVIOUS_CHECKPOINT, map_location=config.DEVICE)
     fc_shape = checkpoint['model_state_dict']['fc.weight'].shape[0]
     model.fc = nn.Linear(model.fc.in_features, fc_shape)
     model.load_state_dict(checkpoint['model_state_dict'], strict=False)
-    print(f"📦 Loaded latest checkpoint: {config.PREVIOUS_CHECKPOINT}")
+    print(f"Loaded latest checkpoint: {config.PREVIOUS_CHECKPOINT}")
 
 # Update Fully Connected Layer for Merged Classes
 model.fc = nn.Linear(model.fc.in_features, len(selected_classes))
@@ -127,10 +132,20 @@ scheduler = CosineAnnealingLR(optimizer, T_max=config.EPOCHS)
 criterion = nn.CrossEntropyLoss()
 
 # --- Training and Validation Loop ---
+train_acc_list, val_acc_list, top5_acc_list, epoch_times = [], [], [], []
 print("🚀 Starting Fine-tuning...")
+training_start_time = time.time()
+
 for epoch in range(start_epoch, config.EPOCHS):
     model.train()
-    for inputs, labels in tqdm(train_loader, desc=f"Epoch {epoch + 1}/{config.EPOCHS}"):
+    epoch_start_time = time.time()
+    gc.collect()
+    torch.cuda.empty_cache()
+    correct, total, running_loss = 0, 0, 0.0
+
+    tqdm_loader = tqdm(train_loader, desc=f"Epoch {epoch + 1}/{config.EPOCHS}", dynamic_ncols=True)
+
+    for inputs, labels in tqdm_loader:
         inputs, labels = inputs.to(config.DEVICE), labels.to(config.DEVICE)
         optimizer.zero_grad()
         outputs = model(inputs)
@@ -138,10 +153,71 @@ for epoch in range(start_epoch, config.EPOCHS):
         loss.backward()
         optimizer.step()
 
-    print(f"✅ Epoch {epoch + 1} completed")
+        running_loss += loss.item()
+        _, preds = torch.max(outputs, 1)
+        correct += (preds == labels).sum().item()
+        total += labels.size(0)
+
+        # Live-Update
+        current_loss = running_loss / (total // config.BATCH_SIZE + 1)
+        current_acc = correct / total
+        tqdm_loader.set_postfix({
+            "loss": f"{current_loss:.4f}",
+            "acc": f"{current_acc:.4f}"
+        })
+
+    train_acc = correct / total
+    train_acc_list.append(train_acc)
+
+    # --- Validation ---
+    model.eval()
+    val_correct, val_total, top5_correct, val_loss = 0, 0, 0, 0.0
+    with torch.no_grad():
+        for inputs, labels in val_loader:
+            inputs, labels = inputs.to(config.DEVICE), labels.to(config.DEVICE)
+            outputs = model(inputs)
+            val_loss += criterion(outputs, labels).item()
+            _, preds = torch.max(outputs, 1)
+            val_correct += (preds == labels).sum().item()
+            top5_preds = outputs.topk(5, dim=1).indices
+            top5_correct += sum(label in pred for pred, label in zip(top5_preds, labels))
+            val_total += labels.size(0)
+
+    val_acc = val_correct / val_total
+    top5_acc = top5_correct / val_total
+    val_acc_list.append(val_acc)
+    top5_acc_list.append(top5_acc)
+
+    scheduler.step()
+    train_loss = running_loss / len(train_loader)
+    val_loss_avg = val_loss / len(val_loader)
+
+    print(f"Epoch {epoch + 1}: "
+          f"Train Loss={train_loss:.4f}, Train Acc={train_acc:.4f} | "
+          f"Val Loss={val_loss_avg:.4f}, Val Acc={val_acc:.4f}, Top-5 Acc={top5_acc:.4f}")
+
+    save_checkpoint(model, optimizer, epoch, config.CHECKPOINT_PATH.format(epoch))
+    if (epoch + 1) % 10 == 0 or epoch == 0:
+        save_confusion_matrix(model, val_loader, selected_classes, config.DEVICE, epoch + 1, config.CHECKPOINT_DIR)
+    epoch_times.append(time.time() - epoch_start_time)
 
 # --- Save Final Model and Configuration ---
 now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 model_path = os.path.join(config.MODEL_DIR, f"finetuned_model_{now}.pth")
 torch.save(model.state_dict(), model_path)
+config_path = os.path.join(config.MODEL_DIR, f"config_finetune_{now}.json")
+with open(config_path, 'w') as f:
+    json.dump({
+        "CLASSES": selected_classes,
+        "MERGE_MAP": merge_map,
+        "VAL_ACC": val_acc_list,
+        "TOP_5_ACC": top5_acc_list,
+        "BEST_VAL_ACC": max(val_acc_list),
+        "BEST_TOP5_ACC": max(top5_acc_list),
+        "EPOCH_TIMES": epoch_times,
+        "TOTAL_TIME": time.time() - training_start_time
+    }, f, indent=4)
+
+# Plotten des Trainingsfortschritts
+plot_training_progress(train_acc_list, val_acc_list, top5_acc_list, config.MODEL_DIR)
 print(f"✅ Fine-tuning complete. Model saved at: {model_path}")

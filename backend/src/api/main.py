@@ -6,6 +6,7 @@ from io import BytesIO
 
 from PIL import Image, UnidentifiedImageError
 from fastapi import FastAPI, HTTPException
+from starlette.middleware.cors import CORSMiddleware
 
 from plantai.plant_ai import PlantClassifier
 from plantapi.plant_api import PlantGetter
@@ -17,7 +18,23 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 # Load maximum image size from .env file (default: 5 MB)
 MAX_IMAGE_SIZE = int(os.getenv("MAX_IMAGE_SIZE", "5242880"))
 
+# Load Host domain
+HOST = os.getenv("HOST", "")
 app = FastAPI()
+
+origins = [
+    "https://localhost",
+    HOST
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 classifier = PlantClassifier()
 getter = PlantGetter()
 

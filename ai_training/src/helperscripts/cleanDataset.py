@@ -5,6 +5,7 @@ minimum number of images. Three directories are processed: images_train, images_
 First, class folders that are too small are deleted from the training dataset. Then, the same folders are removed from
 the validation and test datasets.
 """
+
 import os
 import shutil
 

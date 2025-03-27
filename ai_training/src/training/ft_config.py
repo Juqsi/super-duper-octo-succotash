@@ -1,6 +1,8 @@
 """
 This script contains the configuration settings for training and fine-tuning a deep learning model using PyTorch.
 
+It defines the file paths, hyperparameters, and options for data loading, training, and model checkpointing.
+
 Paths:
     - **DATA_DIR**: Directory containing the dataset (e.g., images for training, validation, and testing).
     - **MODEL_DIR**: Directory where pre-trained models are stored.
@@ -25,6 +27,7 @@ Checkpointing:
 This configuration script provides a centralized place for controlling key aspects of the model training and
 fine-tuning process, including dataset locations, hyperparameters, checkpointing, and pre-trained model usage.
 """
+
 import os
 
 import torch

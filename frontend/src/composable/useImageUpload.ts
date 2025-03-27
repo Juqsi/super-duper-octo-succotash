@@ -49,7 +49,7 @@ export function useImageUpload(apiUrl = BASE_PATH) {
     error.value = null
 
     try {
-      const response = await fetch(apiUrl + '/recognizePlant', {
+      const response = await fetch(apiUrl + '/uploads', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

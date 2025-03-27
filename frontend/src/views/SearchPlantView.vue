@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import {onMounted, ref} from 'vue'
+import {useRoute} from 'vue-router'
 import NavBar from '@/components/NavBar.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import PlantInformationCard from '@/components/PlantInformationCard.vue'
-import { useSearch } from '@/composable/useSearch.ts'
-import { type Plant, type Recognition } from '@/stores/usePlantHistory'
+import {useSearch} from '@/composable/useSearch.ts'
+import {type Recognition} from '@/stores/usePlantHistory'
 
 const route = useRoute()
 
@@ -13,13 +13,12 @@ const searchQuery = ref<string>('')
 
 const { searchPlant, isLoading, error } = useSearch()
 
-const searchResults = ref<Plant[]>([])
+const searchResults = ref<Recognition[]>([])
 
 const submitSearch = async () => {
   searchQuery.value = (route.query.name as string) || ''
   if (searchQuery.value && searchQuery.value.length > 0) {
-    const data = await searchPlant(searchQuery.value)
-    searchResults.value = data || []
+    searchResults.value = await searchPlant(searchQuery.value) ?? []
   }
 }
 
@@ -44,13 +43,7 @@ onMounted(async () => {
       <div v-else class="grid gap-6">
         <div v-for="(rec, index) in searchResults" :key="index">
           <PlantInformationCard
-            :recognition="
-              {
-                plant: rec,
-                name: rec.scientific_name,
-                wikipedia: '',
-              } as Recognition
-            "
+            :recognition="rec"
           />
         </div>
       </div>

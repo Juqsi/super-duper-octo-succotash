@@ -57,7 +57,7 @@ CUTMIX_PROB = 0.5
 
 
 # Hyperparameter
-BATCH_SIZE = 128  # Reduziert auf 64 für besseres Generalisieren
+BATCH_SIZE = 128
 LEARNING_RATE = 5e-5
 EPOCHS = 120
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
