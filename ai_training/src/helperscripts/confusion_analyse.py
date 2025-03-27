@@ -15,7 +15,6 @@ import json
 import pandas as pd
 import os
 
-with open("./dataset/plantnet_300K/plantnet300K_species_names.json", "r", encoding="utf-8") as f:
 with open(os.path.abspath(
         os.path.join(
             os.path.dirname(__file__), "../../dataset/plantnet_300K/plantnet300K_species_names.json"
