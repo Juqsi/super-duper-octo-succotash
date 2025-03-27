@@ -65,7 +65,7 @@ const submitImages = async () => {
       class="cursor-pointer p-4 border border-dashed border-gray-300 rounded-xl text-gray-600 text-center hover:bg-gray-50 transition-colors duration-200 w-full"
       for="file-upload"
     >
-      Upload images
+      Select Images
     </label>
 
     <div v-if="images.length" class="grid grid-cols-3 gap-2">
@@ -87,7 +87,7 @@ const submitImages = async () => {
     </div>
 
     <Button :disabled="images.length === 0 || isUploading" class="w-full" @click="submitImages">
-      {{ isUploading ? 'Upload...' : 'send Images' }}
+      {{ isUploading ? 'Upload...' : 'Upload Images' }}
     </Button>
   </div>
 </template>
