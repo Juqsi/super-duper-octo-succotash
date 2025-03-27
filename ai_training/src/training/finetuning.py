@@ -27,9 +27,9 @@ from torchvision import datasets, transforms
 from torchvision.transforms import RandAugment
 from tqdm import tqdm
 
-import ft_config as config
-from ai_training.src.training.stats import save_confusion_matrix, plot_training_progress
-from ai_training.src.training.utils import save_checkpoint
+from . import ft_config as config
+from .stats import save_confusion_matrix, plot_training_progress
+from .utils import save_checkpoint
 
 # --- Merge Map laden und Klassen zusammenführen ---
 

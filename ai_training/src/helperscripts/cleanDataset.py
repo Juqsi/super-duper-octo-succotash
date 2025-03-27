@@ -10,10 +10,16 @@ import os
 import shutil
 
 # Verzeichnisse definieren
-DATASET_DIR = "../../dataset/plantnet_300K"
-TRAIN_DIR = os.path.join(DATASET_DIR, "images_train")
-VAL_DIR = os.path.join(DATASET_DIR, "images_val")
-TEST_DIR = os.path.join(DATASET_DIR, "images_test")
+
+TRAIN_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../dataset/plantnet_300K/images_train"))
+if not os.path.exists(TRAIN_DIR):
+    os.makedirs(TRAIN_DIR, exist_ok=True)
+VAL_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../dataset/plantnet_300K/images_val"))
+if not os.path.exists(VAL_DIR):
+    os.makedirs(VAL_DIR, exist_ok=True)
+TEST_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../dataset/plantnet_300K/images_test"))
+if not os.path.exists(TEST_DIR):
+    os.makedirs(TEST_DIR, exist_ok=True)
 
 # Mindestanzahl an Bildern pro Klasse
 MIN_IMAGES = 5

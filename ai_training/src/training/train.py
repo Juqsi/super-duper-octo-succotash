@@ -1,21 +1,23 @@
 import gc
-import time
-import torch
-import os
 import json
-import numpy as np
-import torchvision.models as models
+import os
+import time
 from datetime import datetime
-from torch.optim.lr_scheduler import CosineAnnealingLR
+
+import numpy as np
+import torch
+import torchvision.models as models
 from torch import nn, optim
+from torch.optim.lr_scheduler import CosineAnnealingLR
 from torch.utils.data import DataLoader, WeightedRandomSampler
 from torchvision import datasets, transforms
-from tqdm import tqdm
-import config
-from ai_training.src.training.stats import save_confusion_matrix, plot_training_progress
-from utils import save_checkpoint, load_checkpoint
 from torchvision.models import ResNet50_Weights
 from torchvision.transforms import RandAugment
+from tqdm import tqdm
+
+import config
+from stats import save_confusion_matrix, plot_training_progress
+from utils import save_checkpoint, load_checkpoint
 
 
 class FocalLoss(nn.Module):
@@ -30,6 +32,7 @@ class FocalLoss(nn.Module):
         gamma (float, optional): Fokussierungsparameter zur Gewichtung schwerer Beispiele. Standard ist 2.0.
         reduction (str, optional): Methode zur Aggregation des Loss ('mean' oder 'sum'). Standard ist 'mean'.
     """
+
     def __init__(self, alpha=0.25, gamma=2.0, reduction='mean'):
         super(FocalLoss, self).__init__()
         self.alpha = alpha
@@ -163,7 +166,8 @@ transform = transforms.Compose([
 
 # Lade Datensätze
 selected_classes = os.listdir(config.TRAIN_DIR)
-selected_classes.remove('.DS_Store')
+if '.DS_Store' in selected_classes:
+    selected_classes.remove('.DS_Store')
 print(len(selected_classes), selected_classes)
 
 train_dataset = load_dataset(config.TRAIN_DIR)

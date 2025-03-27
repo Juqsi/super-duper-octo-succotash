@@ -8,12 +8,17 @@ Es führt folgende Schritte durch:
        zu identifizieren und zu mergen.
     5. Speichern der resultierenden Merge Map in einer JSON-Datei.
 """
-
-import json
 import difflib
+import json
+import os
 from collections import defaultdict
 
-with open("./dataset/plantnet_300K/plantnet300K_species_names.json", "r", encoding="utf-8") as f:
+with open(
+        os.path.join(
+            os.path.dirname(__file__), os.path.join(
+                os.path.dirname(__file__), "../../dataset/plantnet_300K/plantnet300K_species_names.json"
+            )
+        ), "r", encoding="utf-8") as f:
     class_map = json.load(f)
 
 entries = [(cid, name.strip()) for cid, name in class_map.items()]
@@ -44,7 +49,7 @@ if use_fuzzy_matching:
                 merge_map[cid2] = cid1
                 checked.add((cid1, cid2))
 
-with open("./src/ai/evaluation/merge_map.json", "w", encoding="utf-8") as f:
+with open(os.path.abspath(os.path.join(os.path.dirname(__file__), "./merge_map.json")), "w", encoding="utf-8") as f:
     json.dump(merge_map, f, indent=4, ensure_ascii=False)
 
 print(f"Merge Map mit {len(merge_map)} Einträgen gespeichert als merge_map.json")

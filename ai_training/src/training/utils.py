@@ -1,5 +1,6 @@
 import torch
 
+
 def save_checkpoint(model, optimizer, epoch, checkpoint_path):
     """
     Speichert den aktuellen Zustand des Modells und Optimizers als Checkpoint.
@@ -28,6 +29,7 @@ def save_checkpoint(model, optimizer, epoch, checkpoint_path):
     }
     torch.save(checkpoint, checkpoint_path)
     print(f"Checkpoint für Epoche {epoch} gespeichert.")
+
 
 def load_checkpoint(model, optimizer, path, device):
     """

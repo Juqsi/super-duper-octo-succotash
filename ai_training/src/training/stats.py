@@ -1,14 +1,15 @@
-import torch
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
-import os
 import pandas as pd
+import torch
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 
 def save_confusion_matrix(model, val_loader, selected_classes, device, epoch, output_dir):
     """
-    Speichert die normalisierte Confusion Matrix als Bild und CSV-Datei und gibt die häufigsten Fehlklassifikationen aus.
+    Speichert die normalisierte Confusion Matrix als PNG und CSV-Datei und gibt die häufigsten Fehlklassifikationen aus.
 
     Diese Funktion führt folgende Schritte durch:
       1. Berechnet Vorhersagen des Modells auf dem Validierungs-Dataset.

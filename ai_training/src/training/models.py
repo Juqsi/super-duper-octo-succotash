@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+
 class MyModel(nn.Module):
     """
     Convolutional Neural Network (CNN) für Bildklassifikation.
@@ -12,6 +13,7 @@ class MyModel(nn.Module):
     Args:
         num_classes (int): Anzahl der Ausgabeklassen für die Klassifikation. Standardwert ist 15.
     """
+
     def __init__(self, num_classes=15):
         """
         Initialisiert das MyModel und definiert die Netzwerkarchitektur.
