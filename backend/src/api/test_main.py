@@ -2,21 +2,12 @@ import base64
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
 from fastapi.testclient import TestClient
 
-from plantapi.plant_api import PlantGetter
 from .main import MAX_IMAGE_SIZE
 from .main import app
 
 client = TestClient(app)
-
-
-@pytest.fixture()
-def client_mock():
-    """Fixture to create a test client for the FastAPI app."""
-    client_mock = TestClient(app)
-    yield client_mock
 
 
 def generate_base64_image(image_filename="test_img.jpg"):
@@ -56,8 +47,9 @@ def test_hello_world():
     assert response.json() == {"message": "Hello World 🌍"}
 
 
-@patch.object(PlantGetter, 'get_plant_list_data')
-def test_classify_plant_valid_image(mock_get_plant_list_data, client_mock):
+@patch("api.main.run_plant_classifier")
+@patch("api.main.run_plant_getter")
+def test_classify_plant_valid_image(mock_getter, mock_classifier):
     """
     Tests the "/uploads" endpoint with a valid Base64 image.
 
@@ -67,27 +59,32 @@ def test_classify_plant_valid_image(mock_get_plant_list_data, client_mock):
     """
     valid_base64_image = generate_base64_image()
 
-    # Mocking the response from PlantGetter's get_plant_list_data method
-    mock_get_plant_list_data.return_value = [
+    mock_classifier.return_value = [
+        {"plant_name": "Rosa indica", "probability": 98.2},
+        {"plant_name": "Lavandula", "probability": 84.7}
+    ]
+
+    mock_getter.return_value = [
         {
-            "name": "Rosa indica",
             "plant": {"scientific_name": "Rosa indica", "family": "Rosaceae"},
             "wikipedia": "https://de.wikipedia.org/wiki/Rosa_indica"
+        },
+        {
+            "plant": {"scientific_name": "Lavandula", "family": "Lamiaceae"},
+            "wikipedia": "https://de.wikipedia.org/wiki/Lavendel"
         }
     ]
 
-    response = client.post(
-        "/uploads", json={"images": [valid_base64_image]}
-    )
-    print(response.json())
+    response = client.post("/uploads", json={"images": [valid_base64_image]})
     assert response.status_code == 200
-    assert "results" in response.json()
-    assert len(response.json()["results"]) == 1
-    assert "recognitions" in response.json()["results"][0]
+    result = response.json()["results"][0]
+    assert len(result["recognitions"]) == 2
+    assert result["recognitions"][0]["name"] == "Rosa indica"
 
 
-@patch.object(PlantGetter, 'get_plant_list_data')
-def test_classify_plant_multiple_images(mock_get_plant_list_data, client_mock):
+@patch("api.main.run_plant_classifier")
+@patch("api.main.run_plant_getter")
+def test_classify_plant_multiple_images(mock_getter, mock_classifier):
     """
     Tests the "/uploads" endpoint with multiple Base64 images.
 
@@ -98,33 +95,46 @@ def test_classify_plant_multiple_images(mock_get_plant_list_data, client_mock):
     valid_base64_image1 = generate_base64_image()
     valid_base64_image2 = generate_base64_image()
 
-    # Mocking the response from PlantGetter's get_plant_list_data method
-    mock_get_plant_list_data.side_effect = [
+    mock_classifier.side_effect = [
+        [
+            {"plant_name": "Rosa indica", "probability": 90.0},
+            {"plant_name": "Lavandula", "probability": 85.0},
+        ],
+        [
+            {"plant_name": "Tulipa gesneriana", "probability": 91.0},
+            {"plant_name": "Hyacinthus", "probability": 80.0},
+        ]
+    ]
+
+    mock_getter.side_effect = [
         [
             {
-                "name": "Rosa indica",
                 "plant": {"scientific_name": "Rosa indica", "family": "Rosaceae"},
                 "wikipedia": "https://de.wikipedia.org/wiki/Rosa_indica"
+            },
+            {
+                "plant": {"scientific_name": "Lavandula", "family": "Lamiaceae"},
+                "wikipedia": "https://de.wikipedia.org/wiki/Lavendel"
             }
         ],
         [
             {
-                "name": "Tulipa gesneriana",
                 "plant": {"scientific_name": "Tulipa gesneriana", "family": "Liliaceae"},
-                "wikipedia": "https://de.wikipedia.org/wiki/Tulipa_gesneriana"
+                "wikipedia": "https://de.wikipedia.org/wiki/Tulpe"
+            },
+            {
+                "plant": {"scientific_name": "Hyacinthus orientalis", "family": "Asparagaceae"},
+                "wikipedia": "https://de.wikipedia.org/wiki/Hyazinthe"
             }
         ]
     ]
 
-    response = client.post(
-        "/uploads", json={"images": [valid_base64_image1, valid_base64_image2]}
-    )
-    print(response.json())
+    response = client.post("/uploads", json={"images": [valid_base64_image1, valid_base64_image2]})
     assert response.status_code == 200
-    assert "results" in response.json()
-    assert len(response.json()["results"]) == 2
-    assert len(response.json()["results"][0]["recognitions"]) == 1
-    assert len(response.json()["results"][1]["recognitions"]) == 1
+    results = response.json()["results"]
+    assert len(results) == 2
+    assert len(results[0]["recognitions"]) == 2
+    assert len(results[1]["recognitions"]) == 2
 
 
 def test_classify_plant_invalid_image():
@@ -176,8 +186,7 @@ def test_classify_plant_empty_image_list():
     assert response.json()["detail"] == "Missing image data."
 
 
-@patch.object(PlantGetter, 'get_plant_list_data')
-def test_search_plant_missing_name(mock_get_plant_list_data, client_mock):
+def test_search_plant_missing_name():
     """
     Tests the "/search" endpoint with missing 'name' field in the request.
 
@@ -192,8 +201,8 @@ def test_search_plant_missing_name(mock_get_plant_list_data, client_mock):
     assert response.json()["detail"] == "Missing plant name."
 
 
-@patch.object(PlantGetter, 'get_plant_list_data')
-def test_search_plant_valid_name(mock_get_plant_list_data, client_mock):
+@patch("api.main.run_plant_getter")
+def test_search_plant_valid_name(mock_getter):
     """
     Tests the "/search" endpoint with a valid plant name.
 
@@ -202,8 +211,7 @@ def test_search_plant_valid_name(mock_get_plant_list_data, client_mock):
         - The JSON response must contain the 'results' key.
         - The 'results' should contain the plant data and its associated Wikipedia link.
     """
-    # Mocking the response from PlantGetter's get_plant_list_data method
-    mock_get_plant_list_data.return_value = [
+    mock_getter.return_value = [
         {
             "name": "Rosa indica",
             "plant": {"scientific_name": "Rosa indica", "family": "Rosaceae"},
@@ -214,7 +222,6 @@ def test_search_plant_valid_name(mock_get_plant_list_data, client_mock):
     response = client.post(
         "/search", json={"name": "Rosa indica"}
     )
-    print(response.json())
     assert response.status_code == 200
     assert "results" in response.json()
     assert len(response.json()["results"]) == 1
