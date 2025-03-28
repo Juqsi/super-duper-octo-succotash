@@ -123,8 +123,8 @@ def test_classify_plant_multiple_images(mock_get_plant_list_data, client_mock):
     assert response.status_code == 200
     assert "results" in response.json()
     assert len(response.json()["results"]) == 2
-    assert len(response.json()["results"][0]["recognitions"]) == 5
-    assert len(response.json()["results"][1]["recognitions"]) == 5
+    assert len(response.json()["results"][0]["recognitions"]) == 1
+    assert len(response.json()["results"][1]["recognitions"]) == 1
 
 
 def test_classify_plant_invalid_image():

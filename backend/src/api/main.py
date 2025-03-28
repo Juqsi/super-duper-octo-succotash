@@ -20,6 +20,7 @@ MAX_IMAGE_SIZE = int(os.getenv("MAX_IMAGE_SIZE", "5242880"))
 
 # Load Host domain
 HOST = os.getenv("HOST", "")
+MIN_ACC = float(os.getenv("MIN_ACC", "40"))
 app = FastAPI()
 
 origins = [
@@ -180,7 +181,7 @@ async def classify_plant(image_data: dict):
 
         try:
             predictions = run_plant_classifier(image_path)
-            predictions = [prediction for prediction in predictions if prediction["probability"] >= 10.0]
+            predictions = [prediction for prediction in predictions if prediction["probability"] >= MIN_ACC]
             plant_names = [prediction["plant_name"] for prediction in predictions]
             plant_info = run_plant_getter(plant_names)
 
