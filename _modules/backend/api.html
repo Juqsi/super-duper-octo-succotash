@@ -57,7 +57,6 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-api.test_main">api.test_main module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#api.test_main.client_mock"><code class="docutils literal notranslate"><span class="pre">client_mock()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#api.test_main.generate_base64_image"><code class="docutils literal notranslate"><span class="pre">generate_base64_image()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#api.test_main.test_classify_plant_empty_image_list"><code class="docutils literal notranslate"><span class="pre">test_classify_plant_empty_image_list()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#api.test_main.test_classify_plant_invalid_image"><code class="docutils literal notranslate"><span class="pre">test_classify_plant_invalid_image()</span></code></a></li>
@@ -315,12 +314,6 @@ The “name” key can contain a single plant name (string) or a list of plant n
 <section id="module-api.test_main">
 <span id="api-test-main-module"></span><h2>api.test_main module<a class="headerlink" href="#module-api.test_main" title="Link to this heading"></a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="api.test_main.client_mock">
-<span class="sig-prename descclassname"><span class="pre">api.test_main.</span></span><span class="sig-name descname"><span class="pre">client_mock</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../api/test_main.html#client_mock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.test_main.client_mock" title="Link to this definition"></a></dt>
-<dd><p>Fixture to create a test client for the FastAPI app.</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="api.test_main.generate_base64_image">
 <span class="sig-prename descclassname"><span class="pre">api.test_main.</span></span><span class="sig-name descname"><span class="pre">generate_base64_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'test_img.jpg'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../api/test_main.html#generate_base64_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.test_main.generate_base64_image" title="Link to this definition"></a></dt>
 <dd><p>Reads an existing image from the same folder as this script,
@@ -366,7 +359,7 @@ encodes it in Base64 format, and returns it as a string.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="api.test_main.test_classify_plant_multiple_images">
-<span class="sig-prename descclassname"><span class="pre">api.test_main.</span></span><span class="sig-name descname"><span class="pre">test_classify_plant_multiple_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_get_plant_list_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_mock</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../api/test_main.html#test_classify_plant_multiple_images"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.test_main.test_classify_plant_multiple_images" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">api.test_main.</span></span><span class="sig-name descname"><span class="pre">test_classify_plant_multiple_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_getter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_classifier</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../api/test_main.html#test_classify_plant_multiple_images"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.test_main.test_classify_plant_multiple_images" title="Link to this definition"></a></dt>
 <dd><p>Tests the “/uploads” endpoint with multiple Base64 images.</p>
 <dl class="simple">
 <dt>Assertions:</dt><dd><ul class="simple">
@@ -379,7 +372,7 @@ encodes it in Base64 format, and returns it as a string.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="api.test_main.test_classify_plant_valid_image">
-<span class="sig-prename descclassname"><span class="pre">api.test_main.</span></span><span class="sig-name descname"><span class="pre">test_classify_plant_valid_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_get_plant_list_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_mock</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../api/test_main.html#test_classify_plant_valid_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.test_main.test_classify_plant_valid_image" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">api.test_main.</span></span><span class="sig-name descname"><span class="pre">test_classify_plant_valid_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_getter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_classifier</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../api/test_main.html#test_classify_plant_valid_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.test_main.test_classify_plant_valid_image" title="Link to this definition"></a></dt>
 <dd><p>Tests the “/uploads” endpoint with a valid Base64 image.</p>
 <dl class="simple">
 <dt>Assertions:</dt><dd><ul class="simple">
@@ -419,7 +412,7 @@ encodes it in Base64 format, and returns it as a string.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="api.test_main.test_search_plant_missing_name">
-<span class="sig-prename descclassname"><span class="pre">api.test_main.</span></span><span class="sig-name descname"><span class="pre">test_search_plant_missing_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_get_plant_list_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_mock</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../api/test_main.html#test_search_plant_missing_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.test_main.test_search_plant_missing_name" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">api.test_main.</span></span><span class="sig-name descname"><span class="pre">test_search_plant_missing_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../api/test_main.html#test_search_plant_missing_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.test_main.test_search_plant_missing_name" title="Link to this definition"></a></dt>
 <dd><p>Tests the “/search” endpoint with missing ‘name’ field in the request.</p>
 <dl class="simple">
 <dt>Assertions:</dt><dd><ul class="simple">
@@ -432,7 +425,7 @@ encodes it in Base64 format, and returns it as a string.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="api.test_main.test_search_plant_valid_name">
-<span class="sig-prename descclassname"><span class="pre">api.test_main.</span></span><span class="sig-name descname"><span class="pre">test_search_plant_valid_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_get_plant_list_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_mock</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../api/test_main.html#test_search_plant_valid_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.test_main.test_search_plant_valid_name" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">api.test_main.</span></span><span class="sig-name descname"><span class="pre">test_search_plant_valid_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_getter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../api/test_main.html#test_search_plant_valid_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.test_main.test_search_plant_valid_name" title="Link to this definition"></a></dt>
 <dd><p>Tests the “/search” endpoint with a valid plant name.</p>
 <dl class="simple">
 <dt>Assertions:</dt><dd><ul class="simple">

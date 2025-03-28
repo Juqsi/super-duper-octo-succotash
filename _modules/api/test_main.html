@@ -74,24 +74,12 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">unittest.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">patch</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.testclient</span><span class="w"> </span><span class="kn">import</span> <span class="n">TestClient</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">plantapi.plant_api</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlantGetter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.main</span><span class="w"> </span><span class="kn">import</span> <span class="n">MAX_IMAGE_SIZE</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.main</span><span class="w"> </span><span class="kn">import</span> <span class="n">app</span>
 
 <span class="n">client</span> <span class="o">=</span> <span class="n">TestClient</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="client_mock">
-<a class="viewcode-back" href="../backend/api.html#api.test_main.client_mock">[docs]</a>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">client_mock</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fixture to create a test client for the FastAPI app.&quot;&quot;&quot;</span>
-    <span class="n">client_mock</span> <span class="o">=</span> <span class="n">TestClient</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
-    <span class="k">yield</span> <span class="n">client_mock</span></div>
-
 
 
 <div class="viewcode-block" id="generate_base64_image">
@@ -139,8 +127,9 @@
 
 <div class="viewcode-block" id="test_classify_plant_valid_image">
 <a class="viewcode-back" href="../backend/api.html#api.test_main.test_classify_plant_valid_image">[docs]</a>
-<span class="nd">@patch</span><span class="o">.</span><span class="n">object</span><span class="p">(</span><span class="n">PlantGetter</span><span class="p">,</span> <span class="s1">&#39;get_plant_list_data&#39;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">test_classify_plant_valid_image</span><span class="p">(</span><span class="n">mock_get_plant_list_data</span><span class="p">,</span> <span class="n">client_mock</span><span class="p">):</span>
+<span class="nd">@patch</span><span class="p">(</span><span class="s2">&quot;api.main.run_plant_classifier&quot;</span><span class="p">)</span>
+<span class="nd">@patch</span><span class="p">(</span><span class="s2">&quot;api.main.run_plant_getter&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_classify_plant_valid_image</span><span class="p">(</span><span class="n">mock_getter</span><span class="p">,</span> <span class="n">mock_classifier</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tests the &quot;/uploads&quot; endpoint with a valid Base64 image.</span>
 
@@ -150,30 +139,35 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">valid_base64_image</span> <span class="o">=</span> <span class="n">generate_base64_image</span><span class="p">()</span>
 
-    <span class="c1"># Mocking the response from PlantGetter&#39;s get_plant_list_data method</span>
-    <span class="n">mock_get_plant_list_data</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">mock_classifier</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;plant_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosa indica&quot;</span><span class="p">,</span> <span class="s2">&quot;probability&quot;</span><span class="p">:</span> <span class="mf">98.2</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;plant_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Lavandula&quot;</span><span class="p">,</span> <span class="s2">&quot;probability&quot;</span><span class="p">:</span> <span class="mf">84.7</span><span class="p">}</span>
+    <span class="p">]</span>
+
+    <span class="n">mock_getter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">{</span>
-            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosa indica&quot;</span><span class="p">,</span>
             <span class="s2">&quot;plant&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;scientific_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosa indica&quot;</span><span class="p">,</span> <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosaceae&quot;</span><span class="p">},</span>
             <span class="s2">&quot;wikipedia&quot;</span><span class="p">:</span> <span class="s2">&quot;https://de.wikipedia.org/wiki/Rosa_indica&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;plant&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;scientific_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Lavandula&quot;</span><span class="p">,</span> <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;Lamiaceae&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;wikipedia&quot;</span><span class="p">:</span> <span class="s2">&quot;https://de.wikipedia.org/wiki/Lavendel&quot;</span>
         <span class="p">}</span>
     <span class="p">]</span>
 
-    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
-        <span class="s2">&quot;/uploads&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;images&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">valid_base64_image</span><span class="p">]}</span>
-    <span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/uploads&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;images&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">valid_base64_image</span><span class="p">]})</span>
     <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
-    <span class="k">assert</span> <span class="s2">&quot;results&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span>
-    <span class="k">assert</span> <span class="s2">&quot;recognitions&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span></div>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;recognitions&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;recognitions&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Rosa indica&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="test_classify_plant_multiple_images">
 <a class="viewcode-back" href="../backend/api.html#api.test_main.test_classify_plant_multiple_images">[docs]</a>
-<span class="nd">@patch</span><span class="o">.</span><span class="n">object</span><span class="p">(</span><span class="n">PlantGetter</span><span class="p">,</span> <span class="s1">&#39;get_plant_list_data&#39;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">test_classify_plant_multiple_images</span><span class="p">(</span><span class="n">mock_get_plant_list_data</span><span class="p">,</span> <span class="n">client_mock</span><span class="p">):</span>
+<span class="nd">@patch</span><span class="p">(</span><span class="s2">&quot;api.main.run_plant_classifier&quot;</span><span class="p">)</span>
+<span class="nd">@patch</span><span class="p">(</span><span class="s2">&quot;api.main.run_plant_getter&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_classify_plant_multiple_images</span><span class="p">(</span><span class="n">mock_getter</span><span class="p">,</span> <span class="n">mock_classifier</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tests the &quot;/uploads&quot; endpoint with multiple Base64 images.</span>
 
@@ -184,33 +178,46 @@
     <span class="n">valid_base64_image1</span> <span class="o">=</span> <span class="n">generate_base64_image</span><span class="p">()</span>
     <span class="n">valid_base64_image2</span> <span class="o">=</span> <span class="n">generate_base64_image</span><span class="p">()</span>
 
-    <span class="c1"># Mocking the response from PlantGetter&#39;s get_plant_list_data method</span>
-    <span class="n">mock_get_plant_list_data</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">mock_classifier</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;plant_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosa indica&quot;</span><span class="p">,</span> <span class="s2">&quot;probability&quot;</span><span class="p">:</span> <span class="mf">90.0</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;plant_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Lavandula&quot;</span><span class="p">,</span> <span class="s2">&quot;probability&quot;</span><span class="p">:</span> <span class="mf">85.0</span><span class="p">},</span>
+        <span class="p">],</span>
+        <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;plant_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Tulipa gesneriana&quot;</span><span class="p">,</span> <span class="s2">&quot;probability&quot;</span><span class="p">:</span> <span class="mf">91.0</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;plant_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Hyacinthus&quot;</span><span class="p">,</span> <span class="s2">&quot;probability&quot;</span><span class="p">:</span> <span class="mf">80.0</span><span class="p">},</span>
+        <span class="p">]</span>
+    <span class="p">]</span>
+
+    <span class="n">mock_getter</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">[</span>
             <span class="p">{</span>
-                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosa indica&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;plant&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;scientific_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosa indica&quot;</span><span class="p">,</span> <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosaceae&quot;</span><span class="p">},</span>
                 <span class="s2">&quot;wikipedia&quot;</span><span class="p">:</span> <span class="s2">&quot;https://de.wikipedia.org/wiki/Rosa_indica&quot;</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;plant&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;scientific_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Lavandula&quot;</span><span class="p">,</span> <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;Lamiaceae&quot;</span><span class="p">},</span>
+                <span class="s2">&quot;wikipedia&quot;</span><span class="p">:</span> <span class="s2">&quot;https://de.wikipedia.org/wiki/Lavendel&quot;</span>
             <span class="p">}</span>
         <span class="p">],</span>
         <span class="p">[</span>
             <span class="p">{</span>
-                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Tulipa gesneriana&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;plant&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;scientific_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Tulipa gesneriana&quot;</span><span class="p">,</span> <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;Liliaceae&quot;</span><span class="p">},</span>
-                <span class="s2">&quot;wikipedia&quot;</span><span class="p">:</span> <span class="s2">&quot;https://de.wikipedia.org/wiki/Tulipa_gesneriana&quot;</span>
+                <span class="s2">&quot;wikipedia&quot;</span><span class="p">:</span> <span class="s2">&quot;https://de.wikipedia.org/wiki/Tulpe&quot;</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;plant&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;scientific_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Hyacinthus orientalis&quot;</span><span class="p">,</span> <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;Asparagaceae&quot;</span><span class="p">},</span>
+                <span class="s2">&quot;wikipedia&quot;</span><span class="p">:</span> <span class="s2">&quot;https://de.wikipedia.org/wiki/Hyazinthe&quot;</span>
             <span class="p">}</span>
         <span class="p">]</span>
     <span class="p">]</span>
 
-    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
-        <span class="s2">&quot;/uploads&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;images&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">valid_base64_image1</span><span class="p">,</span> <span class="n">valid_base64_image2</span><span class="p">]}</span>
-    <span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/uploads&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;images&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">valid_base64_image1</span><span class="p">,</span> <span class="n">valid_base64_image2</span><span class="p">]})</span>
     <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
-    <span class="k">assert</span> <span class="s2">&quot;results&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;recognitions&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;recognitions&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span></div>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;recognitions&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;recognitions&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span></div>
 
 
 
@@ -274,8 +281,7 @@
 
 <div class="viewcode-block" id="test_search_plant_missing_name">
 <a class="viewcode-back" href="../backend/api.html#api.test_main.test_search_plant_missing_name">[docs]</a>
-<span class="nd">@patch</span><span class="o">.</span><span class="n">object</span><span class="p">(</span><span class="n">PlantGetter</span><span class="p">,</span> <span class="s1">&#39;get_plant_list_data&#39;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">test_search_plant_missing_name</span><span class="p">(</span><span class="n">mock_get_plant_list_data</span><span class="p">,</span> <span class="n">client_mock</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_search_plant_missing_name</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tests the &quot;/search&quot; endpoint with missing &#39;name&#39; field in the request.</span>
 
@@ -293,8 +299,8 @@
 
 <div class="viewcode-block" id="test_search_plant_valid_name">
 <a class="viewcode-back" href="../backend/api.html#api.test_main.test_search_plant_valid_name">[docs]</a>
-<span class="nd">@patch</span><span class="o">.</span><span class="n">object</span><span class="p">(</span><span class="n">PlantGetter</span><span class="p">,</span> <span class="s1">&#39;get_plant_list_data&#39;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">test_search_plant_valid_name</span><span class="p">(</span><span class="n">mock_get_plant_list_data</span><span class="p">,</span> <span class="n">client_mock</span><span class="p">):</span>
+<span class="nd">@patch</span><span class="p">(</span><span class="s2">&quot;api.main.run_plant_getter&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_search_plant_valid_name</span><span class="p">(</span><span class="n">mock_getter</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tests the &quot;/search&quot; endpoint with a valid plant name.</span>
 
@@ -303,8 +309,7 @@
 <span class="sd">        - The JSON response must contain the &#39;results&#39; key.</span>
 <span class="sd">        - The &#39;results&#39; should contain the plant data and its associated Wikipedia link.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Mocking the response from PlantGetter&#39;s get_plant_list_data method</span>
-    <span class="n">mock_get_plant_list_data</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">mock_getter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">{</span>
             <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosa indica&quot;</span><span class="p">,</span>
             <span class="s2">&quot;plant&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;scientific_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosa indica&quot;</span><span class="p">,</span> <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosaceae&quot;</span><span class="p">},</span>
@@ -315,7 +320,6 @@
     <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
         <span class="s2">&quot;/search&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosa indica&quot;</span><span class="p">}</span>
     <span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
     <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
     <span class="k">assert</span> <span class="s2">&quot;results&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span>
