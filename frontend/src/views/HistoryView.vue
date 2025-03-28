@@ -53,14 +53,14 @@ const formatTimestamp = (timestamp: number) => {
               </p>
             </div>
           </div>
+          <empty-state
+            :condition="entry.recognitions.length === 0"
+            img-src="/undraw_flowers_171u.svg"
+            subtitle="try again with a different picture"
+            title="No plant recognized"
+          />
           <div v-if="entry.recognitions && entry.recognitions.length > 0">
             <h2 class="text-lg font-bold mb-2">Recognized plants:</h2>
-            <empty-state
-              :condition="entry.recognitions.length === 0"
-              img-src="/undraw_flowers_171u.svg"
-              subtitle="try again with a different picture"
-              title="No plant recognized"
-            />
             <div class="space-y-2">
               <div
                 v-for="(rec, index) in entry.recognitions"
