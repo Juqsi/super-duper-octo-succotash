@@ -28,8 +28,11 @@ const selectedImage = computed(() => recognizedImages.value[selectedImageIndex.v
       <div
         v-for="(entry, index) in recognizedImages"
         :key="entry.timestamp"
-        :class="{ 'border-primary': selectedImageIndex === index }"
-        class="w-16 h-16 border rounded overflow-hidden cursor-pointer"
+        :class="{
+          'border-primary': selectedImageIndex === index,
+          'border-foreground': selectedImageIndex !== index,
+        }"
+        class="w-20 h-20 border-2 rounded-md overflow-hidden cursor-pointer"
         @click="selectedImageIndex = index"
       >
         <img

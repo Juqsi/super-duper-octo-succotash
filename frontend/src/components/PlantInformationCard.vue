@@ -126,7 +126,10 @@ const props = defineProps<{ recognition: Recognition }>()
           <div>
             {{ props.recognition.name.replace('_', ' ') }}
           </div>
-          <div>{{ props.recognition.probability }}%</div>
+          <div>
+            {{
+              props.recognition.probability ? props.recognition.probability.toFixed(2) + '%' : ''
+            }}</div>
         </CardTitle>
       </CardHeader>
       <CardContent>Plant information not available in our Database.</CardContent>
