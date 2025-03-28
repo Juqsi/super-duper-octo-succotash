@@ -39,10 +39,10 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../backend/modules.html">src</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../ai_training/modules.html">src</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../backend/index.html">Backend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai_training/index.html">AI Training</a></li>
 </ul>
 
         </div>
@@ -226,13 +226,20 @@
 <span class="sd">        HTTPException (500): For unexpected errors in processing or classification.</span>
 
 <span class="sd">    Example request:</span>
+
+<span class="sd">    .. code-block:: json</span>
+
 <span class="sd">        {</span>
 <span class="sd">            &quot;images&quot;: [</span>
 <span class="sd">                &quot;data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/...&quot;,</span>
-<span class="sd">                &quot;data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/...&quot;]</span>
+<span class="sd">                &quot;data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/...&quot;</span>
+<span class="sd">            ]</span>
 <span class="sd">        }</span>
 
 <span class="sd">    Example response:</span>
+
+<span class="sd">    .. code-block:: json</span>
+
 <span class="sd">        {</span>
 <span class="sd">            &quot;results&quot;: [</span>
 <span class="sd">                {</span>
@@ -240,13 +247,13 @@
 <span class="sd">                    &quot;recognitions&quot;: [</span>
 <span class="sd">                        {</span>
 <span class="sd">                            &quot;name&quot;: &quot;Rosa indica&quot;,</span>
-<span class="sd">                            &quot;plant&quot;: { ... },  # Additional plant data</span>
+<span class="sd">                            &quot;plant&quot;: { ... },</span>
 <span class="sd">                            &quot;wikipedia&quot;: &quot;https://en.wikipedia.org/wiki/Rosa_indica&quot;,</span>
 <span class="sd">                            &quot;probability&quot;: 0.98</span>
 <span class="sd">                        },</span>
 <span class="sd">                        {</span>
 <span class="sd">                            &quot;name&quot;: &quot;Rosa rugosa&quot;,</span>
-<span class="sd">                            &quot;plant&quot;: { ... },  # Additional plant data</span>
+<span class="sd">                            &quot;plant&quot;: { ... },</span>
 <span class="sd">                            &quot;wikipedia&quot;: &quot;https://en.wikipedia.org/wiki/Rosa_rugosa&quot;,</span>
 <span class="sd">                            &quot;probability&quot;: 0.85</span>
 <span class="sd">                        }</span>
@@ -314,16 +321,22 @@
 <span class="sd">        HTTPException (400): If the &#39;name&#39; field is missing in the request or if it&#39;s an invalid input.</span>
 
 <span class="sd">    Example request:</span>
+
+<span class="sd">    .. code-block:: json</span>
+
 <span class="sd">        {</span>
 <span class="sd">            &quot;name&quot;: &quot;Rosa indica&quot;</span>
 <span class="sd">        }</span>
 
 <span class="sd">    Example response:</span>
+
+<span class="sd">    .. code-block:: json</span>
+
 <span class="sd">        {</span>
 <span class="sd">            &quot;results&quot;: [</span>
 <span class="sd">                {</span>
 <span class="sd">                    &quot;name&quot;: &quot;Rosa indica&quot;,</span>
-<span class="sd">                    &quot;plant&quot;: { ... },  # Additional plant data</span>
+<span class="sd">                    &quot;plant&quot;: { ... },</span>
 <span class="sd">                    &quot;wikipedia&quot;: &quot;https://en.wikipedia.org/wiki/Rosa_indica&quot;</span>
 <span class="sd">                }</span>
 <span class="sd">            ]</span>

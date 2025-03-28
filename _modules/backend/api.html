@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="plantai package" href="plantai.html" />
-    <link rel="prev" title="src" href="modules.html" /> 
+    <link rel="prev" title="Backend" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,9 +42,9 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Backend</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">api package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-api.main">api.main module</a><ul>
@@ -68,14 +68,13 @@
 <li class="toctree-l4"><a class="reference internal" href="#api.test_main.test_search_plant_valid_name"><code class="docutils literal notranslate"><span class="pre">test_search_plant_valid_name()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#module-api">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="plantai.html">plantai package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plantapi.html">plantapi package</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../ai_training/modules.html">src</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai_training/index.html">AI Training</a></li>
 </ul>
 
         </div>
@@ -92,7 +91,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">src</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Backend</a></li>
       <li class="breadcrumb-item active">api package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/_modules/backend/api.rst.txt" rel="nofollow"> View page source</a>
@@ -103,8 +102,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="api-package">
-<h1>api package<a class="headerlink" href="#api-package" title="Link to this heading"></a></h1>
+  <section id="module-api">
+<span id="api-package"></span><h1>api package<a class="headerlink" href="#module-api" title="Link to this heading"></a></h1>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
@@ -135,52 +134,39 @@
 </ul>
 </dd>
 </dl>
-<dl>
-<dt>Example request:</dt><dd><dl class="simple">
-<dt>{</dt><dd><dl class="simple">
-<dt>“images”: [</dt><dd><p>“<a class="reference external" href="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/">data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/</a>…”,
-“<a class="reference external" href="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/">data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/</a>…”]</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p>}</p>
-</dd>
-<dt>Example response:</dt><dd><dl>
-<dt>{</dt><dd><dl>
-<dt>“results”: [</dt><dd><dl>
-<dt>{</dt><dd><p>“image”: “<a class="reference external" href="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/">data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/</a>…”,
-“recognitions”: [</p>
-<blockquote>
-<div><dl class="simple">
-<dt>{</dt><dd><p>“name”: “Rosa indica”,
-“plant”: { … },  # Additional plant data
-“wikipedia”: “<a class="reference external" href="https://en.wikipedia.org/wiki/Rosa_indica">https://en.wikipedia.org/wiki/Rosa_indica</a>”,
-“probability”: 0.98</p>
-</dd>
-</dl>
-<p>},
-{</p>
-<blockquote>
-<div><p>“name”: “Rosa rugosa”,
-“plant”: { … },  # Additional plant data
-“wikipedia”: “<a class="reference external" href="https://en.wikipedia.org/wiki/Rosa_rugosa">https://en.wikipedia.org/wiki/Rosa_rugosa</a>”,
-“probability”: 0.85</p>
-</div></blockquote>
-<p>}</p>
-</div></blockquote>
-<p>]</p>
-</dd>
-</dl>
-<p>}</p>
-</dd>
-</dl>
-<p>]</p>
-</dd>
-</dl>
-<p>}</p>
-</dd>
-</dl>
+<p>Example request:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;images&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/...&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/...&quot;</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Example response:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;image&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/...&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;recognitions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Rosa indica&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;plant&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                    </span><span class="nt">&quot;wikipedia&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://en.wikipedia.org/wiki/Rosa_indica&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;probability&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.98</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Rosa rugosa&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;plant&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                    </span><span class="nt">&quot;wikipedia&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://en.wikipedia.org/wiki/Rosa_rugosa&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;probability&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.85</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -284,30 +270,24 @@ The “name” key can contain a single plant name (string) or a list of plant n
 <dd class="field-even"><p><strong>HTTPException</strong><strong> (</strong><strong>400</strong><strong>)</strong> – If the ‘name’ field is missing in the request or if it’s an invalid input.</p>
 </dd>
 </dl>
-<dl>
-<dt>Example request:</dt><dd><dl class="simple">
-<dt>{</dt><dd><p>“name”: “Rosa indica”</p>
-</dd>
-</dl>
-<p>}</p>
-</dd>
-<dt>Example response:</dt><dd><dl>
-<dt>{</dt><dd><dl>
-<dt>“results”: [</dt><dd><dl class="simple">
-<dt>{</dt><dd><p>“name”: “Rosa indica”,
-“plant”: { … },  # Additional plant data
-“wikipedia”: “<a class="reference external" href="https://en.wikipedia.org/wiki/Rosa_indica">https://en.wikipedia.org/wiki/Rosa_indica</a>”</p>
-</dd>
-</dl>
-<p>}</p>
-</dd>
-</dl>
-<p>]</p>
-</dd>
-</dl>
-<p>}</p>
-</dd>
-</dl>
+<p>Example request:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Rosa indica&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Example response:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Rosa indica&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;plant&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;wikipedia&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://en.wikipedia.org/wiki/Rosa_indica&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -438,16 +418,13 @@ encodes it in Base64 format, and returns it as a string.</p>
 </dd></dl>
 
 </section>
-<section id="module-api">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-api" title="Link to this heading"></a></h2>
-</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="modules.html" class="btn btn-neutral float-left" title="src" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Backend" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="plantai.html" class="btn btn-neutral float-right" title="plantai package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

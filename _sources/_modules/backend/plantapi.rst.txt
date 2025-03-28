@@ -1,6 +1,11 @@
 plantapi package
 ================
 
+.. automodule:: plantapi
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Submodules
 ----------
 
@@ -16,14 +21,6 @@ plantapi.test\_plant\_api module
 --------------------------------
 
 .. automodule:: plantapi.test_plant_api
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: plantapi
    :members:
    :undoc-members:
    :show-inheritance:

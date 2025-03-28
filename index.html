@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>super-duper-octo-succotash documentation &mdash; super-duper-octo-succotash  documentation</title>
+  <title>PlantAI &mdash; super-duper-octo-succotash  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -19,7 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="src" href="_modules/backend/modules.html" /> 
+    <link rel="next" title="Backend" href="_modules/backend/index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -41,10 +41,10 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="_modules/backend/modules.html">src</a></li>
-<li class="toctree-l1"><a class="reference internal" href="_modules/ai_training/modules.html">src</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_modules/backend/index.html">Backend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_modules/ai_training/index.html">AI Training</a></li>
 </ul>
 
         </div>
@@ -61,7 +61,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">super-duper-octo-succotash documentation</li>
+      <li class="breadcrumb-item active">PlantAI</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -71,21 +71,106 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="super-duper-octo-succotash-documentation">
-<h1>super-duper-octo-succotash documentation<a class="headerlink" href="#super-duper-octo-succotash-documentation" title="Link to this heading"></a></h1>
-<p>Add your content using <code class="docutils literal notranslate"><span class="pre">reStructuredText</span></code> syntax. See the
-<a class="reference external" href="https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html">reStructuredText</a>
-documentation for details.</p>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+  <section id="plantai">
+<h1>PlantAI<a class="headerlink" href="#plantai" title="Link to this heading"></a></h1>
+<p><strong>PlantAI</strong> is an AI-powered system for automatic plant classification and information retrieval,
+designed for home gardeners, hobby botanists, and developers in the smart gardening space.</p>
+<p>Using machine learning, PlantAI reliably identifies plant species from images, instantly provides
+relevant information, and enables integration with modern IoT applications for automated plant care.</p>
+<section id="goals-motivation">
+<h2>Goals &amp; Motivation<a class="headerlink" href="#goals-motivation" title="Link to this heading"></a></h2>
+<p>Many plant owners lack the time or expertise to ensure proper care for their plants.
+PlantAI addresses this challenge through intuitive image analysis, combined with a centralized
+plant database accessible via API – eliminating the need for time-consuming manual research.</p>
+</section>
+<section id="core-features">
+<h2>Core Features<a class="headerlink" href="#core-features" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Image-based plant identification using trained AI models</strong></p></li>
+<li><p><strong>Access to plant information via API</strong> from Wikipedia and a custom database (“PlantBase”)</p></li>
+<li><p><strong>Modern, intuitive web interface</strong></p></li>
+<li><p><strong>Modular, maintainable backend architecture</strong></p></li>
+<li><p><strong>Easily fine-tunable machine learning models</strong></p></li>
+</ul>
+</section>
+<section id="system-architecture">
+<h2>System Architecture<a class="headerlink" href="#system-architecture" title="Link to this heading"></a></h2>
+<p>The system is composed of the following core components:</p>
+<ul class="simple">
+<li><p><strong>Backend</strong>: FastAPI-based, modular, and easy to maintain</p></li>
+<li><p><strong>Frontend</strong>: A Vue-based web application with a clean and intuitive UI</p></li>
+<li><p><strong>AI Module</strong>: Pre-trained classification models with support for fine-tuning</p></li>
+<li><p><strong>PlantBase</strong>: A structured plant information database accessible through a RESTful API</p></li>
+</ul>
+</section>
+<section id="further-information">
+<h2>Further Information<a class="headerlink" href="#further-information" title="Link to this heading"></a></h2>
+<p>Project Website: <a class="reference external" href="https://web.ase.juqsi.de">https://web.ase.juqsi.de</a></p>
+</section>
+</section>
+<section id="project-setup-and-introduction">
+<h1>Project Setup and Introduction<a class="headerlink" href="#project-setup-and-introduction" title="Link to this heading"></a></h1>
+<p>This project consists of two Docker containers:</p>
+<ul class="simple">
+<li><p><strong>Frontend:</strong> Responsible for the user interface, accessible on port 443.</p></li>
+<li><p><strong>Backend:</strong> Handles the API and business logic, accessible on port 8000.</p></li>
+</ul>
+<p>Both containers are defined in a single Docker Compose file and will automatically restart (<code class="docutils literal notranslate"><span class="pre">unless-stopped</span></code>) if they exit unexpectedly.</p>
+<section id="setup-instructions">
+<h2>Setup Instructions<a class="headerlink" href="#setup-instructions" title="Link to this heading"></a></h2>
+<ol class="arabic">
+<li><p><strong>Prerequisites:</strong></p>
+<ul class="simple">
+<li><p>Docker and Docker Compose must be installed.</p></li>
+<li><p>A valid JWT for the PlantBase API must be available and will be used in place of <code class="docutils literal notranslate"><span class="pre">&lt;Token&gt;</span></code>.</p></li>
+<li><p>(Optional) You can adjust the environment variables:</p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="_modules/backend/modules.html">src</a><ul>
+<li><p><strong>MIN_ACC:</strong> Specifies the minimum probability (in percent) required for a plant to be returned. The default is 40%.</p></li>
+<li><p><strong>HOST:</strong> Defaults to <code class="docutils literal notranslate"><span class="pre">localhost</span></code>.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Project Structure:</strong></p>
+<p>Create the following directories, where the respective Dockerfiles and source code will reside:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">./frontend</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">./backend</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Environment Variables Setup (in the Backend):</strong></p>
+<ul class="simple">
+<li><p>Replace <code class="docutils literal notranslate"><span class="pre">&lt;Token&gt;</span></code> in the <code class="docutils literal notranslate"><span class="pre">PLANT_API_KEY</span></code> environment variable with your valid JWT.</p></li>
+<li><p>Adjust the <code class="docutils literal notranslate"><span class="pre">MIN_ACC</span></code> variable if needed. Remember that the default value is 40% unless specified otherwise.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">HOST</span></code> variable can also be customized; by default, it is set to <code class="docutils literal notranslate"><span class="pre">localhost</span></code>.</p></li>
+</ul>
+</li>
+<li><p><strong>Starting the Project:</strong></p>
+<p>Navigate to the directory containing the <code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code> file and run the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker-compose<span class="w"> </span>up<span class="w"> </span>--build
+</pre></div>
+</div>
+<p>After starting, the frontend service will be accessible over HTTPS at:</p>
+<p><a class="reference external" href="https://localhost">https://localhost</a></p>
+<p>Since a self-signed certificate is used, your browser might warn you about an insecure connection. You can proceed by accepting the warning.</p>
+</li>
+<li><p><strong>Additional Notes:</strong></p>
+<ul class="simple">
+<li><p>Check the logs of both containers to ensure that all services have started correctly.</p></li>
+<li><p>If you make changes to the source code of any service, restart the containers to apply the updates.</p></li>
+</ul>
+</li>
+</ol>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_modules/backend/index.html">Backend</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="_modules/backend/api.html">api package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_modules/backend/plantai.html">plantai package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_modules/backend/plantapi.html">plantapi package</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="_modules/ai_training/modules.html">src</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="_modules/ai_training/index.html">AI Training</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="_modules/ai_training/helperscripts.html">helperscripts package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_modules/ai_training/training.html">training package</a></li>
 </ul>
@@ -93,12 +178,13 @@ documentation for details.</p>
 </ul>
 </div>
 </section>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="_modules/backend/modules.html" class="btn btn-neutral float-right" title="src" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="_modules/backend/index.html" class="btn btn-neutral float-right" title="Backend" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

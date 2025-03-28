@@ -1,6 +1,11 @@
 plantai package
 ===============
 
+.. automodule:: plantai
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -16,14 +21,6 @@ plantai.plant\_ai module
 ------------------------
 
 .. automodule:: plantai.plant_ai
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: plantai
    :members:
    :undoc-members:
    :show-inheritance:

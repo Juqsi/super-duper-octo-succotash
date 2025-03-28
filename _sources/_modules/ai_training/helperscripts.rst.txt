@@ -1,6 +1,11 @@
 helperscripts package
 =====================
 
+.. automodule:: helperscripts
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Submodules
 ----------
 
@@ -24,14 +29,6 @@ helperscripts.generate\_merge\_map module
 -----------------------------------------
 
 .. automodule:: helperscripts.generate_merge_map
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: helperscripts
    :members:
    :undoc-members:
    :show-inheritance:
