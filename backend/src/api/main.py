@@ -143,13 +143,20 @@ async def classify_plant(image_data: dict):
         HTTPException (500): For unexpected errors in processing or classification.
 
     Example request:
+
+    .. code-block:: json
+
         {
             "images": [
                 "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/...",
-                "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/..."]
+                "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAP8A/wD/..."
+            ]
         }
 
     Example response:
+
+    .. code-block:: json
+
         {
             "results": [
                 {
@@ -157,13 +164,13 @@ async def classify_plant(image_data: dict):
                     "recognitions": [
                         {
                             "name": "Rosa indica",
-                            "plant": { ... },  # Additional plant data
+                            "plant": { ... },
                             "wikipedia": "https://en.wikipedia.org/wiki/Rosa_indica",
                             "probability": 0.98
                         },
                         {
                             "name": "Rosa rugosa",
-                            "plant": { ... },  # Additional plant data
+                            "plant": { ... },
                             "wikipedia": "https://en.wikipedia.org/wiki/Rosa_rugosa",
                             "probability": 0.85
                         }
@@ -228,16 +235,22 @@ async def search_plant(plant_data: dict):
         HTTPException (400): If the 'name' field is missing in the request or if it's an invalid input.
 
     Example request:
+
+    .. code-block:: json
+
         {
             "name": "Rosa indica"
         }
 
     Example response:
+
+    .. code-block:: json
+
         {
             "results": [
                 {
                     "name": "Rosa indica",
-                    "plant": { ... },  # Additional plant data
+                    "plant": { ... },
                     "wikipedia": "https://en.wikipedia.org/wiki/Rosa_indica"
                 }
             ]
