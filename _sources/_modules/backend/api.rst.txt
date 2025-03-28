@@ -1,0 +1,26 @@
+api package
+===========
+
+.. automodule:: api
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+----------
+
+api.main module
+---------------
+
+.. automodule:: api.main
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+api.test\_main module
+---------------------
+
+.. automodule:: api.test_main
+   :members:
+   :undoc-members:
+   :show-inheritance:

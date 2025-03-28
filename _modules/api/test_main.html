@@ -1,0 +1,359 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>api.test_main &mdash; super-duper-octo-succotash  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            super-duper-octo-succotash
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../backend/index.html">Backend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai_training/index.html">AI Training</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">super-duper-octo-succotash</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">api.test_main</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for api.test_main</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">unittest.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">patch</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.testclient</span><span class="w"> </span><span class="kn">import</span> <span class="n">TestClient</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.main</span><span class="w"> </span><span class="kn">import</span> <span class="n">MAX_IMAGE_SIZE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.main</span><span class="w"> </span><span class="kn">import</span> <span class="n">app</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">TestClient</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="generate_base64_image">
+<a class="viewcode-back" href="../backend/api.html#api.test_main.generate_base64_image">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_base64_image</span><span class="p">(</span><span class="n">image_filename</span><span class="o">=</span><span class="s2">&quot;test_img.jpg&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads an existing image from the same folder as this script,</span>
+<span class="sd">    encodes it in Base64 format, and returns it as a string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image_filename (str): Name of the image file to encode.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Base64-encoded string of the image in JPEG format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">script_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
+    <span class="n">image_path</span> <span class="o">=</span> <span class="n">script_dir</span> <span class="o">/</span> <span class="n">image_filename</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">image_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The image &#39;</span><span class="si">{</span><span class="n">image_filename</span><span class="si">}</span><span class="s2">&#39; was not found in the folder.&quot;</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">image_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">image_file</span><span class="p">:</span>
+        <span class="n">base64_image</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">image_file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;data:image/jpeg;base64,</span><span class="si">{</span><span class="n">base64_image</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_hello_world">
+<a class="viewcode-back" href="../backend/api.html#api.test_main.test_hello_world">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_hello_world</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests the root endpoint (&quot;/&quot;) and verifies that the expected</span>
+<span class="sd">    &quot;Hello World 🌍&quot; message is returned.</span>
+
+<span class="sd">    Assertions:</span>
+<span class="sd">        - The HTTP status code must be 200.</span>
+<span class="sd">        - The JSON response must contain the expected message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello World 🌍&quot;</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="test_classify_plant_valid_image">
+<a class="viewcode-back" href="../backend/api.html#api.test_main.test_classify_plant_valid_image">[docs]</a>
+<span class="nd">@patch</span><span class="p">(</span><span class="s2">&quot;api.main.run_plant_classifier&quot;</span><span class="p">)</span>
+<span class="nd">@patch</span><span class="p">(</span><span class="s2">&quot;api.main.run_plant_getter&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_classify_plant_valid_image</span><span class="p">(</span><span class="n">mock_getter</span><span class="p">,</span> <span class="n">mock_classifier</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests the &quot;/uploads&quot; endpoint with a valid Base64 image.</span>
+
+<span class="sd">    Assertions:</span>
+<span class="sd">        - The HTTP status code must be 200.</span>
+<span class="sd">        - The JSON response must contain the key &quot;results&quot;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">valid_base64_image</span> <span class="o">=</span> <span class="n">generate_base64_image</span><span class="p">()</span>
+
+    <span class="n">mock_classifier</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;plant_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosa indica&quot;</span><span class="p">,</span> <span class="s2">&quot;probability&quot;</span><span class="p">:</span> <span class="mf">98.2</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;plant_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Lavandula&quot;</span><span class="p">,</span> <span class="s2">&quot;probability&quot;</span><span class="p">:</span> <span class="mf">84.7</span><span class="p">}</span>
+    <span class="p">]</span>
+
+    <span class="n">mock_getter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;plant&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;scientific_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosa indica&quot;</span><span class="p">,</span> <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosaceae&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;wikipedia&quot;</span><span class="p">:</span> <span class="s2">&quot;https://de.wikipedia.org/wiki/Rosa_indica&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;plant&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;scientific_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Lavandula&quot;</span><span class="p">,</span> <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;Lamiaceae&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;wikipedia&quot;</span><span class="p">:</span> <span class="s2">&quot;https://de.wikipedia.org/wiki/Lavendel&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/uploads&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;images&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">valid_base64_image</span><span class="p">]})</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;recognitions&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;recognitions&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Rosa indica&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_classify_plant_multiple_images">
+<a class="viewcode-back" href="../backend/api.html#api.test_main.test_classify_plant_multiple_images">[docs]</a>
+<span class="nd">@patch</span><span class="p">(</span><span class="s2">&quot;api.main.run_plant_classifier&quot;</span><span class="p">)</span>
+<span class="nd">@patch</span><span class="p">(</span><span class="s2">&quot;api.main.run_plant_getter&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_classify_plant_multiple_images</span><span class="p">(</span><span class="n">mock_getter</span><span class="p">,</span> <span class="n">mock_classifier</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests the &quot;/uploads&quot; endpoint with multiple Base64 images.</span>
+
+<span class="sd">    Assertions:</span>
+<span class="sd">        - The HTTP status code must be 200.</span>
+<span class="sd">        - The JSON response must contain predictions for each uploaded image.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">valid_base64_image1</span> <span class="o">=</span> <span class="n">generate_base64_image</span><span class="p">()</span>
+    <span class="n">valid_base64_image2</span> <span class="o">=</span> <span class="n">generate_base64_image</span><span class="p">()</span>
+
+    <span class="n">mock_classifier</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;plant_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosa indica&quot;</span><span class="p">,</span> <span class="s2">&quot;probability&quot;</span><span class="p">:</span> <span class="mf">90.0</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;plant_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Lavandula&quot;</span><span class="p">,</span> <span class="s2">&quot;probability&quot;</span><span class="p">:</span> <span class="mf">85.0</span><span class="p">},</span>
+        <span class="p">],</span>
+        <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;plant_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Tulipa gesneriana&quot;</span><span class="p">,</span> <span class="s2">&quot;probability&quot;</span><span class="p">:</span> <span class="mf">91.0</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;plant_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Hyacinthus&quot;</span><span class="p">,</span> <span class="s2">&quot;probability&quot;</span><span class="p">:</span> <span class="mf">80.0</span><span class="p">},</span>
+        <span class="p">]</span>
+    <span class="p">]</span>
+
+    <span class="n">mock_getter</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;plant&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;scientific_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosa indica&quot;</span><span class="p">,</span> <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosaceae&quot;</span><span class="p">},</span>
+                <span class="s2">&quot;wikipedia&quot;</span><span class="p">:</span> <span class="s2">&quot;https://de.wikipedia.org/wiki/Rosa_indica&quot;</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;plant&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;scientific_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Lavandula&quot;</span><span class="p">,</span> <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;Lamiaceae&quot;</span><span class="p">},</span>
+                <span class="s2">&quot;wikipedia&quot;</span><span class="p">:</span> <span class="s2">&quot;https://de.wikipedia.org/wiki/Lavendel&quot;</span>
+            <span class="p">}</span>
+        <span class="p">],</span>
+        <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;plant&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;scientific_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Tulipa gesneriana&quot;</span><span class="p">,</span> <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;Liliaceae&quot;</span><span class="p">},</span>
+                <span class="s2">&quot;wikipedia&quot;</span><span class="p">:</span> <span class="s2">&quot;https://de.wikipedia.org/wiki/Tulpe&quot;</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;plant&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;scientific_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Hyacinthus orientalis&quot;</span><span class="p">,</span> <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;Asparagaceae&quot;</span><span class="p">},</span>
+                <span class="s2">&quot;wikipedia&quot;</span><span class="p">:</span> <span class="s2">&quot;https://de.wikipedia.org/wiki/Hyazinthe&quot;</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">]</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/uploads&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;images&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">valid_base64_image1</span><span class="p">,</span> <span class="n">valid_base64_image2</span><span class="p">]})</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;recognitions&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;recognitions&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span></div>
+
+
+
+<div class="viewcode-block" id="test_classify_plant_invalid_image">
+<a class="viewcode-back" href="../backend/api.html#api.test_main.test_classify_plant_invalid_image">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_classify_plant_invalid_image</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests the &quot;/uploads&quot; endpoint with an invalid Base64 string.</span>
+
+<span class="sd">    Assertions:</span>
+<span class="sd">       - The HTTP status code must be 400.</span>
+<span class="sd">       - The JSON response must contain the error &quot;Invalid Base64 format.&quot;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">invalid_base64_image</span> <span class="o">=</span> <span class="s2">&quot;data:image/jpeg;base64,invalid-}base64&quot;</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="s2">&quot;/uploads&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;images&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">invalid_base64_image</span><span class="p">]}</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">400</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;detail&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Invalid Base64 format.&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_image_too_large">
+<a class="viewcode-back" href="../backend/api.html#api.test_main.test_image_too_large">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_image_too_large</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests the &quot;/uploads&quot; endpoint with an oversized image.</span>
+
+<span class="sd">    Assertions:</span>
+<span class="sd">        - The HTTP status code must be 413.</span>
+<span class="sd">        - The JSON response must contain the appropriate error message indicating size limit exceeded.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">large_base64_image</span> <span class="o">=</span> <span class="s2">&quot;data:image/jpeg;base64,&quot;</span> <span class="o">+</span> <span class="s2">&quot;A&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="n">MAX_IMAGE_SIZE</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="s2">&quot;/uploads&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;images&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">large_base64_image</span><span class="p">]}</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">413</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;detail&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;The image exceeds the maximum file size of 5 MB.&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_classify_plant_empty_image_list">
+<a class="viewcode-back" href="../backend/api.html#api.test_main.test_classify_plant_empty_image_list">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_classify_plant_empty_image_list</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests the &quot;/uploads&quot; endpoint with an empty image list.</span>
+
+<span class="sd">    Assertions:</span>
+<span class="sd">        - The HTTP status code must be 400.</span>
+<span class="sd">        - The JSON response must contain the appropriate error message for missing images.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="s2">&quot;/uploads&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{}</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">400</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;detail&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Missing image data.&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_search_plant_missing_name">
+<a class="viewcode-back" href="../backend/api.html#api.test_main.test_search_plant_missing_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_search_plant_missing_name</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests the &quot;/search&quot; endpoint with missing &#39;name&#39; field in the request.</span>
+
+<span class="sd">    Assertions:</span>
+<span class="sd">        - The HTTP status code must be 400.</span>
+<span class="sd">        - The JSON response must contain the error message &quot;Missing plant name.&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="s2">&quot;/search&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{}</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">400</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;detail&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Missing plant name.&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_search_plant_valid_name">
+<a class="viewcode-back" href="../backend/api.html#api.test_main.test_search_plant_valid_name">[docs]</a>
+<span class="nd">@patch</span><span class="p">(</span><span class="s2">&quot;api.main.run_plant_getter&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_search_plant_valid_name</span><span class="p">(</span><span class="n">mock_getter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests the &quot;/search&quot; endpoint with a valid plant name.</span>
+
+<span class="sd">    Assertions:</span>
+<span class="sd">        - The HTTP status code must be 200.</span>
+<span class="sd">        - The JSON response must contain the &#39;results&#39; key.</span>
+<span class="sd">        - The &#39;results&#39; should contain the plant data and its associated Wikipedia link.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mock_getter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosa indica&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;plant&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;scientific_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosa indica&quot;</span><span class="p">,</span> <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosaceae&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;wikipedia&quot;</span><span class="p">:</span> <span class="s2">&quot;https://en.wikipedia.org/wiki/Rosa_indica&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="s2">&quot;/search&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rosa indica&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+    <span class="k">assert</span> <span class="s2">&quot;results&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Rosa indica&quot;</span>
+    <span class="k">assert</span> <span class="s2">&quot;wikipedia&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;wikipedia&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;https://en.wikipedia.org/wiki/Rosa_indica&quot;</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Lukas Maier, Justus Siegert, Timon Kleinknecht.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

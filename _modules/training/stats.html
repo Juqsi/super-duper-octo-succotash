@@ -1,0 +1,216 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>training.stats &mdash; super-duper-octo-succotash  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            super-duper-octo-succotash
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../backend/index.html">Backend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai_training/index.html">AI Training</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">super-duper-octo-succotash</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">training.stats</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for training.stats</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">ConfusionMatrixDisplay</span>
+
+
+<div class="viewcode-block" id="save_confusion_matrix">
+<a class="viewcode-back" href="../ai_training/training.html#training.stats.save_confusion_matrix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_confusion_matrix</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">val_loader</span><span class="p">,</span> <span class="n">selected_classes</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Saves the normalized confusion matrix as PNG and CSV files and prints the most common misclassifications.</span>
+
+<span class="sd">    This function performs the following steps:</span>
+<span class="sd">      1. Computes model predictions on the validation dataset.</span>
+<span class="sd">      2. Generates a normalized confusion matrix.</span>
+<span class="sd">      3. Visualizes the matrix using Matplotlib and saves the plot as a PNG file.</span>
+<span class="sd">      4. Saves the normalized matrix as a CSV file.</span>
+<span class="sd">      5. Identifies and prints the top-N (default 30) most frequent misclassifications (excluding diagonal entries).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (torch.nn.Module): The model to be evaluated.</span>
+<span class="sd">        val_loader (torch.utils.data.DataLoader): DataLoader for the validation dataset.</span>
+<span class="sd">        selected_classes (list): List of class names.</span>
+<span class="sd">        device (torch.device or str): Device on which calculations are performed (e.g., &quot;cpu&quot; or &quot;cuda&quot;).</span>
+<span class="sd">        epoch (int): Current epoch for labeling saved files.</span>
+<span class="sd">        output_dir (str): Directory where the image and CSV files will be saved.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">all_labels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">all_preds</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">labels</span> <span class="ow">in</span> <span class="n">val_loader</span><span class="p">:</span>
+            <span class="n">inputs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">labels</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">predicted</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">all_labels</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+            <span class="n">all_preds</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">predicted</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+
+    <span class="n">cm</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">all_labels</span><span class="p">,</span> <span class="n">all_preds</span><span class="p">)</span>
+    <span class="n">cm_normalized</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">cm</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+
+    <span class="c1"># Create and save the confusion matrix visualization</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="n">disp</span> <span class="o">=</span> <span class="n">ConfusionMatrixDisplay</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="o">=</span><span class="n">cm_normalized</span><span class="p">,</span> <span class="n">display_labels</span><span class="o">=</span><span class="n">selected_classes</span><span class="p">)</span>
+    <span class="n">disp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Blues&#39;</span><span class="p">,</span> <span class="n">xticks_rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">values_format</span><span class="o">=</span><span class="s2">&quot;.2f&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Normalized Confusion Matrix (Epoch </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;confusion_matrix_epoch_</span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Save the normalized confusion matrix as a CSV file</span>
+    <span class="n">df_cm</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cm_normalized</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">selected_classes</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">selected_classes</span><span class="p">)</span>
+    <span class="n">df_cm</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;confusion_matrix_normalized_epoch_</span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Identify top-N most frequent misclassifications (excluding diagonal)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="mi">30</span>  <span class="c1"># Number of top errors</span>
+    <span class="n">error_matrix</span> <span class="o">=</span> <span class="n">cm_normalized</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">error_matrix</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># Ignore diagonal = correct predictions</span>
+    <span class="n">flat_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">error_matrix</span><span class="o">.</span><span class="n">ravel</span><span class="p">())[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="n">N</span><span class="p">]</span>  <span class="c1"># Top-N errors</span>
+    <span class="n">top_misclassifications</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">error_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">flat_indices</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Top-</span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s2"> most frequent misclassifications in Epoch </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">top_misclassifications</span><span class="p">:</span>
+        <span class="n">true_label</span> <span class="o">=</span> <span class="n">selected_classes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">predicted_label</span> <span class="o">=</span> <span class="n">selected_classes</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="n">confusion_value</span> <span class="o">=</span> <span class="n">error_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">true_label</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">predicted_label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">confusion_value</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Close the plot</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="plot_training_progress">
+<a class="viewcode-back" href="../ai_training/training.html#training.stats.plot_training_progress">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_training_progress</span><span class="p">(</span><span class="n">train_acc</span><span class="p">,</span> <span class="n">val_acc</span><span class="p">,</span> <span class="n">top5_acc</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plots and saves the training and validation accuracy progress over epochs.</span>
+
+<span class="sd">    This function creates a plot that displays training accuracy, validation accuracy (Top-1),</span>
+<span class="sd">    and validation accuracy (Top-5) over epochs. The resulting plot is saved as a PNG file</span>
+<span class="sd">    in the specified output directory.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        train_acc (list): List of training accuracies per epoch.</span>
+<span class="sd">        val_acc (list): List of validation accuracies (Top-1) per epoch.</span>
+<span class="sd">        top5_acc (list): List of validation accuracies (Top-5) per epoch.</span>
+<span class="sd">        output_dir (str): Directory where the plot should be saved.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">epochs</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_acc</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span> <span class="n">train_acc</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Train Accuracy&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span> <span class="n">val_acc</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Validation Accuracy (Top-1)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span> <span class="n">top5_acc</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Validation Accuracy (Top-5)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Epoch&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Accuracy&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Training &amp; Validation Accuracy&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">&quot;training_accuracy_plot.png&quot;</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Lukas Maier, Justus Siegert, Timon Kleinknecht.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

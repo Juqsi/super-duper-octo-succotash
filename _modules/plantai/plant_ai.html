@@ -1,0 +1,246 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>plantai.plant_ai &mdash; super-duper-octo-succotash  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            super-duper-octo-succotash
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../backend/index.html">Backend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai_training/index.html">AI Training</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">super-duper-octo-succotash</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">plantai.plant_ai</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for plantai.plant_ai</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This Module offers a class for classifying Plant Images by species of plant.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torchvision.transforms</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">transforms</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchvision</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+
+<div class="viewcode-block" id="PlantClassifier">
+<a class="viewcode-back" href="../backend/plantai.html#plantai.plant_ai.PlantClassifier">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlantClassifier</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This CLass simplifies recognition into one callable function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the PlantClassifier class by setting up the ai model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span>
+        <span class="n">content_root</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
+        <span class="n">model_path</span> <span class="o">=</span> <span class="n">content_root</span> <span class="o">/</span> <span class="s2">&quot;ki&quot;</span> <span class="o">/</span> <span class="s2">&quot;finetuned_model_2025-03-27_09-38-24.pth&quot;</span>
+        <span class="n">config_path</span> <span class="o">=</span> <span class="n">content_root</span> <span class="o">/</span> <span class="s2">&quot;ki&quot;</span> <span class="o">/</span> <span class="s2">&quot;config_finetune_2025-03-27_09-38-24.json&quot;</span>
+        <span class="n">class_map_path</span> <span class="o">=</span> <span class="n">content_root</span> <span class="o">/</span> <span class="s2">&quot;ki&quot;</span> <span class="o">/</span> <span class="s2">&quot;plantnet300K_species_names.json&quot;</span>
+
+        <span class="c1"># Klassen laden</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">class_ids</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;CLASSES&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Mapping von ID → Klarname laden</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">class_map_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">class_map</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+        <span class="c1"># Modelsetup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">resnet50</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">fc</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">fc</span><span class="o">.</span><span class="n">in_features</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">class_ids</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+        <span class="c1"># Transforms wie beim training</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+            <span class="n">transforms</span><span class="o">.</span><span class="n">Resize</span><span class="p">((</span><span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">)),</span>
+            <span class="n">transforms</span><span class="o">.</span><span class="n">CenterCrop</span><span class="p">(</span><span class="mi">224</span><span class="p">),</span>
+            <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+            <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="p">[</span><span class="mf">0.485</span><span class="p">,</span> <span class="mf">0.456</span><span class="p">,</span> <span class="mf">0.406</span><span class="p">],</span>
+                                 <span class="n">std</span><span class="o">=</span><span class="p">[</span><span class="mf">0.229</span><span class="p">,</span> <span class="mf">0.224</span><span class="p">,</span> <span class="mf">0.225</span><span class="p">])</span>
+        <span class="p">])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__make_prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Analyzes one Image and returns the given number of classification descending by likeliness.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            image_path: the path where the image is saved</span>
+<span class="sd">            top_k: how many answers should be returned</span>
+<span class="sd">        Returns</span>
+<span class="sd">            top_probs, top_indices: containing classifications by index in the config and respectivelikeliness of each</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">image_path</span><span class="p">)</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;RGB&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">image_path</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+        <span class="n">input_tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">input_tensor</span><span class="p">)</span>
+            <span class="n">probabilities</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Wahrscheinlichkeiten berechnen</span>
+            <span class="n">top_probs</span><span class="p">,</span> <span class="n">top_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">top_k</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Top-k Werte extrahieren</span>
+
+        <span class="k">return</span> <span class="n">top_probs</span><span class="p">,</span> <span class="n">top_indices</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__get_prediction_k</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Analyzes one Image and returns k likeliest classification.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            image_path: the path where the image is saved</span>
+<span class="sd">            k: wich index the result should have, when ordered by likeliness</span>
+<span class="sd">        Returns</span>
+<span class="sd">            prediction_k: the k likeliest classification of the Image</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">top_probs</span><span class="p">,</span> <span class="n">top_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__make_prediction</span><span class="p">(</span><span class="n">image_path</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+        <span class="n">class_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_ids</span><span class="p">[</span><span class="n">top_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()]</span>
+        <span class="n">human_readable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">class_id</span><span class="p">,</span> <span class="s2">&quot;Unbekannt&quot;</span><span class="p">)</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="n">top_probs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>  <span class="c1"># Wahrscheinlichkeit als Float</span>
+        <span class="n">prediction_k</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;class_id&quot;</span><span class="p">:</span> <span class="n">class_id</span><span class="p">,</span>
+            <span class="s2">&quot;plant_name&quot;</span><span class="p">:</span> <span class="n">human_readable</span><span class="p">,</span>
+            <span class="s2">&quot;probability&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">prob</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">prediction_k</span>
+
+<div class="viewcode-block" id="PlantClassifier.predict_from_image_path">
+<a class="viewcode-back" href="../backend/plantai.html#plantai.plant_ai.PlantClassifier.predict_from_image_path">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict_from_image_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_of_results</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Analyzes one Image and returns the given number of Answers descending by likeliness.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            image_path: the path where the image is saved</span>
+<span class="sd">            num_of_results: how many classifications should be returned excluding duplicate classes</span>
+<span class="sd">        Returns</span>
+<span class="sd">            predictions: list of length num_of_results conaining the classifications by id, name and their likeliness</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">predictions</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">num_of_results</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
+                <span class="n">num_of_results</span> <span class="o">=</span> <span class="mi">20</span>
+            <span class="n">top_k</span> <span class="o">=</span> <span class="n">num_of_results</span>
+            <span class="n">top_probs</span><span class="p">,</span> <span class="n">top_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__make_prediction</span><span class="p">(</span><span class="n">image_path</span><span class="p">,</span> <span class="n">top_k</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">top_k</span><span class="p">):</span>
+                <span class="n">class_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_ids</span><span class="p">[</span><span class="n">top_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()]</span>
+                <span class="n">human_readable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">class_id</span><span class="p">,</span> <span class="s2">&quot;Unbekannt&quot;</span><span class="p">)</span>
+                <span class="n">prob</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">top_probs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>  <span class="c1"># Wahrscheinlichkeit als Float</span>
+                <span class="n">new_prediction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="c1"># ensure no plant is accidentally spread over two classes</span>
+                <span class="k">for</span> <span class="n">prediction</span> <span class="ow">in</span> <span class="n">predictions</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">prediction</span><span class="p">[</span><span class="s2">&quot;plant_name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">human_readable</span><span class="p">:</span>
+                        <span class="n">prediction</span><span class="p">[</span><span class="s2">&quot;probability&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">round</span><span class="p">(</span><span class="n">prob</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+                        <span class="n">new_prediction</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">break</span>
+
+                <span class="k">if</span> <span class="n">new_prediction</span><span class="p">:</span>
+                    <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                        <span class="s2">&quot;class_id&quot;</span><span class="p">:</span> <span class="n">class_id</span><span class="p">,</span>
+                        <span class="s2">&quot;plant_name&quot;</span><span class="p">:</span> <span class="n">human_readable</span><span class="p">,</span>
+                        <span class="s2">&quot;probability&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">prob</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+                    <span class="p">})</span>
+            <span class="c1"># get more classifications in case of doubles occouring to reach desired number of unique classifications</span>
+            <span class="n">doubles</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="n">num_of_results</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">):</span>
+                <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__get_prediction_k</span><span class="p">(</span><span class="n">image_path</span><span class="p">,</span> <span class="n">num_of_results</span> <span class="o">+</span> <span class="n">doubles</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="n">doubles</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">predictions</span>
+
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;error: File </span><span class="si">{</span><span class="n">image_path</span><span class="si">}</span><span class="s2"> not found&quot;</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Lukas Maier, Justus Siegert, Timon Kleinknecht.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
