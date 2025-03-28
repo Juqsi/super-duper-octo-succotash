@@ -4,6 +4,7 @@ import { usePlantHistory } from '@/stores/usePlantHistory'
 import PlantInformationCard from '@/components/PlantInformationCard.vue'
 import { useRoute } from 'vue-router'
 import NavBar from '@/components/NavBar.vue'
+import EmptyState from '@/components/EmptyState.vue'
 
 const plantHistory = usePlantHistory()
 const route = useRoute()
@@ -28,8 +29,11 @@ const selectedImage = computed(() => recognizedImages.value[selectedImageIndex.v
       <div
         v-for="(entry, index) in recognizedImages"
         :key="entry.timestamp"
-        :class="{ 'border-primary': selectedImageIndex === index }"
-        class="w-16 h-16 border rounded overflow-hidden cursor-pointer"
+        :class="{
+          'border-primary': selectedImageIndex === index,
+          'border-foreground': selectedImageIndex !== index,
+        }"
+        class="w-20 h-20 border-2 rounded-md overflow-hidden cursor-pointer"
         @click="selectedImageIndex = index"
       >
         <img
@@ -48,6 +52,12 @@ const selectedImage = computed(() => recognizedImages.value[selectedImageIndex.v
         <template v-for="(rec, index) in selectedImage.recognitions" :key="index">
           <PlantInformationCard :recognition="rec" />
         </template>
+        <empty-state
+          :condition="selectedImage.recognitions.length === 0"
+          img-src="/undraw_flowers_171u.svg"
+          subtitle="try again with a different picture"
+          title="No plant recognized"
+        />
       </div>
     </div>
   </div>
