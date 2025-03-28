@@ -153,7 +153,15 @@ export function useImageUpload(apiUrl = BASE_PATH) {
       })
 
       if (response.status === 413) {
-        toast.error(`One or more images exceed the maximum file size (${MAX_FILE_SIZE_MB} MB).`)
+        toast.error(`One or more images exceed the maximum file size (${MAX_FILE_SIZE_MB} MB).`, {
+          id: toastId,
+        })
+        return
+      }
+
+      if (response.status === 400) {
+        const message = await response.json()
+        toast.error(message.detail, { id: toastId })
         return
       }
 
