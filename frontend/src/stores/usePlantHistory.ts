@@ -46,7 +46,8 @@ export const usePlantHistory = defineStore('plantHistory', {
       entry: Omit<RecognizedImage, 'timestamp' | 'imageKey'> & { image: string },
     ) {
       const timestamp = Date.now()
-      const imageKey = `plantImage_${timestamp}`
+      const randomSuffix = Math.random().toString(36).substring(2, 8)
+      const imageKey = `plantImage_${timestamp}_${randomSuffix}`
       try {
         localStorage.setItem(imageKey, entry.image)
       } catch (e) {
