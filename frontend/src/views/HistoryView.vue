@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { usePlantHistory } from '@/stores/usePlantHistory'
 import NavBar from '@/components/NavBar.vue'
+import EmptyState from '@/components/EmptyState.vue'
 
 const plantHistory = usePlantHistory()
 const recognizedImages = computed(() => plantHistory.history)
@@ -54,6 +55,12 @@ const formatTimestamp = (timestamp: number) => {
           </div>
           <div v-if="entry.recognitions && entry.recognitions.length > 0">
             <h2 class="text-lg font-bold mb-2">Recognized plants:</h2>
+            <empty-state
+              :condition="entry.recognitions.length === 0"
+              img-src="/undraw_flowers_171u.svg"
+              subtitle="try again with a different picture"
+              title="No plant recognized"
+            />
             <div class="space-y-2">
               <div
                 v-for="(rec, index) in entry.recognitions"
@@ -66,7 +73,7 @@ const formatTimestamp = (timestamp: number) => {
                   <p><strong>Name:</strong> {{ rec.name.replace('_', ' ') }}</p>
                   <p>
                     <strong>Probability:</strong>
-                    {{rec.probability ? rec.probability.toFixed(2) + '%' : ''}}
+                    {{ rec.probability ? rec.probability.toFixed(2) + '%' : '' }}
                   </p>
                   <div v-if="rec.plant">
                     <p><strong>Common Name:</strong> {{ rec.plant.common_name }}</p>
