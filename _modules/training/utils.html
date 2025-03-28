@@ -77,24 +77,23 @@
 <a class="viewcode-back" href="../ai_training/training.html#training.utils.save_checkpoint">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">save_checkpoint</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">checkpoint_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Speichert den aktuellen Zustand des Modells und Optimizers als Checkpoint.</span>
+<span class="sd">    Saves the current state of the model and optimizer as a checkpoint.</span>
 
-<span class="sd">    Diese Funktion speichert den Zustand des Modells, des Optimizers und die aktuelle Epoche</span>
-<span class="sd">    in einem Dictionary und schreibt dieses Dictionary in eine Datei, die durch &#39;checkpoint_path&#39;</span>
-<span class="sd">    spezifiziert ist.</span>
+<span class="sd">    This function stores the state of the model, optimizer, and the current epoch</span>
+<span class="sd">    in a dictionary and writes this dictionary to a file specified by &#39;checkpoint_path&#39;.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model (torch.nn.Module): Das zu speichernde Modell.</span>
-<span class="sd">        optimizer (torch.optim.Optimizer): Der Optimizer, dessen Zustand ebenfalls gespeichert wird.</span>
-<span class="sd">        epoch (int): Die aktuelle Epoche, die im Checkpoint vermerkt wird.</span>
-<span class="sd">        checkpoint_path (str): Der Dateipfad, an dem der Checkpoint gespeichert wird.</span>
+<span class="sd">        model (torch.nn.Module): The model to be saved.</span>
+<span class="sd">        optimizer (torch.optim.Optimizer): The optimizer whose state will also be saved.</span>
+<span class="sd">        epoch (int): The current epoch to record in the checkpoint.</span>
+<span class="sd">        checkpoint_path (str): The file path where the checkpoint will be saved.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        None</span>
 
 <span class="sd">    Side Effects:</span>
-<span class="sd">        - Speichert einen Checkpoint auf der Festplatte.</span>
-<span class="sd">        - Gibt eine Bestätigung auf der Konsole aus.</span>
+<span class="sd">        - Saves a checkpoint on the disk.</span>
+<span class="sd">        - Prints a confirmation message to the console.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">checkpoint</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;epoch&#39;</span><span class="p">:</span> <span class="n">epoch</span><span class="p">,</span>
@@ -102,7 +101,7 @@
         <span class="s1">&#39;optimizer_state_dict&#39;</span><span class="p">:</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span>
     <span class="p">}</span>
     <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">checkpoint_path</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checkpoint für Epoche </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2"> gespeichert.&quot;</span><span class="p">)</span></div>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checkpoint saved for epoch </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
 
 
 
@@ -110,30 +109,30 @@
 <a class="viewcode-back" href="../ai_training/training.html#training.utils.load_checkpoint">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_checkpoint</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Lädt einen gespeicherten Checkpoint und stellt den Zustand von Modell und Optimizer wieder her.</span>
+<span class="sd">    Loads a saved checkpoint and restores the state of the model and optimizer.</span>
 
-<span class="sd">    Diese Funktion lädt einen Checkpoint von dem angegebenen Pfad, stellt den Zustand des Modells und</span>
-<span class="sd">    des Optimizers wieder her und gibt die geladene Epoche zurück.</span>
+<span class="sd">    This function loads a checkpoint from the specified path, restores the model</span>
+<span class="sd">    and optimizer state, and returns the loaded epoch.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model (torch.nn.Module): Das Modell, in das der gespeicherte Zustand geladen wird.</span>
-<span class="sd">        optimizer (torch.optim.Optimizer): Der Optimizer, in den der gespeicherte Zustand geladen wird.</span>
-<span class="sd">        path (str): Der Pfad zur Checkpoint-Datei.</span>
-<span class="sd">        device (torch.device or str): Das Gerät, auf das die geladenen Daten gemappt werden sollen.</span>
+<span class="sd">        model (torch.nn.Module): The model into which the saved state will be loaded.</span>
+<span class="sd">        optimizer (torch.optim.Optimizer): The optimizer into which the saved state will be loaded.</span>
+<span class="sd">        path (str): The path to the checkpoint file.</span>
+<span class="sd">        device (torch.device or str): The device on which the loaded data should be mapped.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        tuple: Ein Tupel (model, optimizer, epoch) bestehend aus dem Modell mit geladenem Zustand,</span>
-<span class="sd">               dem Optimizer mit geladenem Zustand und der zuletzt gespeicherten Epoche.</span>
+<span class="sd">        tuple: A tuple (model, optimizer, epoch) containing the model with loaded state,</span>
+<span class="sd">               the optimizer with loaded state, and the last saved epoch.</span>
 
 <span class="sd">    Side Effects:</span>
-<span class="sd">        - Gibt Statusmeldungen auf der Konsole aus.</span>
+<span class="sd">        - Prints status messages to the console.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Lade Checkpoint von </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
-    <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">weights_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Sicherer laden</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading checkpoint from </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">weights_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Safer loading</span>
     <span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;model_state_dict&#39;</span><span class="p">])</span>
     <span class="n">optimizer</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;optimizer_state_dict&#39;</span><span class="p">])</span>
     <span class="n">epoch</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;epoch&#39;</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checkpoint geladen (Epoche </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checkpoint loaded (Epoch </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">epoch</span></div>
 
 </pre></div>

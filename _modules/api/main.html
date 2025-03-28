@@ -92,6 +92,7 @@
 
 <span class="c1"># Load Host domain</span>
 <span class="n">HOST</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;HOST&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">MIN_ACC</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MIN_ACC&quot;</span><span class="p">,</span> <span class="s2">&quot;40&quot;</span><span class="p">))</span>
 <span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
 
 <span class="n">origins</span> <span class="o">=</span> <span class="p">[</span>
@@ -263,6 +264,7 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">predictions</span> <span class="o">=</span> <span class="n">run_plant_classifier</span><span class="p">(</span><span class="n">image_path</span><span class="p">)</span>
+            <span class="n">predictions</span> <span class="o">=</span> <span class="p">[</span><span class="n">prediction</span> <span class="k">for</span> <span class="n">prediction</span> <span class="ow">in</span> <span class="n">predictions</span> <span class="k">if</span> <span class="n">prediction</span><span class="p">[</span><span class="s2">&quot;probability&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">MIN_ACC</span><span class="p">]</span>
             <span class="n">plant_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">prediction</span><span class="p">[</span><span class="s2">&quot;plant_name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">prediction</span> <span class="ow">in</span> <span class="n">predictions</span><span class="p">]</span>
             <span class="n">plant_info</span> <span class="o">=</span> <span class="n">run_plant_getter</span><span class="p">(</span><span class="n">plant_names</span><span class="p">)</span>
 

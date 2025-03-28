@@ -94,26 +94,26 @@
 </section>
 <section id="module-helperscripts.cleanDataset">
 <span id="helperscripts-cleandataset-module"></span><h2>helperscripts.cleanDataset module<a class="headerlink" href="#module-helperscripts.cleanDataset" title="Link to this heading"></a></h2>
-<p>Dieses Skript dient zur Bereinigung von Datensatzverzeichnissen, indem Klassenordner, die weniger als eine bestimmte
-Mindestanzahl an Bildern enthalten, gelöscht werden.
-Es werden drei Verzeichnisse verarbeitet: images_train, images_val und images_test des PlantNet 300K Datensatzes.
-Zunächst werden zu kleine Ordner im Trainingsdatensatz gelöscht. Anschließend werden die gleichen Ordner in den
-Validierungs- und Testdatensätzen entfernt.</p>
+<p>This script is used to clean up dataset directories by deleting class folders that contain fewer than a specified
+minimum number of images. Three directories are processed: images_train, images_val, and images_test from the PlantNet
+300K dataset.
+First, class folders that are too small are deleted from the training dataset. Then, the same folders are removed from
+the validation and test datasets.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="helperscripts.cleanDataset.delete_small_folders">
 <span class="sig-prename descclassname"><span class="pre">helperscripts.cleanDataset.</span></span><span class="sig-name descname"><span class="pre">delete_small_folders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_images</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../helperscripts/cleanDataset.html#delete_small_folders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#helperscripts.cleanDataset.delete_small_folders" title="Link to this definition"></a></dt>
-<dd><p>Löscht Unterordner im angegebenen Basisverzeichnis, die weniger als ‘min_images’ Dateien enthalten.</p>
-<p>Durchläuft alle Unterordner in ‘base_dir’ und entfernt diejenigen, in denen die Anzahl der Dateien kleiner
-als ‘min_images’ ist. Dabei werden nur Ordner berücksichtigt, die tatsächlich existieren und Dateien enthalten.</p>
+<dd><p>Deletes subfolders in the given base directory that contain fewer than ‘min_images’ files.</p>
+<p>Iterates over all subfolders in ‘base_dir’ and removes those that contain fewer than ‘min_images’ files.
+Only folders that actually exist and contain files are considered.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>base_dir</strong> (<em>str</em>) – Das Verzeichnis, in dem nach Unterordnern gesucht wird.</p></li>
-<li><p><strong>min_images</strong> (<em>int</em>) – Mindestanzahl an Dateien, die ein Unterordner enthalten muss, um nicht gelöscht zu werden.</p></li>
+<li><p><strong>base_dir</strong> (<em>str</em>) – The directory to search for subfolders in.</p></li>
+<li><p><strong>min_images</strong> (<em>int</em>) – The minimum number of files a subfolder must contain to avoid deletion.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Eine Liste der Namen der gelöschten Unterordner.</p>
+<dd class="field-even"><p>A list of names of the deleted subfolders.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
@@ -127,16 +127,15 @@ als ‘min_images’ ist. Dabei werden nur Ordner berücksichtigt, die tatsächl
 </section>
 <section id="module-helperscripts.generate_merge_map">
 <span id="helperscripts-generate-merge-map-module"></span><h2>helperscripts.generate_merge_map module<a class="headerlink" href="#module-helperscripts.generate_merge_map" title="Link to this heading"></a></h2>
-<p>Dieses Skript erstellt eine Merge Map für die PlantNet 300K Species Names.
-Es führt folgende Schritte durch:</p>
+<p>This script creates a merge map for the PlantNet 300K species names.
+It performs the following steps:</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li><p>Laden der Spezies-Namen aus einer JSON-Datei.</p></li>
-<li><p>Gruppierung der Klasseneinträge basierend auf exakten Namensübereinstimmungen.</p></li>
-<li><p>Erzeugung einer Merge Map, bei der Duplikate auf eine primäre ID abgebildet werden.</p></li>
-<li><p>Optional: Einsatz von Fuzzy-Matching, um zusätzlich ähnlich klingende Einträge (über einen Schwellenwert)
-zu identifizieren und zu mergen.</p></li>
-<li><p>Speichern der resultierenden Merge Map in einer JSON-Datei.</p></li>
+<li><p>Load species names from a JSON file.</p></li>
+<li><p>Group class entries based on exact name matches.</p></li>
+<li><p>Generate a merge map where duplicates are mapped to a primary ID.</p></li>
+<li><p>Optional: Use fuzzy matching to additionally identify and merge similar-sounding entries (above a threshold).</p></li>
+<li><p>Save the resulting merge map in a JSON file.</p></li>
 </ol>
 </div></blockquote>
 </section>

@@ -78,31 +78,31 @@
 <a class="viewcode-back" href="../ai_training/training.html#training.models.MyModel">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MyModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Convolutional Neural Network (CNN) für Bildklassifikation.</span>
+<span class="sd">    Convolutional Neural Network (CNN) for image classification.</span>
 
-<span class="sd">    Dieses Modell besteht aus mehreren Convolutional-Blöcken mit Batch-Normalisierung,</span>
-<span class="sd">    ReLU-Aktivierung, Dropout und Pooling-Schichten. Anschließend werden die extrahierten</span>
-<span class="sd">    Merkmale durch voll verbundene Schichten geleitet, um die finale Klassifizierung durchzuführen.</span>
+<span class="sd">    This model consists of several convolutional blocks with batch normalization,</span>
+<span class="sd">    ReLU activation, dropout, and pooling layers. The extracted features are then</span>
+<span class="sd">    passed through fully connected layers to perform the final classification.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        num_classes (int): Anzahl der Ausgabeklassen für die Klassifikation. Standardwert ist 15.</span>
+<span class="sd">        num_classes (int): Number of output classes for classification. Default is 15.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialisiert das MyModel und definiert die Netzwerkarchitektur.</span>
+<span class="sd">        Initializes the MyModel and defines the network architecture.</span>
 
-<span class="sd">        Erstellt die Convolutional-, Batch-Normalisierungs-, Dropout-, Pooling- und Fully-Connected-Schichten</span>
-<span class="sd">        des Netzwerks.</span>
+<span class="sd">        Creates the convolutional, batch normalization, dropout, pooling, and</span>
+<span class="sd">        fully connected layers of the network.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            num_classes (int): Anzahl der Ausgabeklassen. Standard ist 15.</span>
+<span class="sd">            num_classes (int): Number of output classes. Default is 15.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">MyModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">conv1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bn1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">64</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dropout1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>  <span class="c1"># Weniger Dropout in frühen CNN-Layern</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>  <span class="c1"># Lower dropout in early CNN layers</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">conv2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bn2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
@@ -120,28 +120,28 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">adaptive_pool</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">AdaptiveAvgPool2d</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fc1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="mi">1024</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dropout_fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.6</span><span class="p">)</span>  <span class="c1"># Hoher Wert in der FC-Schicht</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout_fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.6</span><span class="p">)</span>  <span class="c1"># Higher dropout value in the FC layer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MyModel.forward">
 <a class="viewcode-back" href="../ai_training/training.html#training.models.MyModel.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Führt einen Forward-Pass des Modells durch.</span>
+<span class="sd">        Performs a forward pass of the model.</span>
 
-<span class="sd">        Verarbeitet die Eingabe durch eine Abfolge von Convolutional-Blöcken,</span>
-<span class="sd">        die jeweils aus Convolution, Batch-Normalisierung, ReLU, Pooling und Dropout bestehen.</span>
-<span class="sd">        Anschließend wird mittels adaptivem Pooling der Feature-Vektor reduziert und durch</span>
-<span class="sd">        voll verbundene Schichten geleitet, um die finale Klassifizierung zu berechnen.</span>
+<span class="sd">        Processes the input through a sequence of convolutional blocks,</span>
+<span class="sd">        each consisting of convolution, batch normalization, ReLU, pooling,</span>
+<span class="sd">        and dropout. Then applies adaptive pooling to reduce the feature vector</span>
+<span class="sd">        and passes it through fully connected layers for the final classification.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            x (torch.Tensor): Eingabetensor der Form (N, C, H, W), wobei N die Batch-Größe darstellt.</span>
+<span class="sd">            x (torch.Tensor): Input tensor with shape (N, C, H, W), where N is the batch size.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            torch.Tensor: Ausgabe des Netzwerks (Logits) für jede Klasse.</span>
+<span class="sd">            torch.Tensor: Network output (logits) for each class.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bn1</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conv1</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># Dropout nach dem ersten Block</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># Dropout after the first block</span>
 
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bn2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conv2</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -156,7 +156,7 @@
         <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fc1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout_fc</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># Dropout vor der letzten Schicht</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout_fc</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># Dropout before the final layer</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">x</span></div>
