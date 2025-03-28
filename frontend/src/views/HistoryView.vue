@@ -66,7 +66,7 @@ const formatTimestamp = (timestamp: number) => {
                   <p><strong>Name:</strong> {{ rec.name.replace('_', ' ') }}</p>
                   <p>
                     <strong>Probability:</strong>
-                    {{ (rec.probability ?? 0).toFixed(2) }}%
+                    {{rec.probability ? rec.probability.toFixed(2) + '%' : ''}}
                   </p>
                   <div v-if="rec.plant">
                     <p><strong>Common Name:</strong> {{ rec.plant.common_name }}</p>
